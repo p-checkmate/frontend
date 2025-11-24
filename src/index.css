@@ -1,0 +1,61 @@
+@import url('/fonts/fonts.css');
+@import 'tailwindcss';
+
+/* ===========================
+   DESIGN TOKENS (@theme)
+   =========================== */
+@theme {
+  --font-suit: 'SUIT', ui-sans-serif, system-ui, sans-serif;
+
+  /* Typography scale */
+  --text-6xl: 40px;
+  --text-5xl: 30px;
+  --text-4xl: 26px;
+  --text-3xl: 24px;
+  --text-2xl: 22px;
+  --text-xl: 20px;
+  --text-lg: 18px;
+  --text-md: 16px;
+  --text-sm: 14px;
+  --text-xs: 12px;
+  --text-xxs: 10px;
+
+  --leading-3xl: 44px;
+  --leading-2xl: 30px;
+  --leading-xl: 26px;
+  --leading-l: 24px;
+  --leading-m: 22px;
+  --leading-s: 20px;
+  --leading-xs: 18px;
+
+  /* Radius */
+  --radius-s: 2px;
+  --radius-m: 8px;
+  --radius-l: 12px;
+  --radius-full: 99px;
+
+  /* Grayscale */
+  --color-black: #000000;
+  --color-white: #ffffff;
+
+}
+
+/* ===========================
+   BASE RESET
+   =========================== */
+@layer base {
+  * {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    @apply mx-auto h-screen max-w-[430px];
+    font-family: var(--font-suit);
+    background-color: var(--color-gray-900);
+    color: var(--color-white);
+    scrollbar-gutter: stable;
+  }
+}
