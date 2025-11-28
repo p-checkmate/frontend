@@ -1,43 +1,53 @@
-@import url('/fonts/fonts.css');
+@import '../public/fonts/fonts.css';
 @import 'tailwindcss';
 
-/* ===========================
-   DESIGN TOKENS (@theme)
-   =========================== */
-@theme {
-  --font-suit: 'SUIT', ui-sans-serif, system-ui, sans-serif;
+/*필요에 따라 추가해서 쓰시면 됩니다!*/
+:root {
+  --font-default: 'Pretendard', sans-serif;
+  /* === 색깔 === */
+  --color-beige1: #F9F5E8;
+  --color-beige2: #fffdf6; /*조금 더 연한 색*/
+  --color-green1: #276d6a; 
+  --color-green2: #336563;
+  --color-yellow: #fcdb66;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-gray1: #ebebeb;
+  --color-gray2: #B4B4B4;
+  --color-gray3: #747474;
+  --color-pink: #ff9173;
 
-  /* Typography scale */
-  --text-6xl: 40px;
-  --text-5xl: 30px;
-  --text-4xl: 26px;
-  --text-3xl: 24px;
-  --text-2xl: 22px;
-  --text-xl: 20px;
-  --text-lg: 18px;
-  --text-md: 16px;
-  --text-sm: 14px;
-  --text-xs: 12px;
-  --text-xxs: 10px;
-
-  --leading-3xl: 44px;
-  --leading-2xl: 30px;
-  --leading-xl: 26px;
-  --leading-l: 24px;
-  --leading-m: 22px;
-  --leading-s: 20px;
-  --leading-xs: 18px;
-
-  /* Radius */
   --radius-s: 2px;
   --radius-m: 8px;
   --radius-l: 12px;
   --radius-full: 99px;
 
-  /* Grayscale */
-  --color-black: #000000;
-  --color-white: #ffffff;
+  /*텍스트 크기*/
+  --text-size-10: 40px;
+  --text-size-9: 35px;
+  --text-size-8: 30px;
+  --text-size-7: 20px;
+  --text-size-6: 18px;
+  --text-size-5: 16px;
+  --text-size-4: 15px;
+  --text-size-3: 13px;
+  --text-size-2: 12px;
+  --text-size-1: 8px;
 
+  /*line height*/
+  --leading-12: 19px;
+  --leading-11: 48px;
+  --leading-10: 42px;
+  --leading-9: 35px;
+  --leading-8: 28px;
+  --leading-7: 26px;
+  --leading-6: 24px;
+  --leading-5: 22px;
+  --leading-4: 20px;
+  --leading-3: 18px;
+  --leading-2: 16px;
+  --leading-1: 12px;
+  --leading-0: 15px;
 }
 
 /* ===========================
@@ -54,8 +64,114 @@
   body {
     @apply mx-auto h-screen max-w-[430px];
     font-family: var(--font-suit);
-    background-color: var(--color-gray-900);
-    color: var(--color-white);
+    background-color: var(--color-beige1);
+    color: var(--color-black);
     scrollbar-gutter: stable;
+  }
+}
+
+@layer utilities{
+  /*텍스트*/
+  .text-title1{
+    font-size: var(--text-size-10);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--leading-11);
+    font-family: var(--font-default);
+  }
+
+  .text-title2{
+    font-size: var(--text-size-9);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--leading-10);
+    font-family: var(--font-default);
+  }
+
+  .text-title3{
+    font-size: var(--text-size-8);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--leading-9);
+    font-family: var(--font-default);
+  }
+
+  .text-title4{
+    font-size: var(--text-size-6);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-5);
+    font-family: var(--font-default);
+  }
+
+  .text-title5{
+    font-size: var(--text-size-5);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-4);
+    font-family: var(--font-default);
+  }
+
+  .text-caption1{
+    font-size: var(--text-size-7);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--leading-6);
+    font-family: var(--font-default);
+  }
+
+  .text-caption2{
+    font-size: var(--text-size-6);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-5);
+    font-family: var(--font-default);
+  }
+
+  .text-caption3{
+    font-size: var(--text-size-5);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-3);
+    font-family: var(--font-default);
+  }
+
+  .text-caption4{
+    font-size: var(--text-size-3);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-2);
+    font-family: var(--font-default);
+  }
+
+  .text-caption5{
+    font-size: var(--text-size-2);
+    font-weight: var(--font-weight-medium);
+    line-height: var(--leading-0);
+    font-family: var(--font-default);
+  }
+
+  .text-body1{
+    font-size: var(--text-size-4);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-3);
+    font-family: var(--font-default);
+  }
+
+  .text-body2{
+    font-size: var(--text-size-5);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-12);
+    font-family: var(--font-default);
+  }
+
+  .text-body3{
+    font-size: var(--text-size-6);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-5);
+    font-family: var(--font-default);
+  }
+
+  .text-body4{
+    font-size: var(--text-size-2);
+    font-weight: var(--font-weight-normal);
+    line-height: var(--leading-0);
+    font-family: var(--font-default);
+  }
+
+  /*배경 색상*/
+  .bg-beige1 {
+    background-color: var(--color-beige2);
   }
 }

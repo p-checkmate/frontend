@@ -1,12 +1,8 @@
-import './App.css'
+import { RouterProvider } from 'react-router-dom';
+import { router } from './routes/route';
 
 function App() {
-  return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-white">
-        Checkmate 프론트 시작 ✨
-      </h1>
-    </div>
-  );
+  return <RouterProvider router={router} />;
 }
-export default App
+
+export default App;
