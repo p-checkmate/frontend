@@ -15,7 +15,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const SIZE_STYLES: Record<ButtonSize, string> = {
   lg: 'h-12 px-6 text-caption1',
-  md: 'h-10 px-5 text-caption5',
+  md: 'h-10.5 px-5 text-caption5',
   sm: 'h-8 px-3 text-body1',
 };
 
