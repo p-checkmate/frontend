@@ -20,7 +20,7 @@ const SIZE_STYLES: Record<ButtonSize, string> = {
 };
 
 const BASE_STYLE =
-  'inline-flex items-center justify-center rounded-m transition-colors duration-150 active:scale-95 disabled:cursor-not-allowed';
+  'cursor-pointer inline-flex items-center justify-center rounded-m transition-colors duration-150 active:scale-95 disabled:cursor-not-allowed';
 
 const Button: React.FC<ButtonProps> = ({
   variant = 'solid',
