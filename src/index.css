@@ -5,15 +5,15 @@
 :root {
   --font-default: 'Pretendard', sans-serif;
   /* === 색깔 === */
-  --color-beige1: #F9F5E8;
+  --color-beige1: #f9f5e8;
   --color-beige2: #fffdf6; /*조금 더 연한 색*/
-  --color-green1: #276d6a; 
+  --color-green1: #276d6a;
   --color-green2: #336563;
   --color-yellow: #fcdb66;
   --color-white: #ffffff;
   --color-black: #000000;
   --color-gray1: #ebebeb;
-  --color-gray2: #B4B4B4;
+  --color-gray2: #b4b4b4;
   --color-gray3: #747474;
   --color-pink: #ff9173;
 
@@ -70,100 +70,100 @@
   }
 }
 
-@layer utilities{
+@layer utilities {
   /*텍스트*/
-  .text-title1{
+  .text-title1 {
     font-size: var(--text-size-10);
     font-weight: var(--font-weight-bold);
     line-height: var(--leading-11);
     font-family: var(--font-default);
   }
 
-  .text-title2{
+  .text-title2 {
     font-size: var(--text-size-9);
     font-weight: var(--font-weight-bold);
     line-height: var(--leading-10);
     font-family: var(--font-default);
   }
 
-  .text-title3{
+  .text-title3 {
     font-size: var(--text-size-8);
     font-weight: var(--font-weight-bold);
     line-height: var(--leading-9);
     font-family: var(--font-default);
   }
 
-  .text-title4{
+  .text-title4 {
     font-size: var(--text-size-6);
     font-weight: var(--font-weight-semibold);
     line-height: var(--leading-5);
     font-family: var(--font-default);
   }
 
-  .text-title5{
+  .text-title5 {
     font-size: var(--text-size-5);
     font-weight: var(--font-weight-semibold);
     line-height: var(--leading-4);
     font-family: var(--font-default);
   }
 
-  .text-caption1{
+  .text-caption1 {
     font-size: var(--text-size-7);
     font-weight: var(--font-weight-semibold);
     line-height: var(--leading-6);
     font-family: var(--font-default);
   }
 
-  .text-caption2{
+  .text-caption2 {
     font-size: var(--text-size-6);
     font-weight: var(--font-weight-medium);
     line-height: var(--leading-5);
     font-family: var(--font-default);
   }
 
-  .text-caption3{
+  .text-caption3 {
     font-size: var(--text-size-5);
     font-weight: var(--font-weight-medium);
     line-height: var(--leading-3);
     font-family: var(--font-default);
   }
 
-  .text-caption4{
+  .text-caption4 {
     font-size: var(--text-size-3);
     font-weight: var(--font-weight-normal);
     line-height: var(--leading-2);
     font-family: var(--font-default);
   }
 
-  .text-caption5{
+  .text-caption5 {
     font-size: var(--text-size-2);
     font-weight: var(--font-weight-medium);
     line-height: var(--leading-0);
     font-family: var(--font-default);
   }
 
-  .text-body1{
+  .text-body1 {
     font-size: var(--text-size-4);
     font-weight: var(--font-weight-normal);
     line-height: var(--leading-3);
     font-family: var(--font-default);
   }
 
-  .text-body2{
+  .text-body2 {
     font-size: var(--text-size-5);
     font-weight: var(--font-weight-normal);
     line-height: var(--leading-12);
     font-family: var(--font-default);
   }
 
-  .text-body3{
+  .text-body3 {
     font-size: var(--text-size-6);
     font-weight: var(--font-weight-normal);
     line-height: var(--leading-5);
     font-family: var(--font-default);
   }
 
-  .text-body4{
+  .text-body4 {
     font-size: var(--text-size-2);
     font-weight: var(--font-weight-normal);
     line-height: var(--leading-0);
@@ -173,5 +173,120 @@
   /*배경 색상*/
   .bg-beige1 {
     background-color: var(--color-beige2);
+  }
+
+  .bg-beige2 {
+    background-color: var(--color-beige2);
+  }
+
+  .bg-white {
+    background-color: var(--color-white);
+  }
+
+  .bg-gray1 {
+    background-color: var(--color-gray1);
+  }
+
+  .bg-gray2 {
+    background-color: var(--color-gray2);
+  }
+
+  .bg-gray3 {
+    background-color: var(--color-gray3);
+  }
+
+  .bg-green1 {
+    background-color: var(--color-green1);
+  }
+
+  .bg-green2 {
+    background-color: var(--color-green2);
+  }
+
+  .bg-yellow {
+    background-color: var(--color-yellow);
+  }
+
+  /*텍스트 색상*/
+  .text-gray1 {
+    color: var(--color-gray1);
+  }
+
+  .text-gray2 {
+    color: var(--color-gray2);
+  }
+
+  .text-gray3 {
+    color: var(--color-gray3);
+  }
+
+  .text-yellow {
+    color: var(--color-yellow);
+  }
+
+  .text-black {
+    color: var(--color-black);
+  }
+
+  .text-green1 {
+    color: var(--color-green1);
+  }
+
+  .text-green2 {
+    color: var(--color-green2);
+  }
+
+  /*border*/
+  .border-green1 {
+    border-color: var(--color-green1);
+  }
+
+  .border-green2 {
+    border-color: var(--color-green2);
+  }
+
+  .border-black {
+    border-color: var(--color-black);
+  }
+
+  .border-gray1 {
+    border-color: var(--color-gray1);
+  }
+
+  .border-gray2 {
+    border-color: var(--color-gray2);
+  }
+
+  .border-gray3 {
+    border-color: var(--color-gray3);
+  }
+
+  /* radius */
+  .rounded-s {
+    border-radius: var(--radius-s); /*2px*/
+  }
+
+  .rounded-m {
+    border-radius: var(--radius-m); /*8px*/
+  }
+
+  .rounded-l {
+    border-radius: var(--radius-l); /*12px*/
+  }
+
+  .rounded-full {
+    border-radius: var(--radius-full); /*99px*/
+  }
+
+  /* 스크롤바를 숨기는 유틸리티 클래스 */
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  html {
+    scrollbar-gutter: stable;
   }
 }
