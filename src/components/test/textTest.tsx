@@ -20,13 +20,10 @@ const textList = [
 const TextTest = () => {
   return (
     <div>
-      <h1 className="text-title3 mb-4">텍스트 스타일 테스트</h1>
+      <h1 className="text-title3 mb-4">텍스트 스타일 테스트 </h1>
 
       {textList.map((item) => (
-        <div
-          key={item.className}
-          className="p-3 rounded-md bg-white border border-gray-200"
-        >
+        <div key={item.className} className="rounded-md border border-gray-200 bg-white p-3">
           <div className={`${item.className}`}>{item.label}</div>
         </div>
       ))}

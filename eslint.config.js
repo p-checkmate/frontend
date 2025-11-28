@@ -9,12 +9,21 @@ export default defineConfig([
   globalIgnores(['dist']),
   {
     files: ['**/*.{ts,tsx}'],
+    plugins: {
+      prettier: prettierPlugin,
+    },
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,
       reactHooks.configs.flat.recommended,
       reactRefresh.configs.vite,
+      prettier,
     ],
+    
+    rules: {
+      'prettier/prettier': 'error',
+    },
+    
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
