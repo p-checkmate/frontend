@@ -33,7 +33,7 @@ const PositionToggle: React.FC<PositionToggleProps> = ({
       onClick={handleClick}
       aria-pressed
       className={cn(
-        "inline-flex items-center justify-center",
+        "cursor-pointer inline-flex items-center justify-center",
         "rounded-m w-16 h-9 text-body3",
         "border border-transparent",
         "transition-colors duration-150",

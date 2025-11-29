@@ -49,7 +49,7 @@ const DebateOpinionBar: React.FC<DebateOpinionBarProps> = ({
         </div>
 
         {/* 오른쪽 화살표 버튼 */}
-        <button onClick={handleSubmit}>
+        <button onClick={handleSubmit} className="cursor-pointer">
           <SendIcon />
         </button>
       </div>
