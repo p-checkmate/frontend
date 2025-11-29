@@ -63,7 +63,7 @@
   html,
   body {
     @apply mx-auto h-screen max-w-[430px];
-    font-family: var(--font-suit);
+    font-family: var(--font-default);
     background-color: var(--color-beige1);
     color: var(--color-black);
     scrollbar-gutter: stable;
@@ -207,6 +207,24 @@
     background-color: var(--color-yellow);
   }
 
+  /*버튼 텍스트 색상*/
+  .btn-text-white{
+    color: var(--color-white);
+  }
+
+  .btn-text-black{
+    color: var(--color-black);
+  }
+
+  .btn-text-green1{
+    color: var(--color-green1);
+  }
+
+  .btn-text-gray3{
+    color: var(--color-gray3);
+  }
+
+
   /*텍스트 색상*/
   .text-gray1 {
     color: var(--color-gray1);
@@ -234,6 +252,10 @@
 
   .text-green2 {
     color: var(--color-green2);
+  }
+
+  .text-white{
+    color: var(--color-white);
   }
 
   /*border*/
