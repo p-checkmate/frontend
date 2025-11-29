@@ -208,22 +208,21 @@
   }
 
   /*버튼 텍스트 색상*/
-  .btn-text-white{
+  .btn-text-white {
     color: var(--color-white);
   }
 
-  .btn-text-black{
+  .btn-text-black {
     color: var(--color-black);
   }
 
-  .btn-text-green1{
+  .btn-text-green1 {
     color: var(--color-green1);
   }
 
-  .btn-text-gray3{
+  .btn-text-gray3 {
     color: var(--color-gray3);
   }
-
 
   /*텍스트 색상*/
   .text-gray1 {
@@ -254,7 +253,7 @@
     color: var(--color-green2);
   }
 
-  .text-white{
+  .text-white {
     color: var(--color-white);
   }
 

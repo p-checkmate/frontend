@@ -74,9 +74,7 @@ const TextTest: React.FC = () => {
 
           <div className="rounded-md border border-gray-200 bg-white p-3">
             <p className="text-body4 text-gray3 mb-1">className="text-body2"</p>
-            <p className="text-body2">
-              text-body2 (16px) - 본문에서 많이 쓸 크기
-            </p>
+            <p className="text-body2">text-body2 (16px) - 본문에서 많이 쓸 크기</p>
           </div>
 
           <div className="rounded-md border border-gray-200 bg-white p-3">
@@ -99,51 +97,37 @@ const TextTest: React.FC = () => {
 
         <div className="space-y-2">
           <div className="rounded-md border border-gray-200 bg-white p-3">
-            <p className="text-body4 text-gray3 mb-1">
-              className="text-title4 text-black"
-            </p>
+            <p className="text-body4 text-gray3 mb-1">className="text-title4 text-black"</p>
             <p className="text-title4 text-black">text-black</p>
           </div>
 
           <div className="rounded-md border border-gray-200 bg-white p-3">
-            <p className="text-body4 text-gray3 mb-1">
-              className="text-title4 text-gray1"
-            </p>
+            <p className="text-body4 text-gray3 mb-1">className="text-title4 text-gray1"</p>
             <p className="text-title4 text-gray1">text-gray1</p>
           </div>
 
           <div className="rounded-md border border-gray-200 bg-white p-3">
-            <p className="text-body4 text-gray3 mb-1">
-              className="text-title4 text-gray2"
-            </p>
+            <p className="text-body4 text-gray3 mb-1">className="text-title4 text-gray2"</p>
             <p className="text-title4 text-gray2">text-gray2</p>
           </div>
 
           <div className="rounded-md border border-gray-200 bg-white p-3">
-            <p className="text-body4 text-gray3 mb-1">
-              className="text-title4 text-gray3"
-            </p>
+            <p className="text-body4 text-gray3 mb-1">className="text-title4 text-gray3"</p>
             <p className="text-title4 text-gray3">text-gray3</p>
           </div>
 
           <div className="rounded-md border border-gray-200 bg-white p-3">
-            <p className="text-body4 text-gray3 mb-1">
-              className="text-title4 text-yellow"
-            </p>
+            <p className="text-body4 text-gray3 mb-1">className="text-title4 text-yellow"</p>
             <p className="text-title4 text-yellow">text-yellow</p>
           </div>
 
           <div className="rounded-md border border-gray-200 bg-white p-3">
-            <p className="text-body4 text-gray3 mb-1">
-              className="text-title4 text-green1"
-            </p>
+            <p className="text-body4 text-gray3 mb-1">className="text-title4 text-green1"</p>
             <p className="text-title4 text-green1">text-green1</p>
           </div>
 
           <div className="rounded-md border border-gray-200 bg-white p-3">
-            <p className="text-body4 text-gray3 mb-1">
-              className="text-title4 text-green2"
-            </p>
+            <p className="text-body4 text-gray3 mb-1">className="text-title4 text-green2"</p>
             <p className="text-title4 text-green2">text-green2</p>
           </div>
         </div>
@@ -156,39 +140,39 @@ const TextTest: React.FC = () => {
         <h1 className="text-title3 mb-4">배경 색상 테스트 (사용 예시)</h1>
 
         <div className="space-y-3">
-          <div className="rounded-md border border-gray-200 p-4 text-body2 bg-beige1">
+          <div className="text-body2 bg-beige1 rounded-md border border-gray-200 p-4">
             className="bg-beige1"
           </div>
 
-          <div className="rounded-md border border-gray-200 p-4 text-body2 bg-beige2">
+          <div className="text-body2 bg-beige2 rounded-md border border-gray-200 p-4">
             className="bg-beige2"
           </div>
 
-          <div className="rounded-md border border-gray-200 p-4 text-body2 bg-white">
+          <div className="text-body2 rounded-md border border-gray-200 bg-white p-4">
             className="bg-white"
           </div>
 
-          <div className="rounded-md border border-gray-200 p-4 text-body2 bg-gray1">
+          <div className="text-body2 bg-gray1 rounded-md border border-gray-200 p-4">
             className="bg-gray1"
           </div>
 
-          <div className="rounded-md border border-gray-200 p-4 text-body2 bg-gray2">
+          <div className="text-body2 bg-gray2 rounded-md border border-gray-200 p-4">
             className="bg-gray2"
           </div>
 
-          <div className="rounded-md border border-gray-200 p-4 text-body2 bg-gray3">
+          <div className="text-body2 bg-gray3 rounded-md border border-gray-200 p-4">
             className="bg-gray3 text-white"
           </div>
 
-          <div className="rounded-md border border-gray-200 p-4 text-body2 bg-green1 text-white">
+          <div className="text-body2 bg-green1 rounded-md border border-gray-200 p-4 text-white">
             className="bg-green1"
           </div>
 
-          <div className="rounded-md border border-gray-200 p-4 text-body2 bg-green2 text-white">
+          <div className="text-body2 bg-green2 rounded-md border border-gray-200 p-4 text-white">
             className="bg-green2"
           </div>
 
-          <div className="rounded-md border border-gray-200 p-4 text-body2 bg-yellow">
+          <div className="text-body2 bg-yellow rounded-md border border-gray-200 p-4">
             className="bg-yellow"
           </div>
         </div>

@@ -1,8 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
-import TextTest from '@/components/test/textTest';
 import HomePage from '@/pages/main/Homepage';
-import TestImagePage from '@/components/test/TestImage';
-import ButtonTest from '@/components/test/ButtonTest';
+import InputPlayground from '@/components/test/InputTest';
 
 export const router = createBrowserRouter([
   {
@@ -10,15 +8,7 @@ export const router = createBrowserRouter([
     element: <HomePage />,
   },
   {
-    path:'/test-text',
-    element: <TextTest/>
+    path: 'test-input',
+    element: <InputPlayground />,
   },
-  {
-    path:'/test-image',
-    element: <TestImagePage/>
-  },
-  {
-    path: '/test-button',
-    element: <ButtonTest/>
-  }
 ]);

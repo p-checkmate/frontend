@@ -38,7 +38,7 @@ export default function Image({
       className={cn('relative w-full overflow-hidden', aspectRatio, rounded, className)}
     >
       {/*에러: bg-gray1*/}
-      {inView && error && <div className={cn('h-full w-full bg-gray1', rounded)} />}
+      {inView && error && <div className={cn('bg-gray1 h-full w-full', rounded)} />}
 
       {/*로딩 중: blur*/}
       {inView && !error && (

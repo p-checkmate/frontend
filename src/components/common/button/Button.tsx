@@ -43,7 +43,7 @@ const Button: React.FC<ButtonProps> = ({
       style = cn(
         color === 'green' && 'bg-green1 btn-text-white hover:bg-green2',
         color === 'yellow' && 'bg-yellow btn-text-black hover:brightness-95',
-        color === 'gray' && 'bg-gray2 btn-text-white hover:bg-gray3'
+        color === 'gray' && 'bg-gray2 btn-text-white hover:bg-gray3',
       );
     }
   }
@@ -52,31 +52,21 @@ const Button: React.FC<ButtonProps> = ({
   if (variant === 'outline') {
     style = cn(
       'bg-transparent',
-      color === 'green' &&
-        'btn-text-green1 border border-green1 hover:bg-beige2',
-      color === 'gray' &&
-        'btn-text-gray3 border border-gray3 hover:bg-gray1'
+      color === 'green' && 'btn-text-green1 border border-green1 hover:bg-beige2',
+      color === 'gray' && 'btn-text-gray3 border border-gray3 hover:bg-gray1',
     );
   }
 
   // ==== TAG 버튼 ====
   if (variant === 'tag') {
-    style = cn(
-      selected ? 'bg-yellow btn-text-black' : 'bg-green1 btn-text-white'
-    );
+    style = cn(selected ? 'bg-yellow btn-text-black' : 'bg-green1 btn-text-white');
   }
 
   return (
     <button
       {...props}
       disabled={disabled}
-      className={cn(
-        BASE_STYLE,
-        SIZE_STYLES[size],
-        fullWidth && 'w-full',
-        style,
-        className
-      )}
+      className={cn(BASE_STYLE, SIZE_STYLES[size], fullWidth && 'w-full', style, className)}
     >
       {children}
     </button>
