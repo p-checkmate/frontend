@@ -1,9 +1,27 @@
-import { useState } from 'react';
-import { Input } from '@/components';
+import { useState } from "react";
+import { Button, Input } from "@/components";
 
 const InputPlayground = () => {
-  const [value1, setValue1] = useState('');
-  const [value2, setValue2] = useState('');
+  const [value1, setValue1] = useState("");
+  const [value2, setValue2] = useState("");
+
+  // 6. 인터랙션 테스트용 상태
+  const [submitValue, setSubmitValue] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [shakeKey, setShakeKey] = useState(0);
+
+  const handleSubmit = () => {
+    // 값이 비어있으면 에러 처리
+    if (!submitValue.trim()) {
+      setIsError(true);
+      setShakeKey((prev) => prev + 1); // key를 변경해 애니메이션 강제 재실행
+      return;
+    }
+
+    // 성공 시 처리
+    setIsError(false);
+    alert(`제출 성공: ${submitValue}`);
+  };
 
   return (
     <div className="bg-bg-1 min-h-screen p-6">
@@ -19,7 +37,9 @@ const InputPlayground = () => {
             onChange={(e) => setValue1(e.target.value)}
             fullWidth
           />
-          <p className="text-caption5 text-gray5">value: {value1 || '(empty)'}</p>
+          <p className="text-caption5 text-gray5">
+            value: {value1 || "(empty)"}
+          </p>
         </div>
 
         {/* 초록색 variant */}
@@ -32,34 +52,48 @@ const InputPlayground = () => {
             onChange={(e) => setValue2(e.target.value)}
             fullWidth
           />
-          <p className="text-caption5 text-gray5">value: {value2 || '(empty)'}</p>
-        </div>
-
-        {/* className으로 크기 조절 */}
-        <div className="space-y-3">
-          <p className="text-body1 font-semibold">3. Custom Size</p>
-
-          <Input className="text-caption5 h-8 px-2" placeholder="작은 인풋" />
-          <Input className="text-body1 h-12 px-4" placeholder="큰 인풋" />
+          <p className="text-caption5 text-gray5">
+            value: {value2 || "(empty)"}
+          </p>
         </div>
 
         {/* disabled */}
         <div className="space-y-2">
-          <p className="text-body1 font-semibold">4. Disabled</p>
+          <p className="text-body1 font-semibold">3. Disabled</p>
           <Input disabled placeholder="비활성화 인풋" fullWidth />
         </div>
 
-        {/* error */}
-        <div className="space-y-2">
-          <p className="text-body1 font-semibold">5. Error 상태</p>
-          <Input variant="primary" isError placeholder="에러 인풋" fullWidth />
+        {/*인터랙션 테스트*/}
+        <div className="space-y-3 rounded-lg border border-gray2 p-4">
+          <p className="text-body1 font-semibold">
+            4. 인터랙션 테스트 (빈 값 제출 시 에러)
+          </p>
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <Input
+                key={shakeKey}
+                value={submitValue}
+                onChange={(e) => {
+                  setSubmitValue(e.target.value);
+                  if (isError) setIsError(false);
+                }}
+                isError={isError}
+                placeholder="내용을 입력하세요"
+                fullWidth
+              />
+              {isError && (
+                <p className="mt-1 text-caption5 text-red-500">
+                  필수 입력 항목입니다!
+                </p>
+              )}
             </div>
-      </div>
-
-      <div className="flex min-h-screen items-center justify-center bg-white">
-        <div className="animate-shake h-24 w-24 bg-red-400" />
-        </div>
+            <Button onClick={handleSubmit} variant="solid" color="green">
+              제출
+            </Button>
           </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
