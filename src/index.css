@@ -1,9 +1,9 @@
-@import '../public/fonts/fonts.css';
-@import 'tailwindcss';
+@import "../public/fonts/fonts.css";
+@import "tailwindcss";
 
 /*필요에 따라 추가해서 쓰시면 됩니다!*/
 :root {
-  --font-default: 'Pretendard', sans-serif;
+  --font-default: "Pretendard", sans-serif;
   /* === 색깔 === */
   --color-beige1: #f9f5e8;
   --color-beige2: #fffdf6; /*조금 더 연한 색*/
@@ -71,6 +71,10 @@
 }
 
 @layer utilities {
+  .ring-green1 {
+    --tw-ring-color: var(--color-green1);
+  }
+
   /*텍스트*/
   .text-title1 {
     font-size: var(--text-size-10);
@@ -172,7 +176,7 @@
 
   /*배경 색상*/
   .bg-beige1 {
-    background-color: var(--color-beige2);
+    background-color: var(--color-beige1);
   }
 
   .bg-beige2 {
@@ -208,22 +212,21 @@
   }
 
   /*버튼 텍스트 색상*/
-  .btn-text-white{
+  .btn-text-white {
     color: var(--color-white);
   }
 
-  .btn-text-black{
+  .btn-text-black {
     color: var(--color-black);
   }
 
-  .btn-text-green1{
+  .btn-text-green1 {
     color: var(--color-green1);
   }
 
-  .btn-text-gray3{
+  .btn-text-gray3 {
     color: var(--color-gray3);
   }
-
 
   /*텍스트 색상*/
   .text-gray1 {
@@ -254,7 +257,7 @@
     color: var(--color-green2);
   }
 
-  .text-white{
+  .text-white {
     color: var(--color-white);
   }
 
@@ -310,5 +313,22 @@
   }
   html {
     scrollbar-gutter: stable;
+  }
+
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-4px);
+    }
+    75% {
+      transform: translateX(4px);
+    }
+  }
+
+  .animate-shake {
+    animation: shake 0.2s ease-in-out 0s 2; /* 0.2초 동안 2번 흔들림 */
   }
 }
