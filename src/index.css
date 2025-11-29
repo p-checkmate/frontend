@@ -71,6 +71,10 @@
 }
 
 @layer utilities {
+  .ring-green1 {
+    --tw-ring-color: var(--color-green1);
+  }
+
   /*텍스트*/
   .text-title1 {
     font-size: var(--text-size-10);

@@ -30,7 +30,7 @@ const InputPlayground = () => {
 
         {/* 기본 인풋 */}
         <div className="space-y-2">
-          <p className="text-body1 font-semibold">1. Default Input</p>
+          <p className="text-body1">1. Default Input</p>
           <Input
             placeholder="기본 인풋"
             value={value1}
