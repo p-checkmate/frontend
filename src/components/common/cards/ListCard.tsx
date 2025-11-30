@@ -16,6 +16,7 @@ interface DiscussionCardProps {
   likeCount: number;
   commentCount?: number;
   className?: string;
+  onClickCard?: () => void;
 }
 
 const DiscussionCard: React.FC<DiscussionCardProps> = ({
@@ -29,6 +30,7 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
   likeCount,
   commentCount,
   className,
+  onClickCard,
 }) => {
   const isQuote = type === "quote";
 
@@ -36,12 +38,14 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
   const [liked, setLiked] = useState(false);
   const displayLikeCount = likeCount + (liked ? 1 : 0);
 
-  const toggleLike = () => {
+  const toggleLike = (e: React.MouseEvent) => {
+    e.stopPropagation();
     setLiked((prev) => !prev);
   };
 
   return (
     <div
+      onClick={onClickCard}
       className={cn("rounded-l bg-white px-5 py-5 shadow-sm w-full", className)}
     >
       {/* 제목 영역 */}

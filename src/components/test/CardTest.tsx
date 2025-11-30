@@ -1,10 +1,13 @@
 import { DiscussionCard } from "@/components";
+import { useNavigate } from "react-router-dom";
 
 const DiscussionCardTest = () => {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-beige1 p-6 space-y-4">
       {/* 자유 토론 카드 */}
       <DiscussionCard
+        className="cursor-pointer"
         type="discussion"
         bookTitle="책 제목"
         title="토론 제목"
@@ -13,6 +16,7 @@ const DiscussionCardTest = () => {
         commentCount={24}
         nickname="닉네임"
         dateLabel="25.11.03"
+        onClickCard={() => navigate(`/`)}
       />
 
       {/* 인용구 카드 */}
