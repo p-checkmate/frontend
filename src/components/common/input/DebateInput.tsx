@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn";
-import { Input } from "@/components";
 import PositionToggle from "@/components/toggle/PositionToggle";
 import { SendIcon } from "@/assets";
 
@@ -19,10 +18,22 @@ const DebateOpinionBar: React.FC<DebateOpinionBarProps> = ({
   const [side, setSide] = useState<DebateSide>(1);
   const [content, setContent] = useState("");
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight}px`;
+  }, [content]);
+
   const handleSubmit = () => {
     if (!content.trim()) return;
     onSubmit?.({ side, content: content.trim() });
     setContent("");
+    const el = textareaRef.current;
+    if (el) el.style.height = "auto";
   };
 
   return (
@@ -35,16 +46,17 @@ const DebateOpinionBar: React.FC<DebateOpinionBarProps> = ({
 
         {/* 입력창 */}
         <div className="flex-1">
-          <Input
-            variant="default"
-            placeholder="의견을 여기에 작성"
+          <textarea
+            ref={textareaRef}
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            fullWidth
+            placeholder="의견을 여기에 작성"
             className={cn(
-              "border-none bg-transparent px-0 h-auto text-body3",
-              "focus:ring-0 focus:outline-none placeholder:text-body3",
+              "w-full resize-none bg-transparent text-body3",
+              "focus:outline-none focus:ring-0 placeholder:text-body3",
+              "max-h-24",
             )}
+            rows={1}
           />
         </div>
 
