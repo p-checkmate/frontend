@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '@/utils/cn';
 import { CommentIcon, CheckIcon } from '@/assets';
 
-type BadgeVariant = 'tag' | 'comment' | 'check';
+//type BadgeVariant = 'tag' | 'comment' | 'check';
 
 interface BaseProps {
     className?: string;
