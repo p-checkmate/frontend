@@ -261,6 +261,10 @@
     color: var(--color-white);
   }
 
+  .text-pink {
+    color: var(--color-pink);
+  }
+
   /*border*/
   .border-green1 {
     border-color: var(--color-green1);
