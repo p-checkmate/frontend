@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import HomePage from "@/pages/main/Homepage";
-import DebateDetailPage from "@/components/test/DebateTest";
+import ModalTest from "@/components/test/ModalTest";
 
 export const router = createBrowserRouter([
   {
@@ -9,6 +9,6 @@ export const router = createBrowserRouter([
   },
   {
     path: "/test",
-    element: <DebateDetailPage />,
+    element: <ModalTest />,
   },
 ]);
