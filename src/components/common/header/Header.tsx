@@ -1,5 +1,3 @@
-// src/components/common/header/Header.tsx
-
 import { useState } from 'react';
 import { cn } from '@/utils/cn';
 import {
@@ -160,7 +158,7 @@ const Header = ({
     <header
       className={cn(
         bgClass,
-        'w-full max-w-[430px] mx-auto flex flex-col border-b border-green1/20',
+        'w-full max-w-[430px] mx-auto flex flex-col',
         className,
       )}
     >
