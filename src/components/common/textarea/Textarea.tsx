@@ -26,7 +26,7 @@ const Textarea: React.FC<TextareaProps> = ({
     <textarea
       disabled={disabled}
       className={cn(
-        "text-body1",
+        "text-body4",
         "rounded-m border px-3 py-2 outline-none",
         "transition-colors duration-150 resize-none",
 

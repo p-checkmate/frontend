@@ -29,7 +29,7 @@ const Input: React.FC<InputProps> = ({
     <input
       disabled={disabled}
       className={cn(
-        "text-body1 placeholder:text-body1",
+        "text-body4 placeholder:text-body1",
         "rounded-[5px] h-9 border px-3 outline-none",
         "transition-colors duration-150",
 
