@@ -5,5 +5,15 @@ import Badge from "./common/badge/Badge";
 import Textarea from "./common/textarea/Textarea";
 import DebateOpinionBar from "./common/input/DebateInput";
 import BaseModal from "./common/modal/Modal";
+import DiscussionCard from "./common/cards/ListCard";
 
-export { Button, Image, Input, Badge, Textarea, DebateOpinionBar, BaseModal };
+export {
+  Button,
+  Image,
+  Input,
+  Badge,
+  Textarea,
+  DebateOpinionBar,
+  BaseModal,
+  DiscussionCard,
+};
