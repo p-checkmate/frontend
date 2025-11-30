@@ -6,6 +6,7 @@ import Textarea from "./common/textarea/Textarea";
 import DebateOpinionBar from "./common/input/DebateInput";
 import BaseModal from "./common/modal/Modal";
 import DiscussionCard from "./common/cards/ListCard";
+import Header from "./common/header/Header";
 
 export {
   Button,
@@ -15,5 +16,6 @@ export {
   Textarea,
   DebateOpinionBar,
   BaseModal,
+  Header,
   DiscussionCard,
 };
