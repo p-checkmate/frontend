@@ -11,6 +11,7 @@ import DropdownIcon from "@/assets/icons/dropDown.svg?react";
 import BookmarkOnIcon from "@/assets/icons/bookmarkOn.svg?react";
 import BookmarkOffIcon from "@/assets/icons/bookmarkOff.svg?react";
 import MyPageIcon from "@/assets/icons/myPage.svg?react";
+import CloseIcon from "@/assets/icons/close.svg?react";
 
 export {
   SendIcon,
@@ -26,4 +27,5 @@ export {
   BookmarkOnIcon,
   BookmarkOffIcon,
   MyPageIcon,
+  CloseIcon,
 };

@@ -49,7 +49,7 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
       className={cn(
         "rounded-l bg-white px-5 py-5 shadow-sm w-full",
         onClickCard &&
-          "cursor-pointer hover:scale-[1.02] hover:shadow-md active:scale-[1.00] ransition-transform duration-100",
+          "cursor-pointer hover:shadow-md hover:ring-1 hover:ring-[var(--color-green1)] transition-transform duration-100",
         className,
       )}
     >

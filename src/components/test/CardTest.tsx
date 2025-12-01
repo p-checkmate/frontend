@@ -1,5 +1,6 @@
 import { DiscussionCard } from "@/components";
 import { useNavigate } from "react-router-dom";
+import BookCard from "../common/cards/BookSelectCard";
 
 const DiscussionCardTest = () => {
   const navigate = useNavigate();
@@ -28,6 +29,22 @@ const DiscussionCardTest = () => {
         likeCount={242}
         nickname="닉네임"
         dateLabel="25.11.03"
+      />
+
+      <BookCard
+        title="책 제목"
+        subtitle="책 정보 (저자 등)"
+        tags={["태그", "태그"]}
+        onClickCard={() => navigate(`/books`)}
+      />
+
+      <BookCard
+        title="책 제목"
+        subtitle="책 정보 (저자 등)"
+        tags={["태그", "태그"]}
+        onClickCard={() => navigate(`/books`)}
+        showRemoveButton
+        onClickRemove={() => navigate("/")}
       />
     </div>
   );
