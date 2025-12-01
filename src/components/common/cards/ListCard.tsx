@@ -46,7 +46,12 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
   return (
     <div
       onClick={onClickCard}
-      className={cn("rounded-l bg-white px-5 py-5 shadow-sm w-full", className)}
+      className={cn(
+        "rounded-l bg-white px-5 py-5 shadow-sm w-full",
+        onClickCard &&
+          "cursor-pointer hover:scale-[1.02] hover:shadow-md active:scale-[1.00] ransition-transform duration-100",
+        className,
+      )}
     >
       {/* 제목 영역 */}
       <div className="flex justify-between">
