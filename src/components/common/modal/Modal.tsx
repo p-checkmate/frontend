@@ -31,7 +31,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
     >
       <div
         className={cn(
-          "w-[90%] max-w-[360px] rounded-l bg-white px-6 py-5 shadow-md",
+          "w-[90%] max-w-[360px] rounded-l bg-beige2 px-6 py-5 shadow-md",
           "space-y-4",
           className,
         )}
