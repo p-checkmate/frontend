@@ -7,6 +7,7 @@ import DebateOpinionBar from "./common/input/DebateInput";
 import BaseModal from "./common/modal/Modal";
 import DiscussionCard from "./common/cards/ListCard";
 import Header from "./common/header/Header";
+import Search from "./common/search/Search";
 
 export {
   Button,
@@ -18,4 +19,5 @@ export {
   BaseModal,
   Header,
   DiscussionCard,
+  Search,
 };
