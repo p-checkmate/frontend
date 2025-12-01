@@ -4,6 +4,9 @@ import { cn } from '@/utils/cn';
 const ToggleTab = ({ options, selected, onSelect, variant }: ToggleTabProps) => {
   const selectedIndex = options.findIndex((option) => option === selected);
 
+  // ========================
+  // 1. pill 토글
+  // ========================
   if (variant === 'pill') {
     const SLIDER_WIDTH = 132;
     const SIDE_PADDING = 8;
@@ -11,7 +14,7 @@ const ToggleTab = ({ options, selected, onSelect, variant }: ToggleTabProps) => 
     const sliderLeft =
       selectedIndex === 0
         ? SIDE_PADDING
-        : 295 - SLIDER_WIDTH - SIDE_PADDING; // 오른쪽 탭 선택 시 위치
+        : 295 - SLIDER_WIDTH - SIDE_PADDING; // 오른쪽 탭일 때 위치
 
     return (
       <div className="flex justify-center">
@@ -46,7 +49,7 @@ const ToggleTab = ({ options, selected, onSelect, variant }: ToggleTabProps) => 
                   type="button"
                   onClick={() => onSelect(option)}
                   className={cn(
-                    'flex-1 text-caption3',
+                    'flex-1 text-caption3 cursor-pointer',  //cursor-pointer 추가
                     'transition-colors duration-200',
                     isActive ? 'text-black' : 'text-white',
                   )}
@@ -61,46 +64,46 @@ const ToggleTab = ({ options, selected, onSelect, variant }: ToggleTabProps) => 
     );
   }
 
-    // 밑줄 토글
-    if (variant === 'underline') {
+  // ========================
+  // 2. underline 토글
+  // ========================
+  if (variant === 'underline') {
     const index = options.findIndex((o) => o === selected);
 
     return (
-        <div className="w-full max-w-[375px] bg-beige2">
-        {/* 위쪽 회색 라인*/}
+      <div className="w-full max-w-[375px] bg-beige2">
         <div className="w-full h-[3px] bg-gray4" />
 
         {/* 탭 영역 */}
         <div className="relative flex border-b border-gray2">
-            {/* 움직이는 검정 밑줄 */}
-            <div
+          {/* 움직이는 검정 밑줄 */}
+          <div
             className="absolute bottom-0 h-[2px] bg-black transition-all duration-200"
             style={{
-                width: '50%',
-                left: `${index * 50}%`,
+              width: '50%',
+              left: `${index * 50}%`,
             }}
-            />
-
-            {options.map((option) => {
+          />
+          {options.map((option) => {
             const isActive = option === selected;
             return (
-                <button
+              <button
                 key={option}
                 type="button"
                 onClick={() => onSelect(option)}
                 className={cn(
-                    'flex-1 py-3 text-center text-caption3',
-                    isActive ? 'text-black' : 'text-black/60',
+                  'flex-1 py-3 text-center text-caption3 cursor-pointer', //cursor-pointer 추가
+                  isActive ? 'text-black' : 'text-black/60',
                 )}
-                >
+              >
                 {option}
-                </button>
+              </button>
             );
-            })}
+          })}
         </div>
-        </div>
+      </div>
     );
-    }
+  }
 
   return null;
 };
