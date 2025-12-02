@@ -13,6 +13,8 @@ import BookmarkOffIcon from "@/assets/icons/bookmarkOff.svg?react";
 import MyPageIcon from "@/assets/icons/myPage.svg?react";
 import CloseIcon from "@/assets/icons/close.svg?react";
 import Search from "@/assets/icons/search.svg?react";
+import ToastHeart from "@/assets/icons/toast_heart.svg?react";
+import ToastBookmark from "@/assets/icons/toast_bookmark.svg?react";
 
 export {
   SendIcon,
@@ -30,4 +32,6 @@ export {
   MyPageIcon,
   CloseIcon,
   Search,
+  ToastHeart,
+  ToastBookmark,
 };

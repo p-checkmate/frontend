@@ -9,6 +9,7 @@ import DiscussionCard from "./common/cards/ListCard";
 import Header from "./common/header/Header";
 import Search from "./common/search/Search";
 import ToggleTab from './common/toggle';
+import Toast from './common/toast/Toast';
 
 export {
   Button,
@@ -22,4 +23,5 @@ export {
   DiscussionCard,
   Search,
   ToggleTab,
+  Toast,
 };
