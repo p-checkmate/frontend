@@ -34,7 +34,7 @@ const TogetherReadSectionTest: React.FC = () => {
   };
 
   return (
-    <div className="bg-beige1 min-h-screen px-4 pb-10 pt-6">
+    <div className="bg-beige1 min-h-screen px-4 pt-6 pb-10">
       <header className="mb-4">
         <p className="text-body5 text-gray3">테스트 페이지</p>
         <h1 className="text-title4 mt-1 text-black">함께 읽기 섹션 테스트</h1>
@@ -116,7 +116,7 @@ const NotJoinedCard: React.FC<NotJoinedCardProps> = ({ session, onJoin }) => {
       </p>
       <div className="mt-3">
         <div className="bg-gray4 relative h-3 w-full overflow-hidden rounded-full">
-          <div className="bg-green1/60 absolute left-0 top-0 h-full w-1/4 rounded-full" />
+          <div className="bg-green1/60 absolute top-0 left-0 h-full w-1/4 rounded-full" />
         </div>
         <p className="text-body5 text-gray3 mt-1">
           아직 참여하지 않았어요. 함께 읽기에 참여하고 내 독서 진행을 기록해보세요.
@@ -161,7 +161,7 @@ const JoinedCard: React.FC<JoinedCardProps> = ({ session, onUpdateProgress, onOp
           <p className="text-title6 mt-1 line-clamp-2 text-black">{title}</p>
 
           <p className="text-body5 text-gray3 mt-2">
-              남은 기간 <span className="text-green1">D-{daysLeft}</span> · 참여자{' '}
+            남은 기간 <span className="text-green1">D-{daysLeft}</span> · 참여자{' '}
             <span className="text-green1">{participants}명</span>
           </p>
         </div>
@@ -180,7 +180,7 @@ const JoinedCard: React.FC<JoinedCardProps> = ({ session, onUpdateProgress, onOp
           }}
           className="bg-green1 text-body5 h-9 w-full rounded-full text-white"
         >
-        진행도 업데이트
+          진행도 업데이트
         </button>
       </div>
     </button>
