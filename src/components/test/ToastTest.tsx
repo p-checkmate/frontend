@@ -4,22 +4,20 @@ import type { ToastVariant } from '@/components/common/toast/Toast';
 
 interface ToastState {
   variant: ToastVariant;
-  message?: string;
+  message: string;
   visible: boolean;
 }
 
 const ToastTest = () => {
   const [toast, setToast] = useState<ToastState | null>(null);
 
-  // visible이 true일 때만 타이머 걸어서 false로 전환 (fade-out)
+  // visible이 true일 때만 2초 뒤 자동으로 숨김
   useEffect(() => {
     if (!toast?.visible) return;
 
     const timer = setTimeout(() => {
-      setToast((prev) =>
-        prev ? { ...prev, visible: false } : prev,
-      );
-    }, 2000); // 2초 후에 서서히 사라지게
+      setToast((prev) => (prev ? { ...prev, visible: false } : prev));
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [toast?.visible]);
@@ -28,7 +26,7 @@ const ToastTest = () => {
     setToast({
       variant: 'like',
       visible: true,
-      // message: '해당 컨텐츠에 좋아요를 남겼어요.',
+      message: '해당 컨텐츠에 좋아요를 남겼어요.',
     });
   };
 
@@ -36,7 +34,7 @@ const ToastTest = () => {
     setToast({
       variant: 'bookmark',
       visible: true,
-      // message: '나의 책장에 해당 책이 저장되었어요.',
+      message: '나의 책장에 해당 책이 저장되었어요.',
     });
   };
 
@@ -70,7 +68,6 @@ const ToastTest = () => {
         </button>
       </section>
 
-      {/* 토스트 렌더링: 상태가 한 번이라도 생기면 계속 유지 */}
       {toast && (
         <Toast
           variant={toast.variant}
