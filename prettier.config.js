@@ -1,5 +1,3 @@
-import tailwindPlugin from "prettier-plugin-tailwindcss";
-
 /** @type {import("prettier").Config} */
 export default {
   singleQuote: true,
@@ -11,5 +9,6 @@ export default {
   bracketSpacing: true,
   arrowParens: "always",
   endOfLine: "auto",
-  plugins: [tailwindPlugin], // 이렇게 직접 넣어주면 무조건 작동합니다.
+  plugins: ["prettier-plugin-tailwindcss"], 
+  tailwindConfig: './tailwind.config.js'
 };
