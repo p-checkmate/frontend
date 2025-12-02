@@ -24,8 +24,14 @@ const Toast = ({ variant, visible, message, className }: ToastProps) => {
   return (
     <div
       className={cn(
-        'fixed top-16 left-1/2 z-50 -translate-x-1/2 transition-opacity duration-300',
-        visible ? 'opacity-100' : 'pointer-events-none opacity-0',
+        // 위치
+        'fixed left-1/2 top-16 z-50 -translate-x-1/2',
+        // 애니메이션 공통
+        'transition-all duration-300 ease-out',
+        // visible 상태에 따라 fade + 살짝 위/아래 이동
+        visible
+          ? 'opacity-100 translate-y-0'
+          : 'pointer-events-none opacity-0 translate-y-2',
         className,
       )}
     >
