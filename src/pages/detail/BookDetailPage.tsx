@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Header, Badge, DiscussionCard, ToggleTab, Image } from '@/components';
+import {
+  Header,
+  Badge,
+  DiscussionCard,
+  ToggleTab,
+  Image,
+  DiscussionCreateModal,
+} from '@/components';
 import { bookDetailMock } from '@/_mocks/bookDetailMock';
 
 const TAB_OPTIONS = ['토론', '인용구'] as const;
@@ -10,9 +17,10 @@ const BookDetailPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<Tab>('토론');
+  const [openCreateModal, setOpenCreateModal] = useState(false);
 
   const handleCreateDiscussion = () => {
-    // TODO: 토론 만들기 모달 띄우기
+    setOpenCreateModal(true);
   };
   const { title, author, publisher, description, coverImageUrl, tags, discussions, quotes } =
     bookDetailMock;
@@ -132,6 +140,7 @@ const BookDetailPage: React.FC = () => {
           </div>
         )}
       </div>
+      <DiscussionCreateModal open={openCreateModal} onClose={() => setOpenCreateModal(false)} />
     </div>
   );
 };
