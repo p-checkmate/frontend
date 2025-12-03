@@ -64,7 +64,7 @@ const Header = ({
           onClick={onBackClick}
           aria-label="뒤로가기"
         >
-          <BackIcon className="w-8 h-8 text-black" />
+          <BackIcon className="w-13 h-13 text-black" /> {/*수정 8에서 10으로*/}
         </button>
       );
     }
@@ -163,7 +163,7 @@ const Header = ({
       )}
     >
       {/* 1줄째: 기본 헤더 라인 */}
-      <div className="flex items-center justify-between h-14 px-4">
+      <div className="flex items-center justify-between h-24 px-4">  {/* 수정 h-14에서 24*/}
         <div className="flex items-center flex-[0.8]">
           {renderLeft()}
         </div>
