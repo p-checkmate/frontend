@@ -74,7 +74,7 @@ const Badge: React.FC<BadgeProps> = (props) => {
   const { visible = true, className } = props as CheckBadgeProps;
   if (!visible) return null;
 
-  return <CheckIcon className={cn("w-6 h-6", className)} />;
+  return <CheckIcon className={cn("w-9 h-9", className)} />;  //체크 뱃지 크기 수정
 };
 
 export default Badge;
