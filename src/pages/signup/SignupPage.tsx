@@ -1,23 +1,31 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {Header, Button, Input} from '@/components';
+import {Header, Button, Input} from '@/components'; 
 
 import { LoginCharacter } from "@/assets";
 
-const LoginPage: React.FC = () => {
+const SignupPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordCheck, setPasswordCheck] = useState("");
 
-  // 지금은 "값이 비어있지 않다" 정도만 체크 (UI용으로)
-  const isFilled = email.trim().length > 0 && password.trim().length > 0;
+  // 1. 유효성 검사 (빈칸 체크)
+  const isFilled = email.trim().length > 0
+    && password.trim().length > 0
+    && passwordCheck.trim().length > 0;
+
+  // 2. 비밀번호 일치 여부 (실시간으로 UI에 보여주기 위해 변수로)
+  const isPasswordMatch = password === passwordCheck;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFilled) return;
 
-    console.log("로그인 요청:", { email, password });
+    console.log("회원가입 요청 성공:", { email, password });
+
+    // 3. 페이지 이동 (온보딩 페이지로)
+    navigate("/onboarding1"); 
   };
 
   return (
@@ -33,31 +41,18 @@ const LoginPage: React.FC = () => {
       <div className="w-full max-w-[375px] px-6 flex flex-col flex-1">
         {/* 타이틀 + 캐릭터 */}
         <div className="relative">
-          <h1
-            className="
-              text-title1 text-black
-              whitespace-pre-line
-              pt-4 pl-1
-            "
-          >
-            채크메이트에{"\n"}로그인하세요
+          <h1 className="text-title1 text-black whitespace-pre-line pt-4 pl-1">
+            새로운 메이트가{"\n"}되어보세요!
           </h1>
-
-          <LoginCharacter
-            className="
-              absolute
-              right-0
-              top-25
-              w-[107px] h-[107px]
-            "
-          />
           
+          {/* 캐릭터*/}
+          <LoginCharacter className="absolute right-0 top-[100px] w-[107px] h-[107px]" />
         </div>
 
         {/* ===== 인풋 영역 ===== */}
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-8 mt-25 flex-1"
+          className="flex flex-col gap-8 mt-[100px] flex-1"
         >
           {/* 이메일 */}
           <div className="flex flex-col gap-3">
@@ -84,7 +79,24 @@ const LoginPage: React.FC = () => {
             </p>
           </div>
 
-          {/* ===== 로그인 버튼 ===== */}
+          {/* 비밀번호 재확인 */}
+          <div className="flex flex-col gap-3">
+            <label className="text-caption2 text-black">비밀번호 재확인</label>
+            <Input
+              type="password"
+              fullWidth
+              value={passwordCheck}
+              onChange={(e) => setPasswordCheck(e.target.value)}
+            />
+            {/* 비밀번호가 다르고, 확인칸에 무언가 입력했을 때 에러 메시지 띄우기 */}
+            {!isPasswordMatch && passwordCheck.length > 0 && (
+               <p className="text-caption5 text-red-500">
+                 비밀번호가 일치하지 않습니다.
+               </p>
+            )}
+          </div>
+
+          {/* ===== 다음 버튼 ===== */}
           <div className="mt-auto pb-10">
             <Button
               type="submit"
@@ -92,9 +104,10 @@ const LoginPage: React.FC = () => {
               color="yellow"
               size="lg"
               fullWidth
-              disabled={!isFilled}
+              // 빈칸이 있거나 비밀번호가 다르면 버튼 비활성화
+              disabled={!isFilled || !isPasswordMatch} 
             >
-              로그인
+              다음
             </Button>
           </div>
         </form>
@@ -103,4 +116,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default SignupPage;

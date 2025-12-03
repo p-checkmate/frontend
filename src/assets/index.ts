@@ -18,6 +18,7 @@ import ToastBookmark from "@/assets/icons/toast_bookmark.svg?react";
 import CharacterReading from "@/assets/character-reading.svg?react";
 import LoginCharacter from "@/assets/login-character.svg?react";
 import LogoCheckmate from "@/assets/logo-checkmate.svg?react";
+import CharacterCelebrate from "@/assets/character-celebrate.svg?react";
 
 export {
   SendIcon,
@@ -40,4 +41,5 @@ export {
   CharacterReading,
   LoginCharacter,
   LogoCheckmate,
+  CharacterCelebrate,
 };
