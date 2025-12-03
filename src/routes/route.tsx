@@ -4,6 +4,8 @@ import OnboardingLandingPage from "@/pages/onboarding/OnboardingLandingPage";
 import LoginPage from "@/pages/login/LoginPage";
 import SignupPage from "@/pages/signup/SignupPage";
 import SignupCelebrate from "@/pages/onboarding/SignupCelebrate";
+import OnboardingPage1 from "@/pages/onboarding/OnboardingPage1";
+import OnboardingPage2 from "@/pages/onboarding/OnboardingPage2";
 
 export const router = createBrowserRouter([
   {
@@ -25,5 +27,13 @@ export const router = createBrowserRouter([
   {
     path: "/signupCelebrate",
     element: <SignupCelebrate />,
-  }
+  },
+  {
+    path: "/onboardingPage1",
+    element: <OnboardingPage1 />,
+  },
+  {
+    path: "/onboardingPage2",
+    element: <OnboardingPage2 />,
+  },
 ]);
