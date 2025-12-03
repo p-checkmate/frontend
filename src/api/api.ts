@@ -45,11 +45,9 @@ function isAuthRequest(url?: string) {
 // =======================
 api.interceptors.request.use(
   (config) => {
-    // 기본 Content-Type 설정 (파일 업로드 등 필요해지면 여기서 분기)
     config.headers = config.headers ?? {};
     (config.headers as any)['Content-Type'] ??= 'application/json';
 
-    // accessToken 있으면 Authorization 헤더 주입 (auth 요청은 제외)
     const token = localStorage.getItem('accessToken');
     if (token && !isAuthRequest(config.url)) {
       (config.headers as any).Authorization = `Bearer ${token}`;
@@ -101,11 +99,10 @@ api.interceptors.response.use(
           code: resData?.code || 401,
           error: Array.isArray(resData?.error) ? resData?.error : null,
         };
-        //window.location.href = '/login';
+        window.location.href = '/login';
         return Promise.reject(apiError);
       }
 
-      // 동시 요청에서 refresh 한 번만 호출되도록 공유
       if (!refreshPromise) {
         refreshPromise = refreshClient
           .post('/auth/refresh', { refreshToken: rt })
@@ -136,11 +133,10 @@ api.interceptors.response.use(
           error: Array.isArray(resData?.error) ? resData?.error : null,
         };
 
-        //window.location.href = '/login';
+        window.location.href = '/login';
         return Promise.reject(apiError);
       }
 
-      // 토큰 갱신 후 원래 요청 재시도
       original.headers = original.headers ?? {};
       original.headers.Authorization = `Bearer ${newAccess}`;
       return api(original);
