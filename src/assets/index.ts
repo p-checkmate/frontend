@@ -15,6 +15,9 @@ import CloseIcon from "@/assets/icons/close.svg?react";
 import Search from "@/assets/icons/search.svg?react";
 import ToastHeart from "@/assets/icons/toast_heart.svg?react";
 import ToastBookmark from "@/assets/icons/toast_bookmark.svg?react";
+import CharacterReading from "@/assets/character-reading.svg?react";
+import LoginCharacter from "@/assets/login-character.svg?react";
+import LogoCheckmate from "@/assets/logo-checkmate.svg?react";
 
 export {
   SendIcon,
@@ -34,4 +37,7 @@ export {
   Search,
   ToastHeart,
   ToastBookmark,
+  CharacterReading,
+  LoginCharacter,
+  LogoCheckmate,
 };

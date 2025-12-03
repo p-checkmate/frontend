@@ -5,7 +5,7 @@ import Header from "@/components/common/header/Header";
 import Button from "@/components/common/button/Button";
 import Input from "@/components/common/input/Input";
 
-import loginCharacter from "@/assets/login-character.svg";
+import { LoginCharacter } from "@/assets";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -13,15 +13,12 @@ const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // ===== 간단한 형식 체크 =====
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const pwRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-
-  const isValid = emailRegex.test(email) && pwRegex.test(password);
+  // 지금은 "값이 비어있지 않다" 정도만 체크 (UI용으로)
+  const isFilled = email.trim().length > 0 && password.trim().length > 0;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isValid) return;
+    if (!isFilled) return;
 
     console.log("로그인 요청:", { email, password });
   };
@@ -41,7 +38,7 @@ const LoginPage: React.FC = () => {
         <div className="relative">
           <h1
             className="
-              text-title1 text-black leading-[48px]
+              text-title1 text-black
               whitespace-pre-line
               pt-4 pl-1
             "
@@ -49,9 +46,7 @@ const LoginPage: React.FC = () => {
             채크메이트에{"\n"}로그인하세요
           </h1>
 
-          <img
-            src={loginCharacter}
-            alt="login character"
+          <LoginCharacter
             className="
               absolute
               right-0
@@ -59,6 +54,7 @@ const LoginPage: React.FC = () => {
               w-[107px] h-[107px]
             "
           />
+          
         </div>
 
         {/* ===== 인풋 영역 ===== */}
@@ -99,7 +95,7 @@ const LoginPage: React.FC = () => {
               color="yellow"
               size="lg"
               fullWidth
-              disabled={!isValid}
+              disabled={!isFilled}
             >
               로그인
             </Button>
