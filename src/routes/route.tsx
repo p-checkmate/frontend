@@ -1,39 +1,44 @@
-import { createBrowserRouter } from "react-router-dom";
-import HomePage from "@/pages/main/Homepage";
-import OnboardingLandingPage from "@/pages/onboarding/OnboardingLandingPage";
-import LoginPage from "@/pages/login/LoginPage";
-import SignupPage from "@/pages/signup/SignupPage";
-import SignupCelebrate from "@/pages/onboarding/SignupCelebrate";
-import OnboardingPage1 from "@/pages/onboarding/OnboardingPage1";
-import OnboardingPage2 from "@/pages/onboarding/OnboardingPage2";
+import { createBrowserRouter } from 'react-router-dom';
+import HomePage from '@/pages/main/Homepage';
+import OnboardingLandingPage from '@/pages/onboarding/OnboardingLandingPage';
+import LoginPage from '@/pages/login/LoginPage';
+import BookDetailPage from '@/pages/detail/BookDetailPage';
+import SignupPage from '@/pages/signup/SignupPage';
+import SignupCelebrate from '@/pages/onboarding/SignupCelebrate';
+import OnboardingPage1 from '@/pages/onboarding/OnboardingPage1';
+import OnboardingPage2 from '@/pages/onboarding/OnboardingPage2';
 
 export const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <HomePage />,
   },
   {
-    path: "/onboardingLandingPage",
+    path: '/onboardingLandingPage',
     element: <OnboardingLandingPage />,
   },
   {
-    path: "/login",
+    path: '/login',
     element: <LoginPage />,
   },
   {
-    path: "/signup",
+    path: '/signup',
     element: <SignupPage />,
   },
   {
-    path: "/signupCelebrate",
+    path: '/signupCelebrate',
     element: <SignupCelebrate />,
   },
   {
-    path: "/onboardingPage1",
+    path: '/onboardingPage1',
     element: <OnboardingPage1 />,
   },
   {
-    path: "/onboardingPage2",
+    path: '/onboardingPage2',
     element: <OnboardingPage2 />,
+  },
+  {
+    path: '/book/:bookId',
+    element: <BookDetailPage />,
   },
 ]);

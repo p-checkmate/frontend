@@ -20,6 +20,14 @@ export default function Image({
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
 
+  if (!src) {
+    return (
+      <div
+        ref={wrapperRef}
+        className={cn('bg-gray1 relative h-full w-full', aspectRatio, className)}
+      />
+    );
+  }
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {

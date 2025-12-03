@@ -10,14 +10,15 @@ import {
   BookmarkOffIcon,
   MyPageIcon,
 } from '@/assets';
+import { useNavigate } from 'react-router-dom';
 
 export type HeaderVariant =
-  | 'back'              // 1. 뒤로가기만
-  | 'backTitle'         // 2. 뒤로가기 + 중앙 텍스트
-  | 'logoSetting'       // 3. 로고 + 설정
+  | 'back' // 1. 뒤로가기만
+  | 'backTitle' // 2. 뒤로가기 + 중앙 텍스트
+  | 'logoSetting' // 3. 로고 + 설정
   | 'backTitleDropdown' // 4. 뒤로가기 + 제목 + ... + 아래 드롭다운
-  | 'logoBookmark'      // 5. 로고 + 북마크 토글
-  | 'logoMy';           // 6. 로고 + 마이페이지
+  | 'logoBookmark' // 5. 로고 + 북마크 토글
+  | 'logoMy'; // 6. 로고 + 마이페이지
 
 interface HeaderProps {
   variant: HeaderVariant;
@@ -46,12 +47,11 @@ const Header = ({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   // 로고 + 북마크 헤더에서 북마크 토글용
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const navigate = useNavigate();
 
   // 배경색: 드롭다운/북마크 헤더만 FFFDF6 (bg-beige2), 나머지는 F9F5E8 (bg-beige1)
   const bgClass =
-    variant === 'backTitleDropdown' || variant === 'logoBookmark'
-      ? 'bg-beige2'
-      : 'bg-beige1';
+    variant === 'backTitleDropdown' || variant === 'logoBookmark' ? 'bg-beige2' : 'bg-beige1';
 
   // =========================
   // Left
@@ -59,12 +59,8 @@ const Header = ({
   const renderLeft = () => {
     if (variant === 'back' || variant === 'backTitle' || variant === 'backTitleDropdown') {
       return (
-        <button
-          type="button"
-          onClick={onBackClick}
-          aria-label="뒤로가기"
-        >
-          <BackIcon className="w-13 h-13 text-black" /> {/*수정 8에서 10으로*/}
+        <button type="button" onClick={onBackClick} aria-label="뒤로가기">
+          <BackIcon className="h-13 w-13 text-black" /> {/*수정 8에서 10으로*/}
         </button>
       );
     }
@@ -73,10 +69,13 @@ const Header = ({
     return (
       <button
         type="button"
-        onClick={onLogoClick}
+        onClick={() => {
+          if (onLogoClick) onLogoClick();
+          else navigate('/');
+        }}
         aria-label="홈으로 이동"
       >
-        <LogoIcon className="h-11" />
+        <LogoIcon className="h-11 cursor-pointer" />
       </button>
     );
   };
@@ -98,12 +97,8 @@ const Header = ({
     switch (variant) {
       case 'logoSetting':
         return (
-          <button
-            type="button"
-            onClick={onSettingClick}
-            aria-label="설정"
-          >
-            <SettingIcon className="w-6 h-6 text-black" />
+          <button type="button" onClick={onSettingClick} aria-label="설정">
+            <SettingIcon className="h-6 w-6 text-black" />
           </button>
         );
 
@@ -117,33 +112,25 @@ const Header = ({
             aria-label="북마크"
           >
             {isBookmarked ? (
-              <BookmarkOnIcon className="w-7 h-7 text-green1" />
+              <BookmarkOnIcon className="text-green1 h-7 w-7 cursor-pointer" />
             ) : (
-              <BookmarkOffIcon className="w-7 h-7 text-green1" />
+              <BookmarkOffIcon className="text-green1 h-7 w-7 cursor-pointer" />
             )}
           </button>
         );
 
       case 'logoMy':
         return (
-          <button
-            type="button"
-            onClick={onMyPageClick}
-            aria-label="마이페이지"
-          >
-            <MyPageIcon className="w-8 h-8 text-green1" />
+          <button type="button" onClick={onMyPageClick} aria-label="마이페이지">
+            <MyPageIcon className="text-green1 h-8 w-8" />
           </button>
         );
 
       case 'backTitleDropdown':
         // VS 토론 헤더의 윗줄 오른쪽: ... 아이콘만
         return (
-          <button
-            type="button"
-            onClick={onMoreClick}
-            aria-label="더보기"
-          >
-            <MoreIcon className="w-7 h-7 text-black" />
+          <button type="button" onClick={onMoreClick} aria-label="더보기">
+            <MoreIcon className="h-7 w-7 text-black" />
           </button>
         );
 
@@ -155,26 +142,14 @@ const Header = ({
   };
 
   return (
-    <header
-      className={cn(
-        bgClass,
-        'w-full max-w-[430px] mx-auto flex flex-col',
-        className,
-      )}
-    >
+    <header className={cn(bgClass, 'mx-auto flex w-full max-w-[430px] flex-col', className)}>
       {/* 1줄째: 기본 헤더 라인 */}
-      <div className="flex items-center justify-between h-24 px-4">  {/* 수정 h-14에서 24*/}
-        <div className="flex items-center flex-[0.8]">
-          {renderLeft()}
-        </div>
-
-        <div className="flex justify-center flex-[1.2]">
-          {renderCenter()}
-        </div>
-
-        <div className="flex justify-end items-center flex-[0.8]">
-          {renderRight()}
-        </div>
+      <div className="flex h-14 items-center justify-between px-4">
+        {' '}
+        {/* 수정 h-14에서 24*/}
+        <div className="flex flex-[0.8] items-center">{renderLeft()}</div>
+        <div className="flex flex-[1.2] justify-center">{renderCenter()}</div>
+        <div className="flex flex-[0.8] items-center justify-end">{renderRight()}</div>
       </div>
 
       {/* 2줄째: VS 토론 헤더에서만 드롭다운 아이콘 (오른쪽 아래) */}
@@ -187,7 +162,7 @@ const Header = ({
           >
             <DropdownIcon
               className={cn(
-                'w-7 h-7 text-black transition-transform duration-150',
+                'h-7 w-7 text-black transition-transform duration-150',
                 isDropdownOpen && 'rotate-180',
               )}
             />
