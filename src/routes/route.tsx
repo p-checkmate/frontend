@@ -7,6 +7,9 @@ import SignupPage from '@/pages/signup/SignupPage';
 import SignupCelebrate from '@/pages/onboarding/SignupCelebrate';
 import OnboardingPage1 from '@/pages/onboarding/OnboardingPage1';
 import OnboardingPage2 from '@/pages/onboarding/OnboardingPage2';
+import OnboardingPage3 from '@/pages/onboarding/OnboardingPage3';
+import OnboardingPage4 from '@/pages/onboarding/OnboardingPage4';
+
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +39,14 @@ export const router = createBrowserRouter([
   {
     path: '/onboardingPage2',
     element: <OnboardingPage2 />,
+  },
+  {
+    path: '/onboardingPage3',
+    element: <OnboardingPage3 />,
+  },
+  {
+    path: '/onboardingPage4',
+    element: <OnboardingPage4 />,
   },
   {
     path: '/book/:bookId',
