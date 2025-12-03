@@ -85,7 +85,7 @@ const OnboardingPage2: React.FC = () => {
                 <Badge
                   variant="check"
                   visible={isSelected}
-                  className="absolute top-0 right-0"
+                  className="absolute -top-4 -right-4"
                 />
               </div>
             );
