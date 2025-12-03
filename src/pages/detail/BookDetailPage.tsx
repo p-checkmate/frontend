@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 import {
   Header,
   Badge,
@@ -7,6 +7,7 @@ import {
   ToggleTab,
   Image,
   DiscussionCreateModal,
+  QuoteCreateModal,
 } from '@/components';
 import { bookDetailMock } from '@/_mocks/bookDetailMock';
 
@@ -14,10 +15,11 @@ const TAB_OPTIONS = ['토론', '인용구'] as const;
 type Tab = (typeof TAB_OPTIONS)[number];
 
 const BookDetailPage: React.FC = () => {
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<Tab>('토론');
   const [openCreateModal, setOpenCreateModal] = useState(false);
+  const [openQuoteModal, setOpenQuoteModal] = useState(false);
 
   const handleCreateDiscussion = () => {
     setOpenCreateModal(true);
@@ -72,7 +74,7 @@ const BookDetailPage: React.FC = () => {
             <span className="text-body3 text-gray6" />
             <button
               type="button"
-              className="text-caption2 text-green3 cursor-pointer"
+              className="text-caption2 cursor-pointer"
               onClick={handleCreateDiscussion}
             >
               토론 만들기 &gt;
@@ -82,11 +84,11 @@ const BookDetailPage: React.FC = () => {
 
         {activeTab === '인용구' && (
           <div className="mt-4 flex items-center justify-between">
-            <span className="text-body3 text-gray6" />
+            <span className="text-body3" />
             <button
               type="button"
-              className="text-caption2 text-green3"
-              onClick={handleCreateDiscussion}
+              className="text-caption2 cursor-pointer"
+              onClick={() => setOpenQuoteModal(true)}
             >
               인용구 만들기 &gt;
             </button>
@@ -95,29 +97,37 @@ const BookDetailPage: React.FC = () => {
 
         {/* ===== 토론 리스트 ===== */}
         {activeTab === '토론' && (
-          <div className="mt-4 space-y-3">
-            {discussions.map((d) => (
-              <DiscussionCard
-                key={d.id}
-                type="discussion"
-                bookTitle={d.bookTitle}
-                title={d.title}
-                content={d.content}
-                nickname={d.nickname}
-                dateLabel={d.dateLabel}
-                likeCount={d.likeCount}
-                commentCount={d.commentCount}
-                onClickCard={() => {}}
-              />
-            ))}
+          <div className="mt-4 px-2">
+            {discussions.length === 0 ? (
+              <p className="text-body3 text-gray5 mt-6 text-center">아직 등록된 토론이 없어요.</p>
+            ) : (
+              <div className="space-y-3">
+                {discussions.map((d) => (
+                  <DiscussionCard
+                    key={d.id}
+                    type="discussion"
+                    bookTitle={d.bookTitle}
+                    title={d.title}
+                    content={d.content}
+                    nickname={d.nickname}
+                    dateLabel={d.dateLabel}
+                    likeCount={d.likeCount}
+                    commentCount={d.commentCount}
+                    onClickCard={() => {
+                      // TODO: 토론 상세
+                    }}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         )}
 
         {/* ===== 인용구 탭 ===== */}
         {activeTab === '인용구' && (
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 space-y-3 px-2">
             {quotes.length === 0 ? (
-              <div className="text-body3 text-gray5 mt-6 text-center">
+              <div className="text-body3 text-gray3 mt-6 text-center">
                 아직 등록된 인용구가 없어요.
               </div>
             ) : (
@@ -141,6 +151,14 @@ const BookDetailPage: React.FC = () => {
         )}
       </div>
       <DiscussionCreateModal open={openCreateModal} onClose={() => setOpenCreateModal(false)} />
+      <QuoteCreateModal
+        open={openQuoteModal}
+        onClose={() => setOpenQuoteModal(false)}
+        onSubmit={(quote) => {
+          //TODO: 인용구 생성 API
+          console.log('인용구 생성 API 호출', quote);
+        }}
+      />
     </div>
   );
 };

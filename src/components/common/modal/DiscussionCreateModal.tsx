@@ -69,7 +69,7 @@ const DiscussionCreateModal = ({ open, onClose }: DiscussionCreateModalProps) =>
         onClose={handleClose}
         title="자유토론 생성"
         footer={
-          <div className="flex w-full gap-10">
+          <div className="flex justify-center gap-13 px-1 pt-2">
             <Button
               className="flex-1"
               variant="solid"
@@ -90,7 +90,7 @@ const DiscussionCreateModal = ({ open, onClose }: DiscussionCreateModalProps) =>
         <div className="space-y-6">
           <div className="space-y-6">
             <div className="space-y-2">
-              <p className="text-caption3">
+              <p className="text-caption3 pt-3">
                 제목<span className="text-pink">*</span>
               </p>
               <Input
@@ -99,6 +99,7 @@ const DiscussionCreateModal = ({ open, onClose }: DiscussionCreateModalProps) =>
                 value={freeTitle}
                 onChange={(e) => setFreeTitle(e.target.value)}
                 fullWidth
+                className="mt-1"
               />
             </div>
 
@@ -111,6 +112,7 @@ const DiscussionCreateModal = ({ open, onClose }: DiscussionCreateModalProps) =>
                 onChange={(e) => setFreeDetail(e.target.value)}
                 rows={4}
                 fullWidth
+                className="mt-1"
               />
             </div>
           </div>
@@ -128,7 +130,7 @@ const DiscussionCreateModal = ({ open, onClose }: DiscussionCreateModalProps) =>
       onClose={handleClose}
       title="VS 토론 생성"
       footer={
-        <div className="flex w-full gap-10">
+        <div className="flex justify-center gap-13 px-1 pt-4">
           <Button
             className="flex-1"
             variant="solid"
@@ -156,6 +158,7 @@ const DiscussionCreateModal = ({ open, onClose }: DiscussionCreateModalProps) =>
               variant="primary"
               placeholder="생성할 토론의 제목을 입력하세요"
               value={vsTitle}
+              className="mt-2"
               onChange={(e) => setVsTitle(e.target.value)}
               fullWidth
             />
@@ -171,12 +174,13 @@ const DiscussionCreateModal = ({ open, onClose }: DiscussionCreateModalProps) =>
               value={vsSide1}
               onChange={(e) => setVsSide1(e.target.value)}
               fullWidth
-              className="mb-2"
+              className="mt-2"
             />
             <Input
               variant="primary"
               placeholder="2번 진영의 대표 의견을 적어주세요"
               value={vsSide2}
+              className="mt-2"
               onChange={(e) => setVsSide2(e.target.value)}
               fullWidth
             />

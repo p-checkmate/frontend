@@ -11,6 +11,7 @@ import Search from './common/search/Search';
 import ToggleTab from './common/toggle';
 import Toast from './common/toast/Toast';
 import DiscussionCreateModal from './common/modal/DiscussionCreateModal';
+import QuoteCreateModal from './common/modal/QuoteCreateModal';
 
 export {
   Button,
@@ -26,4 +27,5 @@ export {
   ToggleTab,
   Toast,
   DiscussionCreateModal,
+  QuoteCreateModal,
 };
