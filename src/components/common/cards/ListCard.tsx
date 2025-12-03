@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { cn } from "@/utils/cn";
-import Badge from "@/components/common/badge/Badge";
-import { HeartIcon, HeartFilled, MoreIcon } from "@/assets";
+import React, { useState } from 'react';
+import { cn } from '@/utils/cn';
+import Badge from '@/components/common/badge/Badge';
+import { HeartIcon, HeartFilled, MoreIcon } from '@/assets';
 
-type CardType = "discussion" | "quote";
+type CardType = 'discussion' | 'quote';
 
 interface DiscussionCardProps {
   type: CardType;
@@ -32,7 +32,7 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
   className,
   onClickCard,
 }) => {
-  const isQuote = type === "quote";
+  const isQuote = type === 'quote';
 
   // 좋아요 상태
   const [liked, setLiked] = useState(false);
@@ -47,16 +47,16 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
     <div
       onClick={onClickCard}
       className={cn(
-        "rounded-l bg-white px-5 py-5 shadow-sm w-full",
+        'w-full rounded-l bg-white px-5 py-5 shadow-sm',
         onClickCard &&
-          "cursor-pointer hover:shadow-md hover:ring-1 hover:ring-[var(--color-green1)] transition-transform duration-100",
+          'cursor-pointer transition-transform duration-100 hover:shadow-md hover:ring-1 hover:ring-[var(--color-green1)]',
         className,
       )}
     >
       {/* 제목 영역 */}
       <div className="flex justify-between">
         <div className="space-y-1">
-          <p className="pt-1 text-title5 text-black">{bookTitle}</p>
+          <p className="text-title5 pt-1 text-black">{bookTitle}</p>
         </div>
 
         <button className="cursor-pointer">
@@ -64,10 +64,10 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
         </button>
       </div>
 
-      {!isQuote && <p className="pt-1 text-title6 text-black">{title}</p>}
+      {!isQuote && <p className="text-title6 pt-1 text-black">{title}</p>}
 
       {/* 내용 */}
-      <p className="mt-2 pr-7 text-body5 text-gray4 line-clamp-2">{content}</p>
+      <p className="text-body5 text-gray3 mt-2 line-clamp-2 pr-7">{content}</p>
 
       {/* 태그 (최대 2개) */}
       {isQuote && tags && tags.length > 0 && (
@@ -79,9 +79,9 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
       )}
 
       {/* 하단 */}
-      <div className="mt-4 flex justify-between items-center">
+      <div className="mt-4 flex items-center justify-between">
         {/* 닉네임 + 날짜 */}
-        <div className="flex items-center gap-2 text-body4 text-gray3">
+        <div className="text-body4 text-gray3 flex items-center gap-2">
           <span>{nickname}</span>
           <span>|</span>
           <span>{dateLabel}</span>
@@ -92,25 +92,21 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
           {/* 좋아요 버튼 */}
           <button
             onClick={toggleLike}
-            className="cursor-pointer flex items-center gap-1 text-body4 h-6 px-3 rounded-m border border-gray2"
+            className="text-body4 rounded-m border-gray2 flex h-6 cursor-pointer items-center gap-1 border px-3"
           >
             <span
               className={cn(
-                "flex items-center justify-center w-4 h-4 flex-shrink-0",
-                liked && "animate-like-bump",
+                'flex h-4 w-4 flex-shrink-0 items-center justify-center',
+                liked && 'animate-like-bump',
               )}
             >
-              {liked ? (
-                <HeartFilled className="w-4 h-4" />
-              ) : (
-                <HeartIcon className="w-4 h-4" />
-              )}
+              {liked ? <HeartFilled className="h-4 w-4" /> : <HeartIcon className="h-4 w-4" />}
             </span>
             <span>{displayLikeCount}</span>
           </button>
 
           {/* 댓글 뱃지 (토론 타입만) */}
-          {!isQuote && typeof commentCount === "number" && (
+          {!isQuote && typeof commentCount === 'number' && (
             <Badge variant="comment" comment={commentCount} />
           )}
         </div>
