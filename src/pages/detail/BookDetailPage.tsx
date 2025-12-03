@@ -9,7 +9,8 @@ import {
   DiscussionCreateModal,
   QuoteCreateModal,
 } from '@/components';
-import { bookDetailMock } from '@/_mocks/bookDetailMock';
+import { getBookDetailById } from '@/_mocks/bookDetailMock';
+import { useParams } from 'react-router-dom';
 
 const TAB_OPTIONS = ['토론', '인용구'] as const;
 type Tab = (typeof TAB_OPTIONS)[number];
@@ -24,8 +25,16 @@ const BookDetailPage: React.FC = () => {
   const handleCreateDiscussion = () => {
     setOpenCreateModal(true);
   };
-  const { title, author, publisher, description, coverImageUrl, tags, discussions, quotes } =
-    bookDetailMock;
+
+  // TODO: API 연결 시 이 부분을 없애고 API로 대체
+  const { bookId } = useParams();
+  const id = Number(bookId);
+  const book = getBookDetailById(id);
+  if (!book) {
+    return <p className="text-gray6 mt-20 text-center">책 정보를 찾을 수 없습니다.</p>;
+  }
+
+  const { title, author, publisher, description, coverImageUrl, tags, discussions, quotes } = book;
 
   return (
     <div className="bg-beige1 min-h-screen">
@@ -44,7 +53,7 @@ const BookDetailPage: React.FC = () => {
               {/* 태그 */}
               <div className="flex flex-wrap gap-2 pt-4">
                 {tags.map((tag) => (
-                  <Badge key={tag} variant="tag" label={tag} />
+                  <Badge key={tag} variant="tag" label={`#${tag}`} />
                 ))}
               </div>
 

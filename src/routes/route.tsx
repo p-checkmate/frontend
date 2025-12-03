@@ -18,7 +18,7 @@ export const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    path: '/book-test',
+    path: '/book/:bookId',
     element: <BookDetailPage />,
   },
 ]);
