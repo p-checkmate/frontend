@@ -1,9 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import Header from "@/components/common/header/Header";
-import Button from "@/components/common/button/Button";
-import Input from "@/components/common/input/Input";
+import {Header, Button, Input} from '@/components'; 
 
 import { LoginCharacter } from "@/assets";
 
