@@ -72,12 +72,13 @@ const OnboardingPage2: React.FC = () => {
                 // store에 있는 함수 실행
                 onClick={() => toggleBookSelect(book.id)}
               >
-                <div className="w-full h-full rounded-m overflow-hidden relative">
+                <div className="w-full h-full overflow-hidden relative">
                   <div className="absolute inset-0 bg-gray2" /> 
                   <Image
                     src={book.imageUrl}
                     alt={book.title}
                     className="h-full w-full object-cover"
+                    rounded="rounded-none"
                   />
                   {isSelected && <div className="absolute inset-0 bg-green1/20" />}
                 </div>
