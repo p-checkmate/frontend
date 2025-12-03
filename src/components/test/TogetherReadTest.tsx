@@ -1,241 +1,148 @@
-// src/components/test/TogetherReadSectionTest.tsx
-import React, { useEffect, useState } from 'react';
+// src/components/test/TogetherReadProgressListTest.tsx
+import React from 'react';
 
-type TogetherReadSession = {
-  id: string;
+type UserProgress = {
+  id: number;
+  nickname: string;
+  page: number;
+  percent: number;
+};
+
+type ProgressListProps = {
   title: string;
+  daysLeft: number;
+  participants: number;
   totalPages: number;
   myPage: number;
-  participants: number;
-  daysLeft: number;
+  users: UserProgress[];
 };
 
-type TogetherReadSectionProps = {
-  isJoined: boolean;
-  session: TogetherReadSession;
-  onJoin?: () => void;
-  onUpdateProgress?: () => void;
-  onOpenDetail?: () => void;
-};
-
-/* =============================
- *  테스트 페이지
- * ============================= */
-const TogetherReadSectionTest: React.FC = () => {
-  const [isJoined, setIsJoined] = useState(false);
-
-  const MOCK_SESSION: TogetherReadSession = {
-    id: '1',
+const TogetherReadProgressListTest: React.FC = () => {
+  const MOCK_DATA: ProgressListProps = {
     title: '고대 도의 아틀란티스',
+    daysLeft: 11,
+    participants: 27,
     totalPages: 368,
     myPage: 120,
-    participants: 27,
-    daysLeft: 11,
+
+    users: [
+      { id: 1, nickname: '지민', page: 120, percent: 32 },
+      { id: 2, nickname: '도윤', page: 250, percent: 68 },
+      { id: 3, nickname: '서연', page: 98, percent: 26 },
+      { id: 4, nickname: '유나', page: 180, percent: 48 },
+      { id: 5, nickname: '현서', page: 330, percent: 91 },
+    ].sort((a, b) => b.percent - a.percent),
   };
 
   return (
-    <div className="bg-beige1 min-h-screen px-4 pt-6 pb-10">
-      <header className="mb-4">
-        <p className="text-body5 text-gray3">테스트 페이지</p>
-        <h1 className="text-title4 mt-1 text-black">함께 읽기 섹션 테스트</h1>
-
-        <button
-          type="button"
-          onClick={() => setIsJoined((prev) => !prev)}
-          className="border-gray2 bg-beige2 text-body5 text-gray3 mt-3 inline-flex items-center gap-2 rounded-full border px-3 py-1"
-        >
-          <span className="bg-green1 h-2 w-2 rounded-full" />
-          <span>
-            현재 상태 : <b>{isJoined ? '참여 상태 (Joined)' : '참여 전 상태 (Not Joined)'}</b>
-          </span>
-        </button>
-      </header>
-
-      <TogetherReadSection
-        isJoined={isJoined}
-        session={MOCK_SESSION}
-        onJoin={() => alert('참여하기 클릭')}
-        onUpdateProgress={() => alert('진행도 업데이트 클릭')}
-        onOpenDetail={() => alert('상세 화면으로 이동 (남들 진행도 리스트)')}
-      />
+    <div className="bg-beige1 min-h-screen p-4">
+      <ProgressList {...MOCK_DATA} />
     </div>
   );
 };
 
-export default TogetherReadSectionTest;
+export default TogetherReadProgressListTest;
 
-/* =============================
- *  섹션 본체
- * ============================= */
+/* ==============================
+ * 메인 컴포넌트
+ * ============================== */
 
-const TogetherReadSection: React.FC<TogetherReadSectionProps> = ({
-  isJoined,
-  session,
-  onJoin,
-  onUpdateProgress,
-  onOpenDetail,
+const ProgressList: React.FC<ProgressListProps> = ({
+  title,
+  daysLeft,
+  participants,
+  totalPages,
+  myPage,
+  users,
 }) => {
-  return (
-    <section className="mt-2">
-      <h2 className="text-title5 mb-2 text-black">이번 주 함께 읽기</h2>
-
-      {isJoined ? (
-        <JoinedCard
-          session={session}
-          onUpdateProgress={onUpdateProgress}
-          onOpenDetail={onOpenDetail}
-        />
-      ) : (
-        <NotJoinedCard session={session} onJoin={onJoin} />
-      )}
-    </section>
-  );
-};
-
-/* =============================
- *  참여 전 카드
- * ============================= */
-
-type NotJoinedCardProps = {
-  session: TogetherReadSession;
-  onJoin?: () => void;
-};
-
-const NotJoinedCard: React.FC<NotJoinedCardProps> = ({ session, onJoin }) => {
-  const { title, participants, daysLeft } = session;
+  const myPercent = Math.round((myPage / totalPages) * 100);
 
   return (
-    <div className="border-gray1 bg-beige2 rounded-l border px-4 py-3">
-      <p className="text-body5 text-gray3">3주 동안 함께 읽는 책</p>
-
-      <p className="text-title6 mt-1 line-clamp-2 text-black">{title}</p>
-
-      <p className="text-body5 text-gray3 mt-2">
-        참여자 <span className="text-green1">{participants}명</span> · 남은 기간{' '}
-        <span className="text-green1">D-{daysLeft}</span>
+    <div className="border-gray1 bg-beige2 rounded-l border p-4">
+      {/* 제목 */}
+      <h2 className="text-title5 text-black">{title}</h2>
+      <p className="text-body5 text-gray3 mt-1">
+        남은 기간 <span className="text-green1">D-{daysLeft}</span> · 참여자{' '}
+        <span className="text-green1">{participants}명</span>
       </p>
-      <div className="mt-3">
-        <div className="bg-gray4 relative h-3 w-full overflow-hidden rounded-full">
-          <div className="bg-green1/60 absolute top-0 left-0 h-full w-1/4 rounded-full" />
-        </div>
-        <p className="text-body5 text-gray3 mt-1">
-          아직 참여하지 않았어요. 함께 읽기에 참여하고 내 독서 진행을 기록해보세요.
-        </p>
-      </div>
 
-      <button
-        type="button"
-        onClick={onJoin}
-        className="bg-green1 text-body5 mt-3 h-9 w-full rounded-full text-white"
-      >
-        함께 읽기 참여하기
-      </button>
-    </div>
-  );
-};
-
-/* =============================
- *  참여 상태 카드
- * ============================= */
-
-type JoinedCardProps = {
-  session: TogetherReadSession;
-  onUpdateProgress?: () => void;
-  onOpenDetail?: () => void;
-};
-
-const JoinedCard: React.FC<JoinedCardProps> = ({ session, onUpdateProgress, onOpenDetail }) => {
-  const { title, totalPages, myPage, participants, daysLeft } = session;
-  const rawPercent = (myPage / totalPages) * 100;
-
-  return (
-    <button
-      type="button"
-      onClick={onOpenDetail}
-      className="border-gray1 bg-beige2 w-full rounded-l border px-4 py-3 text-left"
-    >
-      <div className="flex items-center justify-between gap-3">
-        {/* 왼쪽 텍스트 영역 */}
-        <div className="flex-1">
-          <p className="text-body5 text-gray3">이번 주 함께 읽는 책</p>
-          <p className="text-title6 mt-1 line-clamp-2 text-black">{title}</p>
-
-          <p className="text-body5 text-gray3 mt-2">
-            남은 기간 <span className="text-green1">D-{daysLeft}</span> · 참여자{' '}
-            <span className="text-green1">{participants}명</span>
+      {/* 내 진행률 */}
+      <div className="mt-6 flex items-center gap-6">
+        <CircleProgress percent={myPercent} />
+        <div>
+          <p className="text-body5 text-gray3">내 독서 진행</p>
+          <p className="text-title6 text-black">
+            {myPercent}% <span className="text-body5 text-gray3">({myPage}p)</span>
           </p>
         </div>
-
-        {/* 오른쪽 원형 진행도 */}
-        <CircleProgress percent={rawPercent} />
       </div>
 
-      {/* 버튼은 카드 안에 있지만, 상세 진입과 분리되도록 클릭 막기 */}
-      <div className="mt-3">
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onUpdateProgress?.();
-          }}
-          className="bg-green1 text-body5 h-9 w-full rounded-full text-white"
-        >
-          진행도 업데이트
-        </button>
+      {/* Divider */}
+      <div className="bg-gray1 my-5 h-[1px] w-full" />
+
+      {/* 리스트 제목 */}
+      <p className="text-title6 mb-2 text-black">참여자 진행도</p>
+
+      {/* 참여자 리스트 */}
+      <div className="flex flex-col gap-3">
+        {users.map((u) => (
+          <UserProgressRow key={u.id} user={u} />
+        ))}
       </div>
-    </button>
+    </div>
   );
 };
 
-/* =============================
- *  원형 진행도 컴포넌트
- *  - conic-gradient + JS 애니메이션
- * ============================= */
+/* ==============================
+ * 개별 유저 진행도 Row
+ * ============================== */
 
-type CircleProgressProps = {
-  percent: number; // 0~100
+const UserProgressRow = ({ user }: { user: UserProgress }) => {
+  return (
+    <div className="rounded-m border-gray1 flex items-center gap-3 border bg-white px-3 py-2">
+      {/* 아바타 자리 */}
+      <div className="bg-green1/10 text-green1 text-body5 flex h-10 w-10 items-center justify-center rounded-full">
+        {user.nickname[0]}
+      </div>
+
+      {/* 닉네임 + 진행바 */}
+      <div className="flex-1">
+        <p className="text-body5 text-black">{user.nickname}</p>
+
+        <div className="bg-gray4 relative mt-1 h-3 w-full rounded-full">
+          <div
+            className="bg-green1 absolute top-0 left-0 h-3 rounded-full"
+            style={{ width: `${user.percent}%` }}
+          ></div>
+        </div>
+
+        <p className="text-body5 text-gray3 mt-1">
+          {user.percent}% ({user.page}p)
+        </p>
+      </div>
+    </div>
+  );
 };
 
-const CircleProgress: React.FC<CircleProgressProps> = ({ percent }) => {
-  const [displayPercent, setDisplayPercent] = useState(0);
+/* ==============================
+ * 원형 진행도
+ * ============================== */
 
-  useEffect(() => {
-    const target = Math.max(0, Math.min(100, Math.round(percent)));
-    let frame: number;
-    const start = performance.now();
-    const duration = 600; // ms
+const CircleProgress = ({ percent }: { percent: number }) => {
+  const clamped = Math.max(0, Math.min(100, percent));
 
-    const animate = (now: number) => {
-      const elapsed = now - start;
-      const t = Math.min(1, elapsed / duration);
-      const eased = 1 - Math.pow(1 - t, 3); // ease-out
-
-      setDisplayPercent(Math.round(target * eased));
-
-      if (t < 1) {
-        frame = requestAnimationFrame(animate);
-      }
-    };
-
-    frame = requestAnimationFrame(animate);
-
-    return () => cancelAnimationFrame(frame);
-  }, [percent]);
-
-  const clamped = Math.max(0, Math.min(100, displayPercent));
   const backgroundImage = `conic-gradient(var(--color-green1) 0% ${clamped}%, var(--color-gray1) ${clamped}% 100%)`;
 
   return (
     <div className="flex flex-col items-center justify-center">
       <div
-        className="flex h-16 w-16 items-center justify-center rounded-full"
+        className="flex h-20 w-20 items-center justify-center rounded-full"
         style={{ backgroundImage }}
       >
-        <div className="bg-beige2 flex h-12 w-12 items-center justify-center rounded-full">
+        <div className="bg-beige2 flex h-14 w-14 items-center justify-center rounded-full">
           <span className="text-body5 text-green1">{clamped}%</span>
         </div>
       </div>
-      <p className="text-body5 text-gray3 mt-1">내 진행률</p>
     </div>
   );
 };
