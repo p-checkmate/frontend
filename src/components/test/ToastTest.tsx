@@ -38,6 +38,15 @@ const ToastTest = () => {
     });
   };
 
+  // 알림/경고 토스트 (아이콘 없는 토스트 추가)
+  const showAlertToast = () => {
+    setToast({
+      variant: 'alert',
+      visible: true,
+      message: '선호하는 장르를 먼저 선택해주세요!',
+    });
+  };
+
   return (
     <div className="min-h-screen bg-beige1 px-4 py-8 space-y-6">
       <h1>Toast 테스트</h1>
@@ -65,6 +74,20 @@ const ToastTest = () => {
           className="cursor-pointer rounded-m bg-green1 px-4 py-2 text-body4 text-white"
         >
           북마크 토스트 보여주기
+        </button>
+      </section>
+
+      {/* 3. 아이콘 없는 토스트 테스트 */}
+      <section className="space-y-3">
+        <p>
+          3. 알림 토스트 (아이콘 없음)
+        </p>
+        <button
+          type="button"
+          onClick={showAlertToast}
+          className="cursor-pointer rounded-m bg-yellow text-black px-4 py-2 text-body4"
+        >
+          알림 토스트 보여주기
         </button>
       </section>
 

@@ -8,7 +8,7 @@ const SignupCelebrate: React.FC = () => {
 
     // 메인으로
     const handleStartClick = () => {
-        navigate("/mainpage");
+        navigate("/");
     };
 
     return (
