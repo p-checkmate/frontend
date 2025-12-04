@@ -86,7 +86,12 @@ const Header = ({
   // =========================
   const renderCenter = () => {
     if (variant === 'backTitle' || variant === 'backTitleDropdown') {
-      return <h1 className="text-title4">{title}</h1>;
+      return (
+        // (수정) whitespace-nowrap: 줄바꿈 금지, text-ellipsis: 넘치면 ... 처리
+        <h1 className="text-title4 whitespace-nowrap overflow-hidden text-ellipsis px-2">
+          {title}
+        </h1>
+      );
     }
     return null;
   };
@@ -146,11 +151,20 @@ const Header = ({
     <header className={cn(bgClass, 'mx-auto flex w-full max-w-[430px] flex-col', className)}>
       {/* 1줄째: 기본 헤더 라인 */}
       <div className="flex h-14 items-center justify-between px-4">
-        {' '}
-        {/* 수정 h-14에서 24*/}
-        <div className="flex flex-[0.8] items-center">{renderLeft()}</div>
-        <div className="flex flex-[1.2] justify-center">{renderCenter()}</div>
-        <div className="flex flex-[0.8] items-center justify-end">{renderRight()}</div>
+        {/* (수정) flex 비율 조정 및 min-w 설정으로 찌그러짐 방지 */}
+        <div className="flex w-10 min-w-10 items-center justify-start">
+            {renderLeft()}
+        </div>
+        
+        {/* 중앙 영역은 남는 공간 다 차지하되(flex-1), 넘치면 숨김 */}
+        <div className="flex flex-1 items-center justify-center overflow-hidden">
+            {renderCenter()}
+        </div>
+        
+        {/* 오른쪽 영역도 고정 너비로 잡아줘서 중앙 정렬이 틀어지지 않게 함 */}
+        <div className="flex w-10 min-w-10 items-center justify-end">
+            {renderRight()}
+        </div>
       </div>
 
       {/* 2줄째: VS 토론 헤더에서만 드롭다운 아이콘 (오른쪽 아래) */}
