@@ -99,7 +99,7 @@ const Header = ({
       case 'logoSetting':
         return (
           <button type="button" onClick={onSettingClick} aria-label="설정">
-            <SettingIcon className="h-6 w-6 text-black" />
+            <SettingIcon className="h-6 w-6 text-black cursor-pointer" />
           </button>
         );
 

@@ -46,7 +46,7 @@ const MyPage: React.FC = () => {
         <Header
           variant="logoSetting"
           className="fixed top-0 z-50 w-full max-w-[430px]"
-          onSettingClick={() => navigate('/setting')} //추후 경로 수정
+          onSettingClick={() => navigate('/mypage/setting')} //추후 경로 수정
         />
         <div className="h-14" />
 
@@ -109,7 +109,7 @@ const MyPage: React.FC = () => {
             <button 
               type="button" 
               className="text-body4 text-black cursor-pointer"
-              onClick={() => navigate('/my-bookshelf')} //추후 경로 수정
+              onClick={() => navigate('/mypage/mybook')} // 나의 책장으로 이동
             >
               전체 보기
             </button>

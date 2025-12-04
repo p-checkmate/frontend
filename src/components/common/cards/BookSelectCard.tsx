@@ -49,12 +49,13 @@ const BookCard: React.FC<BookCardProps> = ({
         </button>
       )}
       {/* 썸네일 */}
-      <div className="h-[80px] w-[60px] rounded-s bg-gray1 overflow-hidden flex-shrink-0">
+      <div className="h-[80px] w-[60px] bg-gray1 overflow-hidden flex-shrink-0">
         {thumbnailUrl && (
           <Image
             src={thumbnailUrl}
             alt={title}
             className="h-full w-full object-cover"
+            rounded="rounded-none"
           />
         )}
       </div>
