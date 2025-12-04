@@ -19,6 +19,13 @@ import CharacterReading from "@/assets/character-reading.svg?react";
 import LoginCharacter from "@/assets/login-character.svg?react";
 import LogoCheckmate from "@/assets/logo-checkmate.svg?react";
 import CharacterCelebrate from "@/assets/character-celebrate.svg?react";
+import Character1 from "@/assets/mypage/character1.svg?react";
+import Character2 from "@/assets/mypage/character2.svg?react";
+import Character3 from "@/assets/mypage/character3.svg?react";
+import Character4 from "@/assets/mypage/character4.svg?react";
+import Character5 from "@/assets/mypage/character5.svg?react";
+import InfoIcon from "@/assets/mypage/infoIcon.svg?react";
+import RightArrowIcon from "@/assets/mypage/rightArrowIcon.svg?react";
 
 export {
   SendIcon,
@@ -42,4 +49,11 @@ export {
   LoginCharacter,
   LogoCheckmate,
   CharacterCelebrate,
+  Character1,
+  Character2,
+  Character3,
+  Character4,
+  Character5,
+  InfoIcon,
+  RightArrowIcon,
 };
