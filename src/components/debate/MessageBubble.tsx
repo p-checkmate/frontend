@@ -15,7 +15,7 @@ const DebateMessageBubble: React.FC<Props> = ({ message, type = "FREE" }) => {
     // VS 토론: 진영(side)에 따라 색상 고정
     if (isVS && message.side) {
       if (message.side === 1) {
-        return "bg-yellow text-black";
+        return "bg-yellow btn-text-black";
       }
       return "bg-green1 btn-text-white";
     }
