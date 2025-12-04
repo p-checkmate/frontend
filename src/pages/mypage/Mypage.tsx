@@ -9,6 +9,15 @@ import {
   RightArrowIcon, InfoIcon,
 } from '@/assets';
 
+// 등급 번호 -> 한글 이름 매핑 객체
+const RANK_NAMES: Record<number, string> = {
+  1: '새싹',
+  2: '나무',
+  3: '종이',
+  4: '수첩',
+  5: '책',
+};
+
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
   const [isGradeModalOpen, setIsGradeModalOpen] = useState(false);
@@ -59,7 +68,10 @@ const MyPage: React.FC = () => {
             <div className="flex flex-col gap-4 -mt-7">
               <h2 className="text-caption1 text-white">{user.nickname}</h2> {/*닉네임*/}
               <div className="flex items-center gap-2">
-                 <span className="text-body1 text-white">{user.gradeName}</span> {/*등급이름*/}
+                 {/* 숫자로 들어온 gradeName을 한글로 변환하여 표시 */}
+                 <span className="text-body1 text-white">
+                   {RANK_NAMES[user.gradeName]}
+                 </span>
               </div>
             </div>
           </div>

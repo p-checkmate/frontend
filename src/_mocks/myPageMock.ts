@@ -2,7 +2,7 @@ export type UserProfile = {
   nickname: string;
   email: string;
   exp: number;
-  gradeName: string;
+  gradeName: number; // string -> number로 변경
   genres: string[];
 };
 
@@ -14,10 +14,10 @@ export type MyBook = {
 
 // 유저 프로필 Mock Data
 export const userProfileMock: UserProfile = {
-  nickname: "체크메이트",
+  nickname: "가나디",
   email: "example@gmail.com",
-  exp: 90, // 종이 등급
-  gradeName: "새싹",
+  exp: 90, // 새싹 등급
+  gradeName: 1, // "새싹" -> 1 (숫자)로 변경
   genres: ["추리/스릴러", "판타지/SF", "로맨스/멜로"],
 };
 
