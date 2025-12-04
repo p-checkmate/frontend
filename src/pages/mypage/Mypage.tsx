@@ -3,20 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Header, Image } from '@/components';
 import GradeGuideModal from '@/components/common/modal/GradeGuideModal';
 import { userProfileMock, myBookshelfMock } from '@/_mocks/myPageMock'; //mock 데이터 테스트
+import { RANK_NAMES } from '@/constants/grade';
 
 import {
   Character1, Character2, Character3, Character4, Character5,
   RightArrowIcon, InfoIcon,
 } from '@/assets';
-
-// 등급 번호 -> 한글 이름 매핑 객체
-const RANK_NAMES: Record<number, string> = {
-  1: '새싹',
-  2: '나무',
-  3: '종이',
-  4: '수첩',
-  5: '책',
-};
 
 const MyPage: React.FC = () => {
   const navigate = useNavigate();
