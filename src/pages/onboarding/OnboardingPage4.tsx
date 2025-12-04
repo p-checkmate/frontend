@@ -1,22 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Header, Button } from "@/components";
+import { Header, Button, Toast } from "@/components";
 import { useOnboardingStore } from "@/store/useOnboardingStore";
 
-// 하위 장르 데이터
-const SUB_GENRE_DATA: Record<string, string[]> = {
-  "소설/문학": ["현대 문학/순수 문학", "추리/스릴러", "판타지/SF", "역사 소설", "로맨스/멜로"],
-  "자기계발": ["습관/루틴", "인간관계/소통", "동기부여/마인드셋", "시간/생산성 관리"],
-  "경제/경영": ["재테크/투자", "비즈니스 전략", "리더십/조직 관리", "트렌드/미래 예측"],
-  "인문학/철학": ["심리학", "철학", "고전", "언어/예술"],
-  "과학/기술": ["대중 과학", "IT/코딩", "환경/생명 과학", "우주/천문학"],
-  "역사/사회": ["근현대사", "세계사/동양사", "사회학", "지정학"],
-  "취미/실용": ["요리/음료", "여행/지도", "미술/사진", "건강/운동"],
-};
+// 하위 장르 데이터 : constants에서 데이터 불러오기
+import { SUB_GENRE_DATA } from "@/constants/genre";
 
 const OnboardingPage4: React.FC = () => {
   const navigate = useNavigate();
+
+  // Toast 상태 관리
+  const [toastVisible, setToastVisible] = useState(false);
 
   // Store에서 필요한 상태 가져오기
   const { 
@@ -25,11 +20,18 @@ const OnboardingPage4: React.FC = () => {
     toggleSubGenre 
   } = useOnboardingStore();
 
-  // [방어 코드] 만약 상위 장르 선택 안 하고 url로 바로 들어왔으면 쫓아냄
+  // [방어 코드] 만약 상위 장르 선택 안 하고 url로 바로 들어왔으면 쫓아냄 - Toast 사용
   useEffect(() => {
     if (!selectedTopGenre) {
-      alert("선호하는 장르를 먼저 선택해주세요!");
-      navigate("/onboardingPage3"); // 이전 페이지로 이동
+      // 1. 토스트 띄우기
+      setToastVisible(true);
+
+      // 2. 사용자가 토스트를 볼 시간을 주고(1.5초 뒤) 페이지 이동
+      const timer = setTimeout(() => {
+        navigate("/onboarding/genre", { replace: true });
+      }, 1500);
+
+      return () => clearTimeout(timer);
     }
   }, [selectedTopGenre, navigate]);
 
@@ -56,6 +58,13 @@ const OnboardingPage4: React.FC = () => {
   return (
     <div className="bg-beige1 h-screen w-full flex flex-col overflow-hidden items-center">
       
+      {/* Toast 컴포넌트 배치 : variant="alert"를 사용하여 이미지 없이 텍스트만 */}
+      <Toast 
+        variant="alert" 
+        visible={toastVisible} 
+        message="선호하는 장르를 먼저 선택해주세요!" 
+      />
+
       {/* 1. 헤더 */}
       <Header
         variant="back"

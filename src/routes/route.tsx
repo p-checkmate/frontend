@@ -10,6 +10,8 @@ import OnboardingPage2 from '@/pages/onboarding/OnboardingPage2';
 import OnboardingPage3 from '@/pages/onboarding/OnboardingPage3';
 import OnboardingPage4 from '@/pages/onboarding/OnboardingPage4';
 
+import ToastTest from '@/components/test/ToastTest';
+
 
 export const router = createBrowserRouter([
   {
@@ -33,23 +35,27 @@ export const router = createBrowserRouter([
     element: <SignupCelebrate />,
   },
   {
-    path: '/onboardingPage1',
+    path: '/onboarding/nickname',
     element: <OnboardingPage1 />,
   },
   {
-    path: '/onboardingPage2',
+    path: '/onboarding/book',
     element: <OnboardingPage2 />,
   },
   {
-    path: '/onboardingPage3',
+    path: '/onboarding/genre',
     element: <OnboardingPage3 />,
   },
   {
-    path: '/onboardingPage4',
+    path: '/onboarding/subgenre',
     element: <OnboardingPage4 />,
   },
   {
     path: '/book/:bookId',
     element: <BookDetailPage />,
+  },
+  {
+    path: '/toasttest',
+    element: <ToastTest />,
   },
 ]);

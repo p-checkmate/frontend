@@ -1,7 +1,7 @@
 import { cn } from '@/utils/cn';
 import { ToastHeart, ToastBookmark } from '@/assets';
 
-export type ToastVariant = 'like' | 'bookmark';
+export type ToastVariant = 'like' | 'bookmark' | 'alert'; //alert 타입 추가
 
 interface ToastProps {
   variant: ToastVariant;
@@ -12,8 +12,13 @@ interface ToastProps {
 }
 
 const Toast = ({ variant, visible, message, className }: ToastProps) => {
+  // 아이콘 결정 로직
   const isLike = variant === 'like';
-  const Icon = isLike ? ToastHeart : ToastBookmark;
+  const isBookmark = variant === 'bookmark';
+  const isAlert = variant === 'alert'; // 이미지 없는 경고용 토스트 추가
+
+  // 아이콘 선택 (이미지 없는 alert일 때는 null)
+  const Icon = isLike ? ToastHeart : (isBookmark ? ToastBookmark : null);
 
   return (
     <div
@@ -26,9 +31,18 @@ const Toast = ({ variant, visible, message, className }: ToastProps) => {
         className,
       )}
     >
-      <div className="flex h-[32px] w-[359px] items-center rounded-full bg-green1 px-4">
-        <Icon className="mr-2 h-4 w-4 text-white" />
-        <span className="text-body4 text-white">{message}</span>
+      <div className={cn(
+          "flex h-[32px] w-[359px] items-center rounded-full px-4",
+          "bg-green1" 
+        )}>
+        
+        {/* 아이콘이 있을 때만 렌더링 */}
+        {Icon && <Icon className="mr-2 h-4 w-4 text-white" />}
+        
+        {/* 아이콘이 없으면(alert) 텍스트를 가운데 정렬하거나 그냥 둠 */}
+        <span className={cn("text-body4 text-white", isAlert && "ml-1")}>
+            {message}
+        </span>
       </div>
     </div>
   );

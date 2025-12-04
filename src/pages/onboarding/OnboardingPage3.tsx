@@ -4,16 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { Header, Button } from "@/components";
 import { useOnboardingStore } from "@/store/useOnboardingStore";
 
-// 선택할 장르 목록
-const GENRES = [
-  "소설/문학",
-  "자기계발",
-  "경제/경영",
-  "과학/기술",
-  "인문학/철학",
-  "역사/사회",
-  "취미/실용",
-];
+// 선택할 장르 목록: constants에서 데이터 불러오기
+import { GENRES } from "@/constants/genre";
 
 const OnboardingPage3: React.FC = () => {
   const navigate = useNavigate();
@@ -39,7 +31,7 @@ const OnboardingPage3: React.FC = () => {
     if (!hasSelection) return;
     
     console.log("선택된 상위 장르:", selectedTopGenre);
-    navigate("/onboardingPage4");
+    navigate("/onboarding/subgenre");
   };
 
   return (
@@ -69,18 +61,14 @@ const OnboardingPage3: React.FC = () => {
           </h1>
         </section>
 
-        {/* 장르 태그 버튼 영역 */}
+        {/* 장르 태그 버튼 영역 : GENRES 상수를 사용하여 맵핑 */}
         <section className="flex flex-wrap gap-x-3 gap-y-4 pb-10">
           {GENRES.map((genre) => (
             <Button
               key={genre}
-              variant="tag"    
-              size="sm"          
-              
-              // 선택 상태: Store의 값과 현재 버튼의 장르가 같으면 true
+              variant="tag"
+              size="sm"
               selected={selectedTopGenre === genre}
-              
-              // 클릭 이벤트 연결
               onClick={() => handleGenreClick(genre)}
             >
               #{genre}
