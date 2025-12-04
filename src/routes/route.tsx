@@ -44,7 +44,7 @@ export const router = createBrowserRouter([
     element: <BookDetailPage />,
   },
   {
-    path:'/debate-test/:debateRoomId',
+    path:'/debate/:debateRoomId',
     element:<DebateRoomPage/>
   }
 ]);
