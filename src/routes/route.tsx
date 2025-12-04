@@ -7,6 +7,7 @@ import SignupPage from '@/pages/signup/SignupPage';
 import SignupCelebrate from '@/pages/onboarding/SignupCelebrate';
 import OnboardingPage1 from '@/pages/onboarding/OnboardingPage1';
 import OnboardingPage2 from '@/pages/onboarding/OnboardingPage2';
+import FreeDebateRoomPage from '@/pages/debate/FreeDebateRoom';
 
 export const router = createBrowserRouter([
   {
@@ -41,4 +42,8 @@ export const router = createBrowserRouter([
     path: '/book/:bookId',
     element: <BookDetailPage />,
   },
+  {
+    path:'/debate-test/:debateRoomId',
+    element:<FreeDebateRoomPage/>
+  }
 ]);
