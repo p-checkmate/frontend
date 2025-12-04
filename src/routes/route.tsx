@@ -7,6 +7,7 @@ import SignupPage from '@/pages/signup/SignupPage';
 import SignupCelebrate from '@/pages/onboarding/SignupCelebrate';
 import OnboardingPage1 from '@/pages/onboarding/OnboardingPage1';
 import OnboardingPage2 from '@/pages/onboarding/OnboardingPage2';
+import DebateRoomPage from '@/pages/debate/DebateRoomPage';
 import OnboardingPage3 from '@/pages/onboarding/OnboardingPage3';
 import OnboardingPage4 from '@/pages/onboarding/OnboardingPage4';
 
@@ -53,6 +54,10 @@ export const router = createBrowserRouter([
   {
     path: '/book/:bookId',
     element: <BookDetailPage />,
+  },
+  {
+    path:'/debate/:debateRoomId',
+    element:<DebateRoomPage/>
   },
   {
     path: '/toasttest',

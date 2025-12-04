@@ -1,5 +1,5 @@
 // ex) DebateDetailPage.tsx
-import OpinionWriteBar from "../common/input/DebateInput";
+import OpinionWriteBar from "../debate/DebateInput";
 
 const DebateDetailPage = () => {
   return (
