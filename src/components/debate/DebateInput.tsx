@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn";
-import PositionToggle from "@/components/toggle/PositionToggle";
+import PositionToggle from "@/components/debate/PositionToggle";
 import { SendIcon } from "@/assets";
 
 type DebateSide = 1 | 2;
@@ -45,7 +45,7 @@ const DebateOpinionBar: React.FC<DebateOpinionBarProps> = ({
         )}
 
         {/* 입력창 */}
-        <div className="flex-1">
+        <div className="pt-1 flex-1">
           <textarea
             ref={textareaRef}
             value={content}
@@ -57,6 +57,14 @@ const DebateOpinionBar: React.FC<DebateOpinionBarProps> = ({
               "max-h-24",
             )}
             rows={1}
+            onKeyDown={(e) => {
+            if (e.key === "Enter" && e.shiftKey) return;
+
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleSubmit();
+            }
+          }}
           />
         </div>
 

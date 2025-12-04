@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { cn } from '@/utils/cn';
 import {
   BackIcon,
@@ -29,7 +29,7 @@ interface HeaderProps {
   onSettingClick?: () => void;
   onMoreClick?: () => void;
   onMyPageClick?: () => void;
-
+  dropdownContent?:ReactNode;
   className?: string;
 }
 
@@ -41,6 +41,7 @@ const Header = ({
   onSettingClick,
   onMoreClick,
   onMyPageClick,
+  dropdownContent,
   className,
 }: HeaderProps) => {
   // VS 토론 헤더에서 아래 화살표 회전용
@@ -60,7 +61,7 @@ const Header = ({
     if (variant === 'back' || variant === 'backTitle' || variant === 'backTitleDropdown') {
       return (
         <button type="button" onClick={onBackClick} aria-label="뒤로가기">
-          <BackIcon className="h-13 w-13 text-black" /> {/*수정 8에서 10으로*/}
+          <BackIcon className="h-10 w-10 text-black cursor-pointer" />
         </button>
       );
     }
@@ -157,6 +158,7 @@ const Header = ({
         <div className="flex justify-end pr-4 pb-2">
           <button
             type="button"
+            className='cursor-pointer'
             onClick={() => setIsDropdownOpen((prev) => !prev)}
             aria-label="드롭다운 토글"
           >
@@ -169,6 +171,21 @@ const Header = ({
           </button>
         </div>
       )}
+
+      {/* 3줄째: 드롭다운 영역 */}
+      {variant === "backTitleDropdown" && (
+        <div
+          className={cn(
+            "overflow-hidden transition-all duration-300 ease-in-out",  // 애니메이션
+            isDropdownOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+          )}
+        >
+          <div className="px-4 pb-3 pt-1">
+            {dropdownContent}
+          </div>
+        </div>
+      )}
+
     </header>
   );
 };
