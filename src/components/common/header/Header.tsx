@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { cn } from '@/utils/cn';
 import {
   BackIcon,
@@ -29,7 +29,7 @@ interface HeaderProps {
   onSettingClick?: () => void;
   onMoreClick?: () => void;
   onMyPageClick?: () => void;
-
+  dropdownContent?:ReactNode;
   className?: string;
 }
 
@@ -41,6 +41,7 @@ const Header = ({
   onSettingClick,
   onMoreClick,
   onMyPageClick,
+  dropdownContent,
   className,
 }: HeaderProps) => {
   // VS 토론 헤더에서 아래 화살표 회전용
@@ -168,6 +169,10 @@ const Header = ({
             />
           </button>
         </div>
+      )}
+
+      {variant === "backTitleDropdown" && isDropdownOpen && dropdownContent && (
+        <div className="px-4 pb-3">{dropdownContent}</div>
       )}
     </header>
   );
