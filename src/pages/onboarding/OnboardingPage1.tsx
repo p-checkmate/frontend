@@ -13,7 +13,7 @@ const OnboardingPage1: React.FC = () => {
 
   const handleNext = () => {
     if (!isFilled) return;
-    navigate("/onboardingPage2");
+    navigate("/onboarding/book");
   };
 
   return (

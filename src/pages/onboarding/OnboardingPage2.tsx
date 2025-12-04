@@ -30,7 +30,7 @@ const OnboardingPage2: React.FC = () => {
   const handleNext = () => {
     if (!hasSelection) return;
     console.log("선택된 책 ID들:", selectedBookIds);
-    navigate("/onboardingPage3");
+    navigate("/onboarding/genre");
   };
 
   return (

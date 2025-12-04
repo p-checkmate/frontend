@@ -25,7 +25,7 @@ const SignupPage: React.FC = () => {
     console.log("회원가입 요청 성공:", { email, password });
 
     // 3. 페이지 이동 (온보딩 페이지로)
-    navigate("/onboardingPage1"); 
+    navigate("/onboarding/nickname"); 
   };
 
   return (

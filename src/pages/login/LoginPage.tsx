@@ -18,6 +18,7 @@ const LoginPage: React.FC = () => {
     if (!isFilled) return;
 
     console.log("로그인 요청:", { email, password });
+    navigate("/");
   };
 
   return (
