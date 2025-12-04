@@ -10,9 +10,9 @@ import OnboardingPage2 from '@/pages/onboarding/OnboardingPage2';
 import DebateRoomPage from '@/pages/debate/DebateRoomPage';
 import OnboardingPage3 from '@/pages/onboarding/OnboardingPage3';
 import OnboardingPage4 from '@/pages/onboarding/OnboardingPage4';
-
-import ToastTest from '@/components/test/ToastTest';
-
+import Mypage from '@/pages/mypage/Mypage';
+import MyBook from '@/pages/mypage/MyBook';
+import Setting from '@/pages/mypage/Setting';
 
 export const router = createBrowserRouter([
   {
@@ -60,7 +60,15 @@ export const router = createBrowserRouter([
     element:<DebateRoomPage/>
   },
   {
-    path: '/toasttest',
-    element: <ToastTest />,
+    path: '/mypage',
+    element: <Mypage />,
+  },
+  {
+    path: '/mypage/mybook',
+    element: <MyBook />,
+  },
+  {
+    path: '/mypage/setting',
+    element: <Setting />,
   },
 ]);
