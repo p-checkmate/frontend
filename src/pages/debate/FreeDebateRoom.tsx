@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
 
 import { Header, DebateOpinionBar, DebateMessageBubble } from "@/components";
 
 import type { DebateMessage, DebateRoom } from "@/_mocks/debateMock";
 import { getMessagesByDebateRoomId, getDebateRoomById } from "@/_mocks/debateMock";
+import { useNavigate } from "react-router-dom";
+interface FreeProps {
+  debateRoomId: number;
+}
 
-const FreeDebateRoomPage: React.FC = () => {
-  const { debateRoomId } = useParams(); // URL에서 :debateRoomId 가져오기
+const FreeDebateRoomPage: React.FC<FreeProps> = ({debateRoomId}) => {
   const roomId = Number(debateRoomId);
 
   const [roomInfo, setRoomInfo] = useState<DebateRoom | null>(null);
   const [messages, setMessages] = useState<DebateMessage[]>([]);
-
+  const navigate=useNavigate();
   useEffect(() => {
     if (!roomId) return;
 
@@ -43,8 +45,8 @@ const FreeDebateRoomPage: React.FC = () => {
 
   return (
     <div className="flex min-h-screen justify-center bg-beige1">
-      <div className="flex w-full max-w-[430px] flex-col">
-        <Header variant="backTitleDropdown" title={roomInfo.title} dropdownContent={<section className="bg-beige2 px-2 text-body2 leading-relaxed text-black">
+      <div className="flex w-full flex-col">
+        <Header variant="backTitleDropdown" onBackClick={()=>navigate(-1)} title={roomInfo.title} dropdownContent={<section className="bg-beige2 px-2 pt-1 text-body2 leading-relaxed text-black">
             {roomInfo.description}
           </section>}/>
 

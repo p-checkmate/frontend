@@ -8,6 +8,7 @@ import SignupCelebrate from '@/pages/onboarding/SignupCelebrate';
 import OnboardingPage1 from '@/pages/onboarding/OnboardingPage1';
 import OnboardingPage2 from '@/pages/onboarding/OnboardingPage2';
 import FreeDebateRoomPage from '@/pages/debate/FreeDebateRoom';
+import DebateRoomPage from '@/pages/debate/DebateRoomPage';
 
 export const router = createBrowserRouter([
   {
@@ -44,6 +45,6 @@ export const router = createBrowserRouter([
   },
   {
     path:'/debate-test/:debateRoomId',
-    element:<FreeDebateRoomPage/>
+    element:<DebateRoomPage/>
   }
 ]);

@@ -58,12 +58,10 @@ const DebateOpinionBar: React.FC<DebateOpinionBarProps> = ({
             )}
             rows={1}
             onKeyDown={(e) => {
-            // Shift + Enter → 줄바꿈 허용
             if (e.key === "Enter" && e.shiftKey) return;
 
-            // Enter 단독 → 전송
             if (e.key === "Enter") {
-              e.preventDefault(); // 줄바꿈 막기
+              e.preventDefault();
               handleSubmit();
             }
           }}

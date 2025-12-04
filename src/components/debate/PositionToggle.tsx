@@ -9,8 +9,8 @@ interface PositionToggleProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
 }
 
 const SIDE_STYLES: Record<DebateSide, string> = {
-  1: "bg-yellow text-black",
-  2: "bg-green1 text-white",
+  1: "bg-yellow btn-text-black",
+  2: "bg-green1 btn-text-white",
 };
 
 const PositionToggle: React.FC<PositionToggleProps> = ({
@@ -34,7 +34,7 @@ const PositionToggle: React.FC<PositionToggleProps> = ({
       aria-pressed
       className={cn(
         "cursor-pointer inline-flex items-center justify-center",
-        "rounded-m w-16 h-9 text-body3",
+        "rounded-m w-16 h-9 text-body2",
         "border border-transparent",
         "transition-colors duration-150",
         SIDE_STYLES[value],
