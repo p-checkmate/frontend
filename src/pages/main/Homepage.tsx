@@ -1,7 +1,6 @@
 import TogetherReadCard from "@/components/common/cards/TogetherReadCard";
 
 const HomePage = () => {
-  const joined = true;
 
   return (
     <div className="p-4 space-y-6">
