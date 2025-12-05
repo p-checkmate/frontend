@@ -15,6 +15,7 @@ import MyBook from '@/pages/mypage/MyBook';
 import Setting from '@/pages/mypage/Setting';
 import MyWrite from '@/pages/mypage/MyWrite';
 import MyLiked from '@/pages/mypage/MyLiked';
+import QuoteDetailPage from '@/pages/detail/QuoteDetailPage';
 
 export const router = createBrowserRouter([
   {
@@ -81,5 +82,9 @@ export const router = createBrowserRouter([
     path: '/mypage/myliked',
     element: <MyLiked />,
   },
+  {
+    path:'/quote/:quoteId',
+    element:<QuoteDetailPage/>
+  }
 
 ]);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-//import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Header,
   Badge,
@@ -8,24 +8,19 @@ import {
   Image,
   DiscussionCreateModal,
   QuoteCreateModal,
-  QuoteDetailModal
 } from '@/components';
 import { getBookDetailById } from '@/_mocks/bookDetailMock';
 import { useParams } from 'react-router-dom';
-import type { QuoteDetailData } from '@/components/common/modal/QuoteDetailModal';
 
 const TAB_OPTIONS = ['토론', '인용구'] as const;
 type Tab = (typeof TAB_OPTIONS)[number];
 
 const BookDetailPage: React.FC = () => {
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<Tab>('토론');
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openQuoteModal, setOpenQuoteModal] = useState(false);
-
-  const [openQuoteDetailModal, setOpenQuoteDetailModal] = useState(false);
-  const [selectedQuote, setSelectedQuote] = useState<QuoteDetailData | null>(null);
 
   const handleCreateDiscussion = () => {
     setOpenCreateModal(true);
@@ -43,7 +38,7 @@ const BookDetailPage: React.FC = () => {
 
   return (
     <div className="bg-beige1 min-h-screen">
-      <div className="fixed left-0 right-0 top-0 z-50">
+      <div className="fixed left-0 right-0 top-0 z-40">
         <Header variant="logoBookmark" />
       </div>
 
@@ -129,9 +124,7 @@ const BookDetailPage: React.FC = () => {
                     dateLabel={d.dateLabel}
                     likeCount={d.likeCount}
                     commentCount={d.commentCount}
-                    onClickCard={() => {
-                      // TODO: 토론 상세
-                    }}
+                    onClickCard={() =>navigate(`/debate/${d.id}`)}
                   />
                 ))}
               </div>
@@ -158,22 +151,7 @@ const BookDetailPage: React.FC = () => {
                   dateLabel={q.dateLabel}
                   likeCount={q.likeCount}
                   onClickCard={() => {
-                    const quoteDetailData: QuoteDetailData = {
-                      bookTitle: title,
-                      author,
-                      publisher,
-                      coverUrl: coverImageUrl,
-                      content: q.content,
-                      writer: q.nickname,
-                      date: q.dateLabel,
-                      tags: tags.map((t, index) => ({
-                        id: index,
-                        label: `#${t}`,
-                      })),
-                    };
-
-                    setSelectedQuote(quoteDetailData);
-                    setOpenQuoteDetailModal(true);
+                    navigate(`/quote/${q.id}`)
                   }}
                 />
               ))
@@ -190,13 +168,6 @@ const BookDetailPage: React.FC = () => {
           console.log('인용구 생성 API 호출', quote);
         }}
       />
-      {selectedQuote && (
-        <QuoteDetailModal
-          isOpen={openQuoteDetailModal}
-          onClose={() => setOpenQuoteDetailModal(false)}
-          data={selectedQuote}
-        />
-      )}
     </div>
   );
 };

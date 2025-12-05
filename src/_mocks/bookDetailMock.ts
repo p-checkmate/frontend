@@ -41,7 +41,7 @@ export const bookDetailMocks: BookDetail[] = [
 
     discussions: [
       {
-        id: 1,
+        id: 101,
         bookTitle: '책 제목',
         title: '토론 제목',
         content: '토론 상세 내용 어쩌고 저쩌고 이렇게 길게 만들까?? 근데 얼마나 길게해야 되는지',
@@ -51,7 +51,7 @@ export const bookDetailMocks: BookDetail[] = [
         commentCount: 24,
       },
       {
-        id: 2,
+        id: 102,
         bookTitle: '책 제목',
         title: '또 다른 토론 제목',
         content: '두 번째 토론 내용 어쩌고 저쩌고 이렇게 길게 만들까?? 근데 얼마나 길게해야 되는지',

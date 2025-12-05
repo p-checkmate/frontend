@@ -14,7 +14,6 @@ import DiscussionCreateModal from './common/modal/DiscussionCreateModal';
 import QuoteCreateModal from './common/modal/QuoteCreateModal';
 import DebateMessageBubble from './debate/MessageBubble';
 import DebateMessage from './debate/MessageBubble';
-import QuoteDetailModal from './common/modal/QuoteDetailModal';
 import TogetherReadCard from './common/cards/TogetherReadCard';
 import HorizontalBookScrollSection from './common/Scroll/HorizontalBookScroll';
 import CardCarousel from './common/Scroll/CardCarousel';
@@ -36,7 +35,6 @@ export {
   QuoteCreateModal,
   DebateMessageBubble,
   DebateMessage,
-  QuoteDetailModal,
   TogetherReadCard,
   HorizontalBookScrollSection,
   CardCarousel
