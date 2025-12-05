@@ -38,9 +38,11 @@ const BookDetailPage: React.FC = () => {
 
   return (
     <div className="bg-beige1 min-h-screen">
-      <Header variant="logoBookmark" />
+      <div className="fixed left-0 right-0 top-0 z-50">
+        <Header variant="logoBookmark" />
+      </div>
 
-      <div className="mx-auto pb-10">
+      <div className="mx-auto pt-14 pb-10">
         {/* ===== 책 정보 카드 ===== */}
         <div className="bg-beige2">
           <div className="flex gap-4 px-6 pt-1 pb-5">
@@ -79,8 +81,8 @@ const BookDetailPage: React.FC = () => {
         </div>
 
         {activeTab === '토론' && (
-          <div className="mt-4 flex items-center justify-between">
-            <span className="text-body3 text-gray6" />
+          <div className="mt-4 pr-2 flex items-center justify-between">
+            <span className="text-body3" />
             <button
               type="button"
               className="text-caption2 cursor-pointer"
@@ -92,7 +94,7 @@ const BookDetailPage: React.FC = () => {
         )}
 
         {activeTab === '인용구' && (
-          <div className="mt-4 flex items-center justify-between">
+          <div className="mt-4 pr-2 flex items-center justify-between">
             <span className="text-body3" />
             <button
               type="button"
@@ -106,7 +108,7 @@ const BookDetailPage: React.FC = () => {
 
         {/* ===== 토론 리스트 ===== */}
         {activeTab === '토론' && (
-          <div className="mt-4 px-2">
+          <div className="mt-4 px-5">
             {discussions.length === 0 ? (
               <p className="text-body3 text-gray5 mt-6 text-center">아직 등록된 토론이 없어요.</p>
             ) : (
@@ -134,7 +136,7 @@ const BookDetailPage: React.FC = () => {
 
         {/* ===== 인용구 탭 ===== */}
         {activeTab === '인용구' && (
-          <div className="mt-4 space-y-3 px-2">
+          <div className="mt-4 space-y-3 px-5">
             {quotes.length === 0 ? (
               <div className="text-body3 text-gray3 mt-6 text-center">
                 아직 등록된 인용구가 없어요.
