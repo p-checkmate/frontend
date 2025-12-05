@@ -1,12 +1,13 @@
 import React from "react";
 import { Image, Badge } from "@/components";
+import { CloseIcon } from "@/assets";
 
-type QuoteTag = {
+export type QuoteTag = {
   id: number;
   label: string;
 };
 
-type QuoteDetailData = {
+export type QuoteDetailData = {
   bookTitle: string;
   author: string;
   publisher: string;
@@ -54,7 +55,7 @@ const QuoteDetailModal: React.FC<QuoteDetailModalProps> = ({
               onClick={onClose}
               className="flex h-6 w-6 items-center justify-center rounded-full"
             >
-              <span className="text-caption4 text-gray3">✕</span>
+              <CloseIcon/>
             </button>
           </div>
 
@@ -91,9 +92,9 @@ const QuoteDetailModal: React.FC<QuoteDetailModalProps> = ({
           <div className="my-4 h-px w-full bg-gray1" />
 
           {/* 인용구 본문 */}
-          <div className="px-1 text-center">
-            <p className="text-title5 text-black whitespace-pre-line">
-              “{content}”
+          <div className="px-1">
+            <p className="text-body5 text-black whitespace-pre-line">
+              {content}
             </p>
           </div>
 

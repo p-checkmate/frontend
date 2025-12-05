@@ -66,7 +66,7 @@ export const bookDetailMocks: BookDetail[] = [
       {
         id: 1,
         bookTitle: '책 제목',
-        content: '“이 문장은 정말 인상 깊었어요. ~~ 라는 말이 너무 와닿았어요.”',
+        content: '어쩌고저쩌고 이만큼 길게 적으면 줄여지는지 안 줄여지는지 테스트ㅐㅐㅓ어오란오런ㅇㄹㄴㅇㄹㅇ아아ㅏ아아아ㅏㄴㅇㄹㄴㅇㄹ',
         nickname: '닉네임',
         dateLabel: '25.11.03',
         likeCount: 10,
