@@ -53,21 +53,18 @@ const MainPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 헤더 + 검색창 높이 만큼 패딩 */}
       <div className="mx-auto pb-20 pt-27">
-        {/* ===== 배너 영역 (목데이터) ===== */}
+        {/* ===== 배너 영역  ===== */}
         <div className="mt-3.5">
           <Image className="w-full h-41"/>
         </div>
 
-        {/* ===== 함께 읽기 섹션 ===== */}
         {togetherRead && (
           <section className="mt-6 px-5">
             <h2 className="mb-4 text-title5 text-black">
               현재 진행되고 있는 함께 읽기
             </h2>
 
-            {/* 지금은 1개지만, 나중에 여러 개면 CardCarousel 안에 map으로 넣기 */}
             <TogetherReadCard
               title={togetherRead.title}
               participants={togetherRead.participants}
@@ -77,7 +74,7 @@ const MainPage: React.FC = () => {
               rank={togetherRead.rank}
               thumbnailUrl={togetherRead.thumbnailUrl}
               onClick={() => {
-                // TODO: 함께 읽기 상세/참여 페이지로 이동
+                // TODO: 함께 읽기 상세/참여 페이지로 이동, 여기도 캐러셀로 감싸기..
               }}
             />
           </section>
@@ -111,7 +108,7 @@ const MainPage: React.FC = () => {
           ))}
         </HorizontalBookScrollSection>
 
-        {/* ===== 지금 뜨거운 토론장 (캐러셀 + 도트) ===== */}
+        {/* ===== 지금 뜨거운 토론장 ===== */}
         <section className="mt-10">
           <h2 className="px-5 text-title5">지금 뜨거운 토론장</h2>
 
@@ -133,7 +130,7 @@ const MainPage: React.FC = () => {
           </CardCarousel>
         </section>
 
-        {/* ===== 나를 위한 인용구 (캐러셀 + 도트) ===== */}
+        {/* ===== 나를 위한 인용구 ===== */}
         <section className="mt-10">
           <h2 className="px-5 text-title5">나를 위한 인용구</h2>
 
