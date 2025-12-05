@@ -13,6 +13,8 @@ import OnboardingPage4 from '@/pages/onboarding/OnboardingPage4';
 import Mypage from '@/pages/mypage/Mypage';
 import MyBook from '@/pages/mypage/MyBook';
 import Setting from '@/pages/mypage/Setting';
+import MyWrite from '@/pages/mypage/MyWrite';
+import MyLiked from '@/pages/mypage/MyLiked';
 
 export const router = createBrowserRouter([
   {
@@ -71,4 +73,13 @@ export const router = createBrowserRouter([
     path: '/mypage/setting',
     element: <Setting />,
   },
+  {
+    path: '/mypage/mywrite',
+    element: <MyWrite />,
+  },
+  {
+    path: '/mypage/myliked',
+    element: <MyLiked />,
+  },
+
 ]);

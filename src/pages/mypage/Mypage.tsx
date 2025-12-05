@@ -149,7 +149,7 @@ const MyPage: React.FC = () => {
           <button 
             type="button"
             className="flex items-center gap-1 w-fit py-1 cursor-pointer"
-            onClick={() => navigate('/my-content')} //추후 경로 수정
+            onClick={() => navigate('/mypage/mywrite')} //내가 작성한 콘텐츠로 이동
           >
              <h3 className="text-title4 text-black">내가 작성한 콘텐츠</h3>
              <RightArrowIcon className="w-8 h-8 text-black" />
@@ -158,7 +158,7 @@ const MyPage: React.FC = () => {
           <button 
             type="button"
             className="flex items-center gap-1 w-fit cursor-pointer"
-            onClick={() => navigate('/my-liked-content')} //추후 경로 수정
+            onClick={() => navigate('/mypage/myliked')} //내가 좋아요 한 콘텐츠로 이동
           >
              <h3 className="text-title4 text-black">내가 좋아요 한 콘텐츠</h3>
              <RightArrowIcon className="w-8 h-8 text-black" />

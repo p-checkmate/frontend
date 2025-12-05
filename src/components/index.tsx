@@ -15,6 +15,9 @@ import QuoteCreateModal from './common/modal/QuoteCreateModal';
 import DebateMessageBubble from './debate/MessageBubble';
 import DebateMessage from './debate/MessageBubble';
 import QuoteDetailModal from './common/modal/QuoteDetailModal';
+import TogetherReadCard from './common/cards/TogetherReadCard';
+import HorizontalBookScrollSection from './common/Scroll/HorizontalBookScroll';
+import CardCarousel from './common/Scroll/CardCarousel';
 
 export {
   Button,
@@ -33,5 +36,8 @@ export {
   QuoteCreateModal,
   DebateMessageBubble,
   DebateMessage,
-  QuoteDetailModal
+  QuoteDetailModal,
+  TogetherReadCard,
+  HorizontalBookScrollSection,
+  CardCarousel
 };

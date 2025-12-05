@@ -8,15 +8,19 @@ const ToggleTab = ({ options, selected, onSelect, variant }: ToggleTabProps) => 
   // 1. pill 토글
   // ========================
   if (variant === 'pill') {
-    const SLIDER_WIDTH = 132;
+    // 전체 컨테이너 너비와 슬라이더 너비 정의
+    const CONTAINER_WIDTH = 335; 
+    const SLIDER_WIDTH = 152;    
     const SIDE_PADDING = 8;
 
-    const sliderLeft = selectedIndex === 0 ? SIDE_PADDING : 295 - SLIDER_WIDTH - SIDE_PADDING; // 오른쪽 탭일 때 위치
-
+    const sliderLeft = selectedIndex === 0 
+          ? SIDE_PADDING 
+          : CONTAINER_WIDTH - SLIDER_WIDTH - SIDE_PADDING; 
     return (
       <div className="flex justify-center">
         <div
-          className={cn('relative h-[49px] w-[295px]', 'rounded-m bg-green1', 'overflow-hidden')}
+          className={cn('relative h-[49px]', 'rounded-m bg-green1', 'overflow-hidden')}
+          style={{ width: `${CONTAINER_WIDTH}px` }}
         >
           {/* 흰색 슬라이더 */}
           <div

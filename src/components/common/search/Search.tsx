@@ -33,7 +33,7 @@ const Search = ({
   };
 
   return (
-    <div className={cn('w-full max-w-[335px]', className)}>
+    <div className={cn('w-full max-w-[430px]', className)}>
       <div className="flex h-11 items-center rounded-m border-2 border-green1 bg-beige2 px-3">
         <input
           type="text"
@@ -43,8 +43,7 @@ const Search = ({
           placeholder={placeholder}
           className={cn(
             'flex-1 bg-transparent outline-none',
-            // Body1 + 검정색, placeholder는 회색
-            'text-body1 text-black placeholder:text-gray2'
+            'text-body1 placeholder:text-gray2'
           )}
         />
 
@@ -52,7 +51,7 @@ const Search = ({
           type="button"
           onClick={handleClick}
           aria-label="검색"
-          className="ml-2 flex items-center justify-center"
+          className="ml-2 flex items-center justify-center cursor-pointer"
         >
           <SearchIcon className="w-5 h-5 text-green1" />
         </button>
