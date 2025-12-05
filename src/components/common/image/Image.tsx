@@ -5,6 +5,7 @@ interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   className?: string;
   rounded?: string;
   aspectRatio?: string;
+  onClick?: () => void;
 }
 
 export default function Image({
@@ -12,7 +13,8 @@ export default function Image({
   alt = '',
   className,
   aspectRatio = '',
-  rounded = 'rounded-md',
+  rounded = 'rounded-[0px]',
+  onClick,
   ...props
 }: ImageProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -25,9 +27,11 @@ export default function Image({
       <div
         ref={wrapperRef}
         className={cn('bg-gray1 relative h-full w-full', aspectRatio, className)}
+        onClick={onClick}
       />
     );
   }
+
   useEffect(() => {
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
@@ -43,12 +47,19 @@ export default function Image({
   return (
     <div
       ref={wrapperRef}
-      className={cn('relative w-full overflow-hidden', aspectRatio, rounded, className)}
+      className={cn(
+        'relative w-full overflow-hidden',
+        aspectRatio,
+        rounded,
+        className,
+        onClick ? 'cursor-pointer' : ''
+      )}
+      onClick={onClick}
     >
-      {/*에러: bg-gray1*/}
+      {/* 에러: 회색 박스 */}
       {inView && error && <div className={cn('bg-gray1 h-full w-full', rounded)} />}
 
-      {/*로딩 중: blur*/}
+      {/* 이미지 로딩 */}
       {inView && !error && (
         <img
           src={src}
@@ -58,7 +69,7 @@ export default function Image({
           className={cn(
             'h-full w-full object-cover transition-all duration-500',
             rounded,
-            loaded ? 'blur-0 opacity-100' : 'opacity-70 blur-sm',
+            loaded ? 'blur-0 opacity-100' : 'opacity-70 blur-sm'
           )}
           {...props}
         />

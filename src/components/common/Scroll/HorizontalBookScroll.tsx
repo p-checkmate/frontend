@@ -13,22 +13,21 @@ const HorizontalBookScrollSection: React.FC<HorizontalBookScrollSectionProps> = 
   children,
 }) => {
   return (
-    <section className={cn("w-full bg-beige1", className)}>
+    <section className={cn("w-full px-1 bg-beige1", className)}>
       <div className="flex items-center px-5 pt-4">
-        <span className="mr-2 h-[1px] w-8 bg-black" />
-        <h2 className="text-title6 text-black">{title}</h2>
+        <h2 className="text-title5">{title}</h2>
       </div>
 
       <div className="relative mt-3 px-5 pb-3">
         <div className="scrollbar-hidden overflow-x-auto">
-          <div className="flex gap-3 pr-10">{children}</div>
+          <div className="flex gap-5 pr-10">{children}</div>
         </div>
 
         <div
           className="
             pointer-events-none
             absolute right-5 top-0
-            h-full w-14
+            h-full w-12
             bg-gradient-to-l
             from-[var(--color-beige1)]
             to-transparent
