@@ -1,8 +1,8 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Image, Badge, Header } from "@/components";
-import { CloseIcon } from "@/assets";
 import { getQuoteDetailById, type QuoteDetailData } from "@/_mocks/quoteDetailMock";
+import { QuoteIcon } from "@/assets";
 
 const QuoteDetailPage: React.FC = () => {
   const navigate = useNavigate();
@@ -77,11 +77,20 @@ const QuoteDetailPage: React.FC = () => {
         <div className="my-5 h-px w-full bg-gray1" />
 
         {/* 인용구 본문 */}
-        <div className="px-1">
-          <p className="text-body2 whitespace-pre-line">
-            {content}
-          </p>
+        <div className="mt-4 rounded-l bg-beige2 px-4 py-5">
+          <div className="mb-2 flex items-center gap-2">
+            <span className="text-body4 text-gray3"><QuoteIcon className="w-4"/></span>
+            <span className="text-caption4 text-gray3">인상 깊었던 문장</span>
+          </div>
+
+          <div className="flex gap-3 pt-1">
+            <div className="self-stretch w-1 rounded-full bg-gray1"/>
+            <p className="flex-1 whitespace-pre-line text-body2">
+              {content}
+            </p>
+          </div>
         </div>
+
 
         {/* 작성자 / 날짜 */}
         <div className="mt-6 text-center">

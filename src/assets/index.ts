@@ -26,6 +26,7 @@ import Character4 from "@/assets/mypage/character4.svg?react";
 import Character5 from "@/assets/mypage/character5.svg?react";
 import InfoIcon from "@/assets/mypage/infoIcon.svg?react";
 import RightArrowIcon from "@/assets/mypage/rightArrowIcon.svg?react";
+import QuoteIcon from '@/assets/icons/quote.svg?react';
 
 export {
   SendIcon,
@@ -56,4 +57,5 @@ export {
   Character5,
   InfoIcon,
   RightArrowIcon,
+  QuoteIcon
 };
