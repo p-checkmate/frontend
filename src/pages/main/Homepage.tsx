@@ -36,7 +36,7 @@ const MainPage: React.FC = () => {
 
         <div
           className={cn(
-            "flex justify-center pt-1 pb-3 transition-all duration-300 bg-beige1",
+            "flex justify-center pt-1 pb-3 transition-all duration-300",
             "origin-top",
             isHidden
               ? "-translate-y-full opacity-0"
