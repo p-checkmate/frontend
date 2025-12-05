@@ -12,7 +12,7 @@ export default function Image({
   alt = '',
   className,
   aspectRatio = '',
-  rounded = 'rounded-md',
+  rounded = 'rounded-[0px]',
   ...props
 }: ImageProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
