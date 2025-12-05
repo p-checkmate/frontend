@@ -127,7 +127,7 @@ const Header = ({
 
       case 'logoMy':
         return (
-          <button type="button" onClick={onMyPageClick} aria-label="마이페이지">
+          <button type="button" className='cursor-pointer' onClick={onMyPageClick} aria-label="마이페이지">
             <MyPageIcon className="text-green1 h-8 w-8" />
           </button>
         );
