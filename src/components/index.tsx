@@ -18,6 +18,7 @@ import TogetherReadCard from './common/cards/TogetherReadCard';
 import HorizontalBookScrollSection from './common/Scroll/HorizontalBookScroll';
 import CardCarousel from './common/Scroll/CardCarousel';
 import MyReadCard from './common/cards/MyReadCard';
+import BookMarathonCard from './common/cards/BookMarathonCard';
 
 export {
   Button,
@@ -40,4 +41,5 @@ export {
   HorizontalBookScrollSection,
   CardCarousel,
   MyReadCard,
+  BookMarathonCard,
 };
