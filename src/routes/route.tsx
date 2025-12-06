@@ -85,6 +85,5 @@ export const router = createBrowserRouter([
   {
     path:'/quote/:quoteId',
     element:<QuoteDetailPage/>
-  }
-
+  },
 ]);
