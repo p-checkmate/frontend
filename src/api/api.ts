@@ -149,7 +149,7 @@ api.interceptors.response.use(
     
     const message =
       resData?.message ||
-      resData?.error?.message || // 🔥 여기 추가
+      resData?.error?.message || 
       "네트워크 오류 또는 서버 에러가 발생했습니다.";
 
     const apiError: ApiError = {
