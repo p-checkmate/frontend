@@ -17,6 +17,8 @@ import MyWrite from '@/pages/mypage/MyWrite';
 import MyLiked from '@/pages/mypage/MyLiked';
 import QuoteDetailPage from '@/pages/detail/QuoteDetailPage';
 
+import HeaderTest from '@/components/test/HeaderTest';
+
 export const router = createBrowserRouter([
   {
     path: '/',
@@ -85,5 +87,9 @@ export const router = createBrowserRouter([
   {
     path:'/quote/:quoteId',
     element:<QuoteDetailPage/>
+  },
+  {
+    path:'/headerTest',
+    element:<HeaderTest/>
   },
 ]);
