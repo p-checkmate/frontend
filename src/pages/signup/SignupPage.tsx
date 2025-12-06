@@ -4,7 +4,6 @@ import { Header, Button, Input, Toast } from "@/components";
 import { LoginCharacter } from "@/assets";
 
 import { signup } from "@/api/auth/auth.api";
-import type { ApiResponse } from "@/types/ApiResponse";
 
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -37,19 +36,18 @@ const SignupPage: React.FC = () => {
     try {
       setIsLoading(true);
 
-      const res: ApiResponse<{
-        accessToken: string;
-        refreshToken: string;
-        user: { user_id: number; email: string };
-      }> = await signup({ email, password });
+      const res = await signup({ email, password }); 
 
-      if (!res.success) {
-        showToast(res.message || "회원가입 실패");
+      if (res.status !== "success" || !res.data) {
+        const msg = res.error?.message ?? "회원가입에 실패했습니다.";
+        showToast(msg);
         return;
       }
 
-      localStorage.setItem("accessToken", res.data.accessToken);
-      localStorage.setItem("refreshToken", res.data.refreshToken);
+      const { accessToken, refreshToken } = res.data;
+
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
 
       navigate("/onboarding/nickname");
     } catch (error: any) {

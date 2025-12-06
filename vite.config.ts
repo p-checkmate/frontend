@@ -8,7 +8,7 @@ import svgr from 'vite-plugin-svgr';
 export default defineConfig({
   plugins: [react(), svgr(), tailwindcss()],
   server: {
-    port: 3000,
+    port: 8080,
   },
   resolve: {
     alias: {
