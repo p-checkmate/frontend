@@ -36,15 +36,9 @@ const SignupPage: React.FC = () => {
     try {
       setIsLoading(true);
 
-      const res = await signup({ email, password }); 
+      const res = await signup({ email, password });
 
-      if (res.status !== "success" || !res.data) {
-        const msg = res.error?.message ?? "회원가입에 실패했습니다.";
-        showToast(msg);
-        return;
-      }
-
-      const { accessToken, refreshToken } = res.data;
+      const { accessToken, refreshToken } = res;
 
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
@@ -55,6 +49,7 @@ const SignupPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+
   };
 
   return (
