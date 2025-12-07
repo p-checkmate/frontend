@@ -1,5 +1,4 @@
 import axios from 'axios';
-import type { ApiError, ApiResponse } from '@/types/ApiResponse';
 
 function buildApiBase() {
   const base = import.meta.env.VITE_API_URL as string | undefined;
@@ -18,13 +17,6 @@ const api = axios.create({
   timeout: 7000,
 });
 
-// =======================
-// 재발급 전용 인스턴스
-// =======================
-const refreshClient = axios.create({
-  baseURL: API_BASE,
-  timeout: 7000,
-});
 
 // =======================
 // auth 경로 여부 체크
@@ -61,7 +53,6 @@ api.interceptors.request.use(
 // =======================
 // 응답 인터셉터
 // =======================
-let refreshPromise: Promise<string | null> | null = null;
 
 api.interceptors.response.use(
   (response) => {
