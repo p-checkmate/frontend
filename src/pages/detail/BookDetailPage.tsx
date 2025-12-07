@@ -12,6 +12,8 @@ import {
 import { useParams } from 'react-router-dom';
 import { fetchBookDetail } from '@/api/detail/detail.api';
 import type { BookDetail } from '@/types/book';
+import { fetchQuotes } from '@/api/detail/quote.api';
+import { createQuote } from '@/api/detail/quote.api';
 
 const TAB_OPTIONS = ['토론', '인용구'] as const;
 type Tab = (typeof TAB_OPTIONS)[number];
@@ -26,10 +28,26 @@ const BookDetailPage: React.FC = () => {
   const [book, setBook] = useState<BookDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // 토론/인용구는 api 들어갈 자리
+  const discussions: any[] = [];
+  const [quotes, setQuotes]=useState<any[]>([]);
 
   const handleCreateDiscussion = () => {
     setOpenCreateModal(true);
   };
+
+  // ==== 인용구 조회 API ====
+  useEffect(()=>{
+    if(!bookId) return;
+    (async ()=>{
+      try{
+        const res=await fetchQuotes(bookId);
+        setQuotes(res.data??[]);
+      }catch(err:any){
+        console.error("인용구 불러오기 실패:", err);
+      }
+    })();
+  }, [bookId]);
 
   // ===== 도서 상세 API 호출 =====
   useEffect(() => {
@@ -84,10 +102,6 @@ const BookDetailPage: React.FC = () => {
 
   const coverImageUrl = thumbnailUrl;
   const tags = genres?.map((g) => g.genreName) ?? [];
-
-  // 토론/인용구는 아직 API 없다고 가정하고 빈 배열
-  const discussions: any[] = [];
-  const quotes: any[] = [];
 
   return (
     <div className="bg-beige1 min-h-screen">
@@ -197,14 +211,14 @@ const BookDetailPage: React.FC = () => {
             ) : (
               quotes.map((q) => (
                 <DiscussionCard
-                  key={q.id}
+                  key={q.quote_id}
                   type="quote"
-                  bookTitle={q.bookTitle}
+                  bookTitle={title} //책 제목도 안 내려와서 우선 상세 조회 API에서 받아오기
                   content={q.content}
                   tags={tags}
-                  nickname={q.nickname}
-                  dateLabel={q.dateLabel}
-                  likeCount={q.likeCount}
+                  nickname={'임시'} // 현재 api에서 닉네임을 안 내려줌,,,,
+                  dateLabel={q.created_at}
+                  likeCount={q.like_count}
                   onClickCard={() => {
                     // TODO: 인용구 상세
                   }}
@@ -218,9 +232,15 @@ const BookDetailPage: React.FC = () => {
       <QuoteCreateModal
         open={openQuoteModal}
         onClose={() => setOpenQuoteModal(false)}
-        onSubmit={(quote) => {
-          //TODO: 인용구 생성 API
-          console.log('인용구 생성 API 호출', quote);
+        onSubmit={async (quoteContent)=>{
+          try{
+            await createQuote(bookId!, quoteContent);
+            const res=await fetchQuotes(bookId!);
+            setQuotes(res.data??[]);
+            setOpenQuoteModal(false);
+          }catch(err:any){
+            console.error("인용구 생성 실패:", err);
+          }
         }}
       />
     </div>
