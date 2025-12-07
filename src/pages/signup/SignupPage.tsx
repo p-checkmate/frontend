@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {Header, Button, Input} from '@/components'; 
-
+import { Header, Button, Input, Toast } from "@/components";
 import { LoginCharacter } from "@/assets";
+
+import { signup } from "@/api/auth/auth.api";
 
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
@@ -10,46 +11,76 @@ const SignupPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  // 1. 유효성 검사 (빈칸 체크)
-  const isFilled = email.trim().length > 0
-    && password.trim().length > 0
-    && passwordCheck.trim().length > 0;
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
-  // 2. 비밀번호 일치 여부 (실시간으로 UI에 보여주기 위해 변수로)
-  const isPasswordMatch = password === passwordCheck;
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setToastVisible(true);
 
-  const handleSubmit = (e: React.FormEvent) => {
+    setTimeout(() => {
+      setToastVisible(false);
+    }, 2500);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("회원가입 요청 성공:", { email, password });
+    if (password !== passwordCheck) {
+      showToast("비밀번호가 일치하지 않습니다.");
+      return;
+    }
 
-    // 3. 페이지 이동 (온보딩 페이지로)
-    navigate("/onboarding/nickname"); 
+    try {
+      setIsLoading(true);
+
+      const res = await signup({ email, password }); 
+
+      if (res.status !== "success" || !res.data) {
+        const msg = res.error?.message ?? "회원가입에 실패했습니다.";
+        showToast(msg);
+        return;
+      }
+
+      const { accessToken, refreshToken } = res.data;
+
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
+      navigate("/onboarding/nickname");
+    } catch (error: any) {
+      showToast(error.message ?? "회원가입 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="bg-beige1 min-h-screen flex flex-col items-center">
-      {/* ===== 헤더 ===== */}
+
+      <Toast
+        variant="alert"
+        visible={toastVisible}
+        message={toastMessage}
+      />
+
       <Header
         variant="back"
         onBackClick={() => navigate(-1)}
         className="w-full"
       />
 
-      {/* ===== 컨텐츠 영역 ===== */}
       <div className="w-full max-w-[375px] px-6 flex flex-col flex-1">
-        {/* 타이틀 + 캐릭터 */}
         <div className="relative">
           <h1 className="text-title1 text-black whitespace-pre-line pt-4 pl-1">
             새로운 메이트가{"\n"}되어보세요!
           </h1>
-          
-          {/* 캐릭터*/}
+
           <LoginCharacter className="absolute right-0 top-[100px] w-[107px] h-[107px]" />
         </div>
 
-        {/* ===== 인풋 영역 ===== */}
         <form
           onSubmit={handleSubmit}
           className="flex flex-col gap-8 mt-[100px] flex-1"
@@ -88,15 +119,9 @@ const SignupPage: React.FC = () => {
               value={passwordCheck}
               onChange={(e) => setPasswordCheck(e.target.value)}
             />
-            {/* 비밀번호가 다르고, 확인칸에 무언가 입력했을 때 에러 메시지 띄우기 */}
-            {!isPasswordMatch && passwordCheck.length > 0 && (
-               <p className="text-caption5 text-red-500">
-                 비밀번호가 일치하지 않습니다.
-               </p>
-            )}
           </div>
 
-          {/* ===== 다음 버튼 ===== */}
+          {/* 다음 버튼 */}
           <div className="mt-auto pb-10">
             <Button
               type="submit"
@@ -104,10 +129,9 @@ const SignupPage: React.FC = () => {
               color="yellow"
               size="lg"
               fullWidth
-              // 빈칸이 있거나 비밀번호가 다르면 버튼 비활성화
-              disabled={!isFilled || !isPasswordMatch} 
+              disabled={isLoading}
             >
-              다음
+              {isLoading ? "가입 중..." : "다음"}
             </Button>
           </div>
         </form>
