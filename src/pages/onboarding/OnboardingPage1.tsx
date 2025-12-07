@@ -1,24 +1,58 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-import {Header, Button, Input} from '@/components'; 
-
+import {Header, Button, Input, Toast} from '@/components'; 
 import { useOnboardingStore } from "@/store/useOnboardingStore";
+import { updateNickname } from "@/api/user/nickname.api";
 
 const OnboardingPage1: React.FC = () => {
   const navigate = useNavigate();
   const { nickname, setNickname } = useOnboardingStore();
 
-  const isFilled = nickname.trim().length > 0;
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleNext = () => {
-    if (!isFilled) return;
-    navigate("/onboarding/book");
+  const isFilled = nickname.trim().length > 0;
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
+  const showToast = (message: string) => {
+    setToastMessage(message);
+    setToastVisible(true);
+    setTimeout(() => {
+      setToastVisible(false);
+    }, 2500);
   };
+  const handleNext = async () => {
+    if (!isFilled || isLoading) return;
+
+    try {
+      setIsLoading(true);
+
+      // 닉네임 PATCH 요청
+      const res: any = await updateNickname(nickname);
+
+      // 성공 응답: { status: "success", data: { message: "..." } }
+      if (res.status !== "success") {
+        const msg =
+          res.error?.message || "프로필 설정에 실패했습니다. 다시 시도해 주세요.";
+        showToast(msg);
+        return;
+      }
+
+      // 성공하면 다음 온보딩 페이지로 이동
+      navigate("/onboarding/book");
+    } catch (error: any) {
+      // api.ts에서 ApiError로 던져주는 경우
+      showToast(error.message ?? "프로필 설정 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
 
   return (
     <div className="bg-beige1 h-screen w-full flex flex-col overflow-hidden items-center">
-      
+       <Toast variant="alert" visible={toastVisible} message={toastMessage} />
       {/* 1. 헤더 */}
       <Header
         variant="back"

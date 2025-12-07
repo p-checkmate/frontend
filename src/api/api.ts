@@ -145,15 +145,21 @@ api.interceptors.response.use(
     // =======================
     // 그 외 에러
     // =======================
-    const resData = error.response?.data as ApiResponse<any> | undefined;
+    const resData = error.response?.data as any;
+    
+    const message =
+      resData?.message ||
+      resData?.error?.message || 
+      "네트워크 오류 또는 서버 에러가 발생했습니다.";
+
     const apiError: ApiError = {
-      message: resData?.message || '네트워크 오류 또는 서버 에러가 발생했습니다.',
-      code: resData?.code || status || 'UNKNOWN',
-      error: Array.isArray(resData?.error) ? resData?.error : null,
+      message,
+      code: resData?.code || status || "UNKNOWN",
+      error: Array.isArray(resData?.error) ? resData.error : null,
     };
 
     return Promise.reject(apiError);
-  },
+      },
 );
 
 export default api;
