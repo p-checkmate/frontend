@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// src/pages/BookDetailPage.tsx
+import React, { useState, useEffect } from 'react';
 import {
   Header,
   Badge,
@@ -9,36 +9,89 @@ import {
   DiscussionCreateModal,
   QuoteCreateModal,
 } from '@/components';
-import { getBookDetailById } from '@/_mocks/bookDetailMock';
 import { useParams } from 'react-router-dom';
+import { fetchBookDetail } from '@/api/detail/detail.api';
+import type { BookDetail } from '@/types/book';
 
 const TAB_OPTIONS = ['토론', '인용구'] as const;
 type Tab = (typeof TAB_OPTIONS)[number];
 
 const BookDetailPage: React.FC = () => {
-  const navigate = useNavigate();
+  const { bookId } = useParams();
 
   const [activeTab, setActiveTab] = useState<Tab>('토론');
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const [openQuoteModal, setOpenQuoteModal] = useState(false);
 
+  const [book, setBook] = useState<BookDetail | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const handleCreateDiscussion = () => {
     setOpenCreateModal(true);
   };
 
-  // TODO: API 연결 시 이 부분을 없애고 API로 대체
-  const { bookId } = useParams();
-  const id = Number(bookId);
-  const book = getBookDetailById(id);
-  if (!book) {
-    return <p className="text-gray6 mt-20 text-center">책 정보를 찾을 수 없습니다.</p>;
+  // ===== 도서 상세 API 호출 =====
+  useEffect(() => {
+    if (!bookId) {
+      setError('잘못된 접근입니다.');
+      setLoading(false);
+      return;
+    }
+
+    (async () => {
+      try {
+        setLoading(true);
+        const data = await fetchBookDetail(bookId);
+        setBook(data);
+        setError(null);
+      } catch (err: any) {
+        console.error(err);
+        setError(err?.message ?? '도서 정보를 불러오지 못했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [bookId]);
+
+  // ===== 로딩 / 에러 처리 =====
+  if (loading) {
+    return (
+      <div className="bg-beige1 min-h-screen">
+        <div className="fixed left-0 right-0 top-0 z-50">
+          <Header variant="logoBookmark" />
+        </div>
+        <p className="mt-20 text-center text-gray6">책 정보를 불러오는 중입니다…</p>
+      </div>
+    );
   }
 
-  const { title, author, publisher, description, coverImageUrl, tags, discussions, quotes } = book;
+  if (error || !book) {
+    return (
+      <div className="bg-beige1 min-h-screen">
+        <div className="fixed left-0 right-0 top-0 z-50">
+          <Header variant="logoBookmark" />
+        </div>
+        <p className="mt-20 text-center text-gray6">
+          {error ?? '책 정보를 찾을 수 없습니다.'}
+        </p>
+      </div>
+    );
+  }
+
+  // ===== API에서 받은 데이터 =====
+  const { title, author, publisher, description, thumbnailUrl, genres } = book;
+
+  const coverImageUrl = thumbnailUrl;
+  const tags = genres?.map((g) => g.genreName) ?? [];
+
+  // 토론/인용구는 아직 API 없다고 가정하고 빈 배열
+  const discussions: any[] = [];
+  const quotes: any[] = [];
 
   return (
     <div className="bg-beige1 min-h-screen">
-      <div className="fixed left-0 right-0 top-0 z-40">
+      <div className="fixed left-0 right-0 top-0 z-50">
         <Header variant="logoBookmark" />
       </div>
 
@@ -124,7 +177,9 @@ const BookDetailPage: React.FC = () => {
                     dateLabel={d.dateLabel}
                     likeCount={d.likeCount}
                     commentCount={d.commentCount}
-                    onClickCard={() =>navigate(`/debate/${d.id}`)}
+                    onClickCard={() => {
+                      // TODO: 토론 상세
+                    }}
                   />
                 ))}
               </div>
@@ -151,7 +206,7 @@ const BookDetailPage: React.FC = () => {
                   dateLabel={q.dateLabel}
                   likeCount={q.likeCount}
                   onClickCard={() => {
-                    navigate(`/quote/${q.id}`)
+                    // TODO: 인용구 상세
                   }}
                 />
               ))

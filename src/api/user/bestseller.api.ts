@@ -1,5 +1,8 @@
 import api from "../api";
 
+// =======================
+//  베스트셀러 데이터 타입
+// =======================
 export interface BookItem {
   itemId: number;
   title: string;
@@ -20,32 +23,23 @@ export interface BestsellerData {
   items: BookItem[];
 }
 
-export interface BestsellerResponse {
-  status: "success" | "error";
-  data: BestsellerData;
-}
-
 export const fetchBestsellers = async (): Promise<BestsellerData> => {
-  const res = (await api.get("/books/bestsellers")) as BestsellerResponse;
-  return res.data;
+  return api.get("/books/bestsellers");
 };
+
+// =======================
+//  즐겨찾기 등록
+// =======================
 export interface FavoriteBooksRequest {
   itemIds: number[];
 }
 
-export interface FavoriteBooksResponse {
-  status: "success" | "error";
-  data: {
-    bookmarkIds: number[];
-  };
+export interface FavoriteBooksData {
+  bookmarkIds: number[];
 }
 
 export const postFavoriteBooks = async (
   itemIds: number[],
-): Promise<number[]> => {
-  const res = (await api.post("/onboarding/favorite-books", {
-    itemIds,
-  })) as FavoriteBooksResponse;
-
-  return res.data.bookmarkIds;
+): Promise<FavoriteBooksData> => {
+  return api.post("/onboarding/favorite-books", { itemIds });
 };

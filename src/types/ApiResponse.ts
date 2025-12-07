@@ -5,19 +5,24 @@ export interface FieldError {
 
 export type ApiErrorDetail = null | FieldError[] | Record<string, any>;
 
-export interface ApiResponse<T> {
-  success: boolean;
-  code: number | string;
-  message: string;
+export type ApiSuccessResponse<T> = {
+  status: 'success';
   data: T;
-  error: ApiErrorDetail;
-}
+};
+
+export type ApiErrorResponse = {
+  status: 'error';
+  error: { message: string };
+};
+
+export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
 
 export interface ApiError {
   message: string;
-  code: number | string;
-  error: FieldError[] | null;
+  code?: number | string;
+  error?: any;
 }
+
 
 export interface PaginationData<T> {
   content: T[];

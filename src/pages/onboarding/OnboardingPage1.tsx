@@ -21,32 +21,24 @@ const OnboardingPage1: React.FC = () => {
       setToastVisible(false);
     }, 2500);
   };
+
   const handleNext = async () => {
     if (!isFilled || isLoading) return;
 
     try {
       setIsLoading(true);
 
-      // 닉네임 PATCH 요청
-      const res: any = await updateNickname(nickname);
+      await updateNickname(nickname);
 
-      // 성공 응답: { status: "success", data: { message: "..." } }
-      if (res.status !== "success") {
-        const msg =
-          res.error?.message || "프로필 설정에 실패했습니다. 다시 시도해 주세요.";
-        showToast(msg);
-        return;
-      }
-
-      // 성공하면 다음 온보딩 페이지로 이동
       navigate("/onboarding/book");
+
     } catch (error: any) {
-      // api.ts에서 ApiError로 던져주는 경우
       showToast(error.message ?? "프로필 설정 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }
   };
+
 
 
 
