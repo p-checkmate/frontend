@@ -17,6 +17,8 @@ import DebateMessage from './debate/MessageBubble';
 import TogetherReadCard from './common/cards/TogetherReadCard';
 import HorizontalBookScrollSection from './common/Scroll/HorizontalBookScroll';
 import CardCarousel from './common/Scroll/CardCarousel';
+import MyReadCard from './common/cards/MyReadCard';
+import BookMarathonCard from './common/cards/BookMarathonCard';
 
 export {
   Button,
@@ -37,5 +39,7 @@ export {
   DebateMessage,
   TogetherReadCard,
   HorizontalBookScrollSection,
-  CardCarousel
+  CardCarousel,
+  MyReadCard,
+  BookMarathonCard,
 };

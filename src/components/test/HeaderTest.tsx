@@ -6,6 +6,7 @@ const HeaderTest = () => {
   const handleSetting = () => alert('설정 클릭!');
   const handleMore = () => alert('... 메뉴 클릭!');
   const handleMyPage = () => alert('마이페이지 이동!');
+  const handleShare = () => alert('공유 아이콘 클릭!');
 
   return (
     <div className="bg-beige1 min-h-screen space-y-10 py-6">
@@ -48,6 +49,17 @@ const HeaderTest = () => {
       <section className="border-gray1 border-b pb-2">
         <p>6. 로고 + 마이페이지 아이콘</p>
         <Header variant="logoMy" onLogoClick={handleLogo} onMyPageClick={handleMyPage} />
+      </section>
+
+      {/* 7) 뒤로가기 + 중앙 텍스트 + 아이콘 */}
+      <section className="border-gray1 border-b pb-2">
+        <p>7. 뒤로가기 + 중앙 텍스트 + 아이콘</p>
+        <Header
+          variant="backTitleIcon"
+          title="함께 읽기"
+          onBackClick={handleBack}
+          onShareClick={handleShare}   // Share 핸들러 전달
+        />
       </section>
     </div>
   );

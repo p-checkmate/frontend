@@ -9,6 +9,7 @@ import {
   BookmarkOnIcon,
   BookmarkOffIcon,
   MyPageIcon,
+  ShareIcon,
 } from '@/assets';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,7 +19,8 @@ export type HeaderVariant =
   | 'logoSetting' // 3. 로고 + 설정
   | 'backTitleDropdown' // 4. 뒤로가기 + 제목 + ... + 아래 드롭다운
   | 'logoBookmark' // 5. 로고 + 북마크 토글
-  | 'logoMy'; // 6. 로고 + 마이페이지
+  | 'logoMy' // 6. 로고 + 마이페이지
+  | 'backTitleIcon'; // 7. 뒤로가기 + 중앙 텍스트 + 공유 아이콘
 
 interface HeaderProps {
   variant: HeaderVariant;
@@ -29,6 +31,7 @@ interface HeaderProps {
   onSettingClick?: () => void;
   onMoreClick?: () => void;
   onMyPageClick?: () => void;
+  onShareClick?: () => void; 
   dropdownContent?:ReactNode;
   className?: string;
 }
@@ -41,6 +44,7 @@ const Header = ({
   onSettingClick,
   onMoreClick,
   onMyPageClick,
+  onShareClick,
   dropdownContent,
   className,
 }: HeaderProps) => {
@@ -58,7 +62,7 @@ const Header = ({
   // Left
   // =========================
   const renderLeft = () => {
-    if (variant === 'back' || variant === 'backTitle' || variant === 'backTitleDropdown') {
+    if (variant === 'back' || variant === 'backTitle' || variant === 'backTitleDropdown' || variant === 'backTitleIcon') {
       return (
         <button type="button" onClick={onBackClick} aria-label="뒤로가기">
           <BackIcon className="h-10 w-10 text-black cursor-pointer" />
@@ -85,7 +89,7 @@ const Header = ({
   // Center
   // =========================
   const renderCenter = () => {
-    if (variant === 'backTitle' || variant === 'backTitleDropdown') {
+    if (variant === 'backTitle' || variant === 'backTitleDropdown' || variant === 'backTitleIcon') {
       return (
         // (수정) whitespace-nowrap: 줄바꿈 금지, text-ellipsis: 넘치면 ... 처리
         <h1 className="text-title4 whitespace-nowrap overflow-hidden text-ellipsis px-2">
@@ -137,6 +141,14 @@ const Header = ({
         return (
           <button type="button" onClick={onMoreClick} aria-label="더보기">
             <MoreIcon className="h-7 w-7 text-black" />
+          </button>
+        );
+
+        /* (추가) 뒤로가기 + 제목 + 아이콘 */
+      case 'backTitleIcon':
+        return (
+          <button type="button" onClick={onShareClick}>
+            <ShareIcon className="h-7 w-7 text-black cursor-pointer" />
           </button>
         );
 
