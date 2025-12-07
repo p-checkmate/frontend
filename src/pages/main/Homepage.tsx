@@ -75,6 +75,7 @@ const MainPage: React.FC = () => {
               thumbnailUrl={togetherRead.thumbnailUrl}
               onClick={() => {
                 // TODO: 함께 읽기 상세/참여 페이지로 이동, 여기도 캐러셀로 감싸기..
+                navigate(`/togetherRead`); // 잘 모르겠어서 어떻게 일단 이렇게 해뒀습니다.. 
               }}
             />
           </section>
