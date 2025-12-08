@@ -1,24 +1,47 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {Header, Button, Input} from '@/components';
-
+import { Header, Button, Input, Toast } from "@/components";
 import { LoginCharacter } from "@/assets";
+import { postLogin } from "@/api/auth/login.api";
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // 지금은 "값이 비어있지 않다" 정도만 체크 (UI용으로)
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+
   const isFilled = email.trim().length > 0 && password.trim().length > 0;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFilled) return;
+    if (!isFilled || loading) return;
 
-    console.log("로그인 요청:", { email, password });
-    navigate("/");
+    try {
+      setLoading(true);
+
+      const data = await postLogin({ email, password });
+
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      navigate("/");
+    } catch (err: any) {
+      console.error(err);
+
+      const message =
+        err?.message || "로그인에 실패했습니다. 이메일/비밀번호를 확인해주세요.";
+
+      setToastMessage(message);
+      setToastVisible(true);
+      setTimeout(() => setToastVisible(false), 2000);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,7 +75,6 @@ const LoginPage: React.FC = () => {
               w-[107px] h-[107px]
             "
           />
-          
         </div>
 
         {/* ===== 인풋 영역 ===== */}
@@ -93,13 +115,19 @@ const LoginPage: React.FC = () => {
               color="yellow"
               size="lg"
               fullWidth
-              disabled={!isFilled}
+              disabled={!isFilled || loading}
             >
-              로그인
+              {loading ? "로그인 중..." : "로그인"}
             </Button>
           </div>
         </form>
       </div>
+
+      <Toast
+        variant="alert"
+        visible={toastVisible}
+        message={toastMessage}
+      />
     </div>
   );
 };
