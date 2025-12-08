@@ -17,6 +17,10 @@ const api = axios.create({
   timeout: 7000,
 });
 
+const refreshClient = axios.create({
+  baseURL: API_BASE,
+  timeout: 7000,
+});
 
 // =======================
 // auth 경로 여부 체크
@@ -71,7 +75,6 @@ api.interceptors.response.use(
       });
     }
 
-    // 혹시 모를 예외적 응답
     return body;
   },
 
@@ -79,9 +82,74 @@ api.interceptors.response.use(
     const status = error.response?.status;
     const body = error.response?.data;
 
-    // refresh 처리
+    // 401: accessToken 만료 → refresh 시도
     if (status === 401) {
-      // 원래 있던 로직 그대로 두면 됨
+      const originalRequest = error.config;
+
+      // 이미 한 번 재시도했다면 더 이상 리프레시 안 함
+      if (originalRequest && (originalRequest as any)._retry) {
+        // 토큰 정리 후 로그인 페이지로 이동
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/login";
+        return Promise.reject(error);
+      }
+
+      if (isAuthRequest(originalRequest?.url)) {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/login";
+        return Promise.reject(error);
+      }
+
+      const refreshToken = localStorage.getItem("refreshToken");
+
+      if (!refreshToken) {
+        // 리프레시 토큰도 없으면 그냥 로그인 필요
+        localStorage.removeItem("accessToken");
+        window.location.href = "/login";
+        return Promise.reject(error);
+      }
+
+      try {
+        (originalRequest as any)._retry = true;
+
+        const refreshResponse = await refreshClient.post(
+          "/auth/refresh", 
+          { refreshToken },
+        );
+
+        const refreshBody = refreshResponse.data;
+
+        const newAccessToken =
+          refreshBody?.data?.accessToken ?? refreshBody?.accessToken;
+        const newRefreshToken =
+          refreshBody?.data?.refreshToken ?? refreshBody?.refreshToken;
+
+        if (!newAccessToken) {
+          throw new Error("토큰 재발급에 실패했습니다.");
+        }
+
+        localStorage.setItem("accessToken", newAccessToken);
+        if (newRefreshToken) {
+          localStorage.setItem("refreshToken", newRefreshToken);
+        }
+
+        if (originalRequest?.headers) {
+          (originalRequest.headers as any).Authorization = `Bearer ${newAccessToken}`;
+        } else if (originalRequest) {
+          originalRequest.headers = {
+            Authorization: `Bearer ${newAccessToken}`,
+          };
+        }
+
+        return api.request(originalRequest);
+      } catch (refreshError) {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.location.href = "/login";
+        return Promise.reject(refreshError);
+      }
     }
 
     return Promise.reject({
@@ -94,6 +162,7 @@ api.interceptors.response.use(
     });
   },
 );
+
 
 
 export default api;
