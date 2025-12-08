@@ -9,11 +9,12 @@ import {
   DiscussionCreateModal,
   QuoteCreateModal,
 } from '@/components';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { fetchBookDetail } from '@/api/detail/detail.api';
 import type { BookDetail } from '@/types/book';
 import { fetchQuotes } from '@/api/detail/quote.api';
 import { createQuote } from '@/api/detail/quote.api';
+import { formatKoreanDate } from '@/utils/date';
 
 const TAB_OPTIONS = ['토론', '인용구'] as const;
 type Tab = (typeof TAB_OPTIONS)[number];
@@ -28,9 +29,10 @@ const BookDetailPage: React.FC = () => {
   const [book, setBook] = useState<BookDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // 토론/인용구는 api 들어갈 자리
+  //토론 API 추후 연결
   const discussions: any[] = [];
   const [quotes, setQuotes]=useState<any[]>([]);
+  const navigate=useNavigate();
 
   const handleCreateDiscussion = () => {
     setOpenCreateModal(true);
@@ -38,16 +40,16 @@ const BookDetailPage: React.FC = () => {
 
   // ==== 인용구 조회 API ====
   useEffect(()=>{
-    if(!bookId) return;
+    if(!book?.bookId) return;
     (async ()=>{
       try{
-        const res=await fetchQuotes(bookId);
+        const res=await fetchQuotes(book.bookId);
         setQuotes(res.data??[]);
       }catch(err:any){
         console.error("인용구 불러오기 실패:", err);
       }
     })();
-  }, [bookId]);
+  }, [book?.bookId]);
 
   // ===== 도서 상세 API 호출 =====
   useEffect(() => {
@@ -105,7 +107,7 @@ const BookDetailPage: React.FC = () => {
 
   return (
     <div className="bg-beige1 min-h-screen">
-      <div className="fixed left-0 right-0 top-0 z-50">
+      <div className="fixed left-0 right-0 top-0 z-40">
         <Header variant="logoBookmark" />
       </div>
 
@@ -216,11 +218,11 @@ const BookDetailPage: React.FC = () => {
                   bookTitle={title} //책 제목도 안 내려와서 우선 상세 조회 API에서 받아오기
                   content={q.content}
                   tags={tags}
-                  nickname={'임시'} // 현재 api에서 닉네임을 안 내려줌,,,,
-                  dateLabel={q.created_at}
+                  nickname={q.nickname}
+                  dateLabel={formatKoreanDate(q.created_at)}
                   likeCount={q.like_count}
                   onClickCard={() => {
-                    // TODO: 인용구 상세
+                    navigate(`/quote/${q.quote_id}`)
                   }}
                 />
               ))
@@ -234,8 +236,8 @@ const BookDetailPage: React.FC = () => {
         onClose={() => setOpenQuoteModal(false)}
         onSubmit={async (quoteContent)=>{
           try{
-            await createQuote(bookId!, quoteContent);
-            const res=await fetchQuotes(bookId!);
+            await createQuote(book.bookId!, quoteContent);
+            const res=await fetchQuotes(book.bookId!);
             setQuotes(res.data??[]);
             setOpenQuoteModal(false);
           }catch(err:any){
