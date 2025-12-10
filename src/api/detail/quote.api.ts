@@ -26,3 +26,11 @@ export async function fetchQuoteDetail(quoteId: number): Promise<QuoteDetail> {
   const data = await api.get<QuoteDetail>(`/quotes/${quoteId}`);
   return data as unknown as QuoteDetail;
 }
+
+export const likeQuote = async (quoteId: number) => {
+  return api.post(`/quotes/${quoteId}/like`, {});
+};
+
+export const unlikeQuote = async (quoteId: number) => {
+  return api.delete(`/quotes/${quoteId}/like`);
+};
