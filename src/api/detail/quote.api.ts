@@ -13,16 +13,16 @@ export type QuoteDetail = {
 
 // 인용구 목록 조회
 export async function fetchQuotes(bookId: string | number) {
-  return api.get(`/books/${bookId}/quotes/get`);
+  return api.get(`/books/${bookId}/quotes`);
 }
 
 // 인용구 생성
 export async function createQuote(bookId: string | number, content: string) {
-  return api.post(`/books/${bookId}/quotes/post`, { content });
+  return api.post(`/books/${bookId}/quotes`, { content });
 }
 
 // 인용구 상세 조회
 export async function fetchQuoteDetail(quoteId: number): Promise<QuoteDetail> {
-  const data = await api.get<QuoteDetail>(`/quotes/${quoteId}/get`);
+  const data = await api.get<QuoteDetail>(`/quotes/${quoteId}`);
   return data as unknown as QuoteDetail;
 }
