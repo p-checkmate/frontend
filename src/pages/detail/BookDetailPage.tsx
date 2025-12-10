@@ -1,4 +1,3 @@
-// src/pages/BookDetailPage.tsx
 import React, { useState, useEffect } from 'react';
 import {
   Header,
@@ -15,6 +14,10 @@ import type { BookDetail } from '@/types/book';
 import { fetchQuotes } from '@/api/detail/quote.api';
 import { createQuote } from '@/api/detail/quote.api';
 import { formatKoreanDate } from '@/utils/date';
+import {
+  createBookBookmark,
+  deleteBookBookmark,
+} from '@/api/detail/bookmark.api';
 
 const TAB_OPTIONS = ['토론', '인용구'] as const;
 type Tab = (typeof TAB_OPTIONS)[number];
@@ -29,24 +32,26 @@ const BookDetailPage: React.FC = () => {
   const [book, setBook] = useState<BookDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  //토론 API 추후 연결
+  // 토론 API 추후 연결
   const discussions: any[] = [];
-  const [quotes, setQuotes]=useState<any[]>([]);
-  const navigate=useNavigate();
+  const [quotes, setQuotes] = useState<any[]>([]);
+  const navigate = useNavigate();
+
+  const [isBookmarked, setIsBookmarked] = useState(false);
 
   const handleCreateDiscussion = () => {
     setOpenCreateModal(true);
   };
 
   // ==== 인용구 조회 API ====
-  useEffect(()=>{
-    if(!book?.bookId) return;
-    (async ()=>{
-      try{
-        const res=await fetchQuotes(book.bookId);
-        setQuotes(res.data??[]);
-      }catch(err:any){
-        console.error("인용구 불러오기 실패:", err);
+  useEffect(() => {
+    if (!book?.bookId) return;
+    (async () => {
+      try {
+        const res = await fetchQuotes(book.bookId);
+        setQuotes(res.data ?? []);
+      } catch (err: any) {
+        console.error('인용구 불러오기 실패:', err);
       }
     })();
   }, [book?.bookId]);
@@ -64,6 +69,12 @@ const BookDetailPage: React.FC = () => {
         setLoading(true);
         const data = await fetchBookDetail(bookId);
         setBook(data);
+
+        //북마크 여부 내려주는 API 필요
+        if (typeof (data as any).bookmarked === 'boolean') {
+          setIsBookmarked(Boolean((data as any).bookmarked));
+        }
+
         setError(null);
       } catch (err: any) {
         console.error(err);
@@ -74,12 +85,33 @@ const BookDetailPage: React.FC = () => {
     })();
   }, [bookId]);
 
+  const handleToggleBookmark = async () => {
+    if (!bookId) return;
+
+    try {
+      if (isBookmarked) {
+        await deleteBookBookmark(bookId);
+        setIsBookmarked(false);
+      } else {
+        await createBookBookmark(bookId);
+        setIsBookmarked(true);
+      }
+    } catch (err: any) {
+      console.error('북마크 토글 실패:', err);
+      // TODO: 토스트로 바꾸기
+    }
+  };
+
   // ===== 로딩 / 에러 처리 =====
   if (loading) {
     return (
       <div className="bg-beige1 min-h-screen">
         <div className="fixed left-0 right-0 top-0 z-50">
-          <Header variant="logoBookmark" />
+          <Header
+            variant="logoBookmark"
+            isBookmarked={isBookmarked}
+            onToggleBookmark={handleToggleBookmark}
+          />
         </div>
         <p className="mt-20 text-center text-gray6">책 정보를 불러오는 중입니다…</p>
       </div>
@@ -90,7 +122,11 @@ const BookDetailPage: React.FC = () => {
     return (
       <div className="bg-beige1 min-h-screen">
         <div className="fixed left-0 right-0 top-0 z-50">
-          <Header variant="logoBookmark" />
+          <Header
+            variant="logoBookmark"
+            isBookmarked={isBookmarked}
+            onToggleBookmark={handleToggleBookmark}
+          />
         </div>
         <p className="mt-20 text-center text-gray6">
           {error ?? '책 정보를 찾을 수 없습니다.'}
@@ -99,7 +135,6 @@ const BookDetailPage: React.FC = () => {
     );
   }
 
-  // ===== API에서 받은 데이터 =====
   const { title, author, publisher, description, thumbnailUrl, genres } = book;
 
   const coverImageUrl = thumbnailUrl;
@@ -108,7 +143,11 @@ const BookDetailPage: React.FC = () => {
   return (
     <div className="bg-beige1 min-h-screen">
       <div className="fixed left-0 right-0 top-0 z-40">
-        <Header variant="logoBookmark" />
+        <Header
+          variant="logoBookmark"
+          isBookmarked={isBookmarked}
+          onToggleBookmark={handleToggleBookmark}
+        />
       </div>
 
       <div className="mx-auto pt-14 pb-10">
@@ -179,7 +218,9 @@ const BookDetailPage: React.FC = () => {
         {activeTab === '토론' && (
           <div className="mt-4 px-5">
             {discussions.length === 0 ? (
-              <p className="text-body3 text-gray5 mt-6 text-center">아직 등록된 토론이 없어요.</p>
+              <p className="text-body3 text-gray5 mt-6 text-center">
+                아직 등록된 토론이 없어요.
+              </p>
             ) : (
               <div className="space-y-3">
                 {discussions.map((d) => (
@@ -215,14 +256,14 @@ const BookDetailPage: React.FC = () => {
                 <DiscussionCard
                   key={q.quote_id}
                   type="quote"
-                  bookTitle={title} //책 제목도 안 내려와서 우선 상세 조회 API에서 받아오기
+                  bookTitle={title} // 책 제목도 안 내려와서 우선 상세 조회 API에서 받아오기
                   content={q.content}
                   tags={tags}
                   nickname={q.nickname}
                   dateLabel={formatKoreanDate(q.created_at)}
                   likeCount={q.like_count}
                   onClickCard={() => {
-                    navigate(`/quote/${q.quote_id}`)
+                    navigate(`/quote/${q.quote_id}`);
                   }}
                 />
               ))
@@ -230,18 +271,22 @@ const BookDetailPage: React.FC = () => {
           </div>
         )}
       </div>
-      <DiscussionCreateModal open={openCreateModal} onClose={() => setOpenCreateModal(false)} />
+
+      <DiscussionCreateModal
+        open={openCreateModal}
+        onClose={() => setOpenCreateModal(false)}
+      />
       <QuoteCreateModal
         open={openQuoteModal}
         onClose={() => setOpenQuoteModal(false)}
-        onSubmit={async (quoteContent)=>{
-          try{
+        onSubmit={async (quoteContent) => {
+          try {
             await createQuote(book.bookId!, quoteContent);
-            const res=await fetchQuotes(book.bookId!);
-            setQuotes(res.data??[]);
+            const res = await fetchQuotes(book.bookId!);
+            setQuotes(res.data ?? []);
             setOpenQuoteModal(false);
-          }catch(err:any){
-            console.error("인용구 생성 실패:", err);
+          } catch (err: any) {
+            console.error('인용구 생성 실패:', err);
           }
         }}
       />

@@ -31,9 +31,12 @@ interface HeaderProps {
   onSettingClick?: () => void;
   onMoreClick?: () => void;
   onMyPageClick?: () => void;
-  onShareClick?: () => void; 
-  dropdownContent?:ReactNode;
+  onShareClick?: () => void;
+  dropdownContent?: ReactNode;
   className?: string;
+
+  isBookmarked?: boolean;
+  onToggleBookmark?: () => void;
 }
 
 const Header = ({
@@ -47,14 +50,19 @@ const Header = ({
   onShareClick,
   dropdownContent,
   className,
+  isBookmarked, 
+  onToggleBookmark,
 }: HeaderProps) => {
   // VS 토론 헤더에서 아래 화살표 회전용
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  // 로고 + 북마크 헤더에서 북마크 토글용
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [internalBookmarked, setInternalBookmarked] = useState(false);
   const navigate = useNavigate();
 
-  // 배경색: 드롭다운/북마크 헤더만 FFFDF6 (bg-beige2), 나머지는 F9F5E8 (bg-beige1)
+  const isControlledBookmark = typeof isBookmarked === 'boolean';
+  const currentBookmarked = isControlledBookmark
+    ? (isBookmarked as boolean)
+    : internalBookmarked;
+
   const bgClass =
     variant === 'backTitleDropdown' || variant === 'logoBookmark' ? 'bg-beige2' : 'bg-beige1';
 
@@ -117,11 +125,15 @@ const Header = ({
           <button
             type="button"
             onClick={() => {
-              setIsBookmarked((prev) => !prev);
+              if (onToggleBookmark) {
+                onToggleBookmark();
+              } else {
+                setInternalBookmarked((prev) => !prev);
+              }
             }}
             aria-label="북마크"
           >
-            {isBookmarked ? (
+            {currentBookmarked ? (
               <BookmarkOnIcon className="text-green1 h-7 w-7 cursor-pointer" />
             ) : (
               <BookmarkOffIcon className="text-green1 h-7 w-7 cursor-pointer" />
@@ -131,7 +143,7 @@ const Header = ({
 
       case 'logoMy':
         return (
-          <button type="button" className='cursor-pointer' onClick={onMyPageClick} aria-label="마이페이지">
+          <button type="button" className="cursor-pointer" onClick={onMyPageClick} aria-label="마이페이지">
             <MyPageIcon className="text-green1 h-8 w-8" />
           </button>
         );
@@ -165,17 +177,17 @@ const Header = ({
       <div className="flex h-14 items-center justify-between px-4">
         {/* (수정) flex 비율 조정 및 min-w 설정으로 찌그러짐 방지 */}
         <div className="flex w-10 min-w-10 items-center justify-start">
-            {renderLeft()}
+          {renderLeft()}
         </div>
-        
+
         {/* 중앙 영역은 남는 공간 다 차지하되(flex-1), 넘치면 숨김 */}
         <div className="flex flex-1 items-center justify-center overflow-hidden">
-            {renderCenter()}
+          {renderCenter()}
         </div>
-        
+
         {/* 오른쪽 영역도 고정 너비로 잡아줘서 중앙 정렬이 틀어지지 않게 함 */}
         <div className="flex w-10 min-w-10 items-center justify-end">
-            {renderRight()}
+          {renderRight()}
         </div>
       </div>
 
@@ -184,7 +196,7 @@ const Header = ({
         <div className="flex justify-end pr-4 pb-2">
           <button
             type="button"
-            className='cursor-pointer'
+            className="cursor-pointer"
             onClick={() => setIsDropdownOpen((prev) => !prev)}
             aria-label="드롭다운 토글"
           >
@@ -199,19 +211,16 @@ const Header = ({
       )}
 
       {/* 3줄째: 드롭다운 영역 */}
-      {variant === "backTitleDropdown" && (
+      {variant === 'backTitleDropdown' && (
         <div
           className={cn(
-            "overflow-hidden transition-all duration-300 ease-in-out",  // 애니메이션
-            isDropdownOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+            'overflow-hidden transition-all duration-300 ease-in-out', // 애니메이션
+            isDropdownOpen ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0',
           )}
         >
-          <div className="px-4 pb-3 pt-1">
-            {dropdownContent}
-          </div>
+          <div className="px-4 pb-3 pt-1">{dropdownContent}</div>
         </div>
       )}
-
     </header>
   );
 };
