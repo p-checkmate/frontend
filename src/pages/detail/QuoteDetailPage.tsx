@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Image, Badge, Header } from "@/components";
 import { QuoteIcon } from "@/assets";
-import { fetchQuoteDetail } from "@/api/detail/quote.api";
+import {
+  fetchQuoteDetail,
+  fetchQuoteLikeStatus,
+  likeQuote,
+  unlikeQuote,
+} from "@/api/detail/quote.api";
 import { formatKoreanDate } from "@/utils/date";
 
 const QuoteDetailPage: React.FC = () => {
@@ -24,6 +29,10 @@ const QuoteDetailPage: React.FC = () => {
     updated_at: string | null;
   } | null>(null);
 
+  // 헤더 좋아요 상태
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+
   useEffect(() => {
     if (!quoteId) {
       setError("잘못된 접근입니다.");
@@ -43,11 +52,16 @@ const QuoteDetailPage: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        // 인터셉터 때문에 fetchQuoteDetail 결과는 바로 data 객체
-        const quoteData = await fetchQuoteDetail(id);
+        const [quoteData, likedStatus] = await Promise.all([
+          fetchQuoteDetail(id),
+          fetchQuoteLikeStatus(id),
+        ]);
+
         setQuote(quoteData);
+        setLikeCount(quoteData.like_count ?? 0);
+        setLiked(likedStatus ?? false);
       } catch (err: any) {
-        console.error("인용구 상세 조회 실패:", err);
+        console.error("인용구 상세/좋아요 조회 실패:", err);
         setError("인용구 정보를 불러오지 못했습니다.");
       } finally {
         setLoading(false);
@@ -55,15 +69,46 @@ const QuoteDetailPage: React.FC = () => {
     })();
   }, [quoteId]);
 
+  const handleToggleLike = async () => {
+    if (!quote) return;
+
+    try {
+      if (liked) {
+        await unlikeQuote(quote.quote_id);
+        setLiked(false);
+        setLikeCount((prev) => Math.max(prev - 1, 0));
+        setQuote((prev) =>
+          prev
+            ? {
+                ...prev,
+                like_count: Math.max(prev.like_count - 1, 0),
+              }
+            : prev,
+        );
+      } else {
+        await likeQuote(quote.quote_id);
+        setLiked(true);
+        setLikeCount((prev) => prev + 1);
+        setQuote((prev) =>
+          prev
+            ? {
+                ...prev,
+                like_count: prev.like_count + 1,
+              }
+            : prev,
+        );
+      }
+    } catch (err) {
+      console.error("인용구 좋아요 토글 실패:", err);
+      //토스트로
+    }
+  };
+
   // ===== 로딩 / 에러 처리 =====
   if (loading) {
     return (
       <div className="min-h-screen bg-beige1">
-        <Header
-          variant="backTitle"
-          title="인용구"
-          onBackClick={() => navigate(-1)}
-        />
+        <Header variant="back" onBackClick={() => navigate(-1)} />
         <p className="mt-10 text-center text-body3 text-gray4">
           인용구 정보를 불러오는 중입니다…
         </p>
@@ -74,11 +119,7 @@ const QuoteDetailPage: React.FC = () => {
   if (error || !quote) {
     return (
       <div className="min-h-screen bg-beige1">
-        <Header
-          variant="backTitle"
-          title="인용구"
-          onBackClick={() => navigate(-1)}
-        />
+        <Header variant="back" onBackClick={() => navigate(-1)} />
         <p className="mt-10 text-center text-body3 text-gray4">
           {error ?? "인용구 정보를 찾을 수 없습니다."}
         </p>
@@ -86,8 +127,6 @@ const QuoteDetailPage: React.FC = () => {
     );
   }
 
-  // ===== 화면에 쓸 데이터 매핑 =====
-  // 🔹 책 정보는 일단 임시 하드코딩
   const bookTitle = "임시 책 제목";
   const author = "임시 저자";
   const publisher = "임시 출판사";
@@ -97,27 +136,24 @@ const QuoteDetailPage: React.FC = () => {
   const writer = quote.nickname;
   const date = formatKoreanDate(quote.created_at);
 
-  // 아직 태그 없음
   const tags: { id: number; label: string }[] = [];
 
   return (
     <div className="min-h-screen bg-beige1">
-      {/* 상단 헤더 */}
+      {/* 상단 헤더: 뒤로가기 + 하트 */}
       <Header
-        variant="backTitle"
-        title="인용구"
+        variant="back"
         onBackClick={() => navigate(-1)}
+        isLiked={liked}
+        likeCount={likeCount}
+        onToggleLike={handleToggleLike}
       />
 
       <div className="px-5 py-3">
         {/* 책 정보 + 표지 */}
         <div className="flex items-center gap-4">
           <div className="h-28 w-[80px] flex-shrink-0">
-            <Image
-              src={coverUrl}
-              alt="책 표지"
-              className="h-full w-full rounded"
-            />
+            <Image src={coverUrl} alt="책 표지" className="h-full w-full rounded" />
           </div>
 
           <div className="flex flex-1 flex-col gap-1">
@@ -152,10 +188,8 @@ const QuoteDetailPage: React.FC = () => {
           </div>
 
           <div className="flex gap-3 pt-1">
-            <div className="self-stretch w-1 rounded-full bg-gray1" />
-            <p className="flex-1 whitespace-pre-line text-body2">
-              {content}
-            </p>
+            <div className="w-1 self-stretch rounded-full bg-gray1" />
+            <p className="flex-1 whitespace-pre-line text-body2">{content}</p>
           </div>
         </div>
 

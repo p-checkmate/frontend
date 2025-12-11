@@ -27,10 +27,16 @@ export async function fetchQuoteDetail(quoteId: number): Promise<QuoteDetail> {
   return data as unknown as QuoteDetail;
 }
 
+//좋아요
 export const likeQuote = async (quoteId: number) => {
   return api.post(`/quotes/${quoteId}/like`, {});
 };
 
 export const unlikeQuote = async (quoteId: number) => {
   return api.delete(`/quotes/${quoteId}/like`);
+};
+
+export const fetchQuoteLikeStatus = async (quoteId: number): Promise<boolean> => {
+  const res = await api.get(`/quotes/${quoteId}/like-status`);
+  return (res as any).liked as boolean;
 };

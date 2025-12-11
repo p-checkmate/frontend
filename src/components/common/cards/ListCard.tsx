@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { cn } from '@/utils/cn';
 import Badge from '@/components/common/badge/Badge';
 import { HeartIcon, HeartFilled, MoreIcon } from '@/assets';
@@ -18,10 +18,8 @@ interface DiscussionCardProps {
   className?: string;
   onClickCard?: () => void;
 
-  // (추가) 좋아요 상태 강제 주입 (선택 사항)
+  /** 표시용 좋아요 여부(boolean) */
   isLiked?: boolean;
-  // (추가) 좋아요 버튼 클릭 시 부모에게 알림 (삭제용)
-  onLikeClick?: () => void;
 }
 
 const DiscussionCard: React.FC<DiscussionCardProps> = ({
@@ -36,32 +34,9 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
   commentCount,
   className,
   onClickCard,
-  isLiked,     // 추가
-  onLikeClick, // 추가
+  isLiked = false,
 }) => {
   const isQuote = type === 'quote';
-
-  // 좋아요 상태
-  //const [liked, setLiked] = useState(false);
-
-  // (수정) isLiked 값이 있으면 그걸로 초기화, 없으면 false
-  const [liked, setLiked] = useState(isLiked ?? false);
-
-  // const displayLikeCount = likeCount + (liked ? 1 : 0);
-  const displayLikeCount = likeCount + (liked ? 0 : 0); 
-  // (참고: 이미 좋아요 된 상태라면 카운트 표시는 백엔드 로직에 따라 +1/-1 달라질 수 있음. 일단 UI 위주로)
-
-  const toggleLike = (e: React.MouseEvent) => {
-    e.stopPropagation();
-
-    // 1. 내부 상태 변경
-    setLiked((prev) => !prev);
-
-    // 2. 부모에게 알림 (MyLike 페이지에서 삭제하기 위해)
-    if (onLikeClick) {
-      onLikeClick();
-    }
-  };
 
   return (
     <div
@@ -89,7 +64,7 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
       {/* 내용 */}
       <p className="text-body5 text-gray3 mt-2 line-clamp-2 pr-7">{content}</p>
 
-      {/* 태그 (최대 2개) */}
+      {/* 태그 (인용구만) */}
       {isQuote && tags && tags.length > 0 && (
         <div className="mt-3.5 flex gap-2">
           {tags.slice(0, 2).map((t) => (
@@ -109,23 +84,17 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
 
         {/* 좋아요 / 댓글 */}
         <div className="flex items-center gap-2">
-          {/* 좋아요 버튼 */}
-          <button
-            onClick={toggleLike}
-            className="text-body4 rounded-m border-gray2 flex h-6 cursor-pointer items-center gap-1 border px-3"
-          >
-            <span
-              className={cn(
-                'flex h-4 w-4 flex-shrink-0 items-center justify-center',
-                liked && 'animate-like-bump',
+          <div className="text-body4 rounded-m border-gray2 flex h-6 items-center gap-1 border px-3 select-none">
+            <span className="flex h-4 w-4 items-center justify-center">
+              {isLiked ? (
+                <HeartFilled className="h-4 w-4" />
+              ) : (
+                <HeartIcon className="h-4 w-4" />
               )}
-            >
-              {liked ? <HeartFilled className="h-4 w-4" /> : <HeartIcon className="h-4 w-4" />}
             </span>
-            <span>{displayLikeCount}</span>
-          </button>
+            <span>{likeCount}</span>
+          </div>
 
-          {/* 댓글 뱃지 (토론 타입만) */}
           {!isQuote && typeof commentCount === 'number' && (
             <Badge variant="comment" comment={commentCount} />
           )}
