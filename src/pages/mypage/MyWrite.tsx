@@ -13,32 +13,11 @@ import {
   type LikedDiscussionsResponse,
 } from '@/api/mypage/mywrite.api';
 
+// UI 타입 src/types 에서 import
+import type { UIQuote, UIDiscussion } from '@/types/mywrite';
+
 // 탭 타입
 type Tab = '인용구' | '토론';
-
-// UI 전용 타입
-type UIQuote = {
-  id: number;            // quote_id
-  bookTitle: string;
-  content: string;
-  tags: string[];
-  nickname: string;
-  dateLabel: string;
-  likeCount: number;
-  isLiked: boolean;
-};
-
-type UIDiscussion = {
-  id: number;            // discussion_id
-  bookTitle: string;
-  title: string;
-  content: string;
-  nickname: string;
-  dateLabel: string;
-  likeCount: number;
-  commentCount: number;
-  isLiked: boolean;
-};
 
 // 날짜 문자열을 간단히 포맷하는 함수 (created_at → YYYY-MM-DD 정도)
 function formatDateLabel(createdAt: string): string {
@@ -201,10 +180,7 @@ const MyWrite: React.FC = () => {
                     dateLabel={q.dateLabel}
                     likeCount={q.likeCount}
                     isLiked={q.isLiked}
-                    // 카드 클릭 → 인용구 상세 페이지로 이동
                     onClickCard={() => navigate(`/quote/${q.id}`)}
-                    // 좋아요 버튼 API 연결은 나중에 onLikeClick으로 연결 예정
-                    // onLikeClick={() => ...}
                   />
                 ))
               )}
@@ -231,9 +207,7 @@ const MyWrite: React.FC = () => {
                     likeCount={d.likeCount}
                     commentCount={d.commentCount}
                     isLiked={d.isLiked}
-                    // 카드 클릭 → 토론방 상세 페이지로 이동
                     onClickCard={() => navigate(`/debate/${d.id}`)}
-                    // onLikeClick={() => ...}  // 좋아요 토글 API는 나중에
                   />
                 ))
               )}
