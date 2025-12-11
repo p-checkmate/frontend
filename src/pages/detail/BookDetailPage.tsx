@@ -275,6 +275,11 @@ const BookDetailPage: React.FC = () => {
       <DiscussionCreateModal
         open={openCreateModal}
         onClose={() => setOpenCreateModal(false)}
+        bookId={book.bookId}
+        onCreated={(id) => {
+          console.log('새 토론 생성됨:', id);
+          navigate(`/debate/${id}`)
+        }}
       />
       <QuoteCreateModal
         open={openQuoteModal}
