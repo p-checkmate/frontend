@@ -1,35 +1,84 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { Header, BaseModal, Button } from '@/components';
 import { RightArrowIcon } from '@/assets';
-import { userProfileMock } from '@/_mocks/myPageMock'; // Mock 데이터 가져오기
+
+import {
+  fetchSettingProfile,
+  logout,
+  deleteAccount,
+} from '@/api/mypage/setting.api';
+import type { SettingProfile } from '@/api/mypage/setting.api';
 
 const Setting: React.FC = () => {
   const navigate = useNavigate();
-  
-  // 모달 상태 관리
+
+  // ===== 유저 정보 상태 =====
+  const [profile, setProfile] = useState<SettingProfile | null>(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [profileError, setProfileError] = useState<string | null>(null);
+
+  // ===== 모달 상태 =====
   const [logoutModalOpen, setLogoutModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
+  // 버튼 중복 클릭 방지용
+  const [processing, setProcessing] = useState(false);
+
+  // ===== 프로필 로드 =====
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        setLoadingProfile(true);
+        setProfileError(null);
+
+        const data = await fetchSettingProfile();
+        setProfile(data);
+      } catch (e) {
+        console.error('설정 화면 프로필 로딩 실패:', e);
+        setProfileError('계정 정보를 불러오지 못했어요.');
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+
+    loadProfile();
+  }, []);
+
   // 1. 라이선스 페이지 이동
   const handleLicenseClick = () => {
-    navigate('/mypage/setting/license'); //추후 경로 수정
+    navigate('/mypage/setting/license'); // 추후 경로 수정
   };
 
   // 2. 로그아웃 처리
-  const handleLogoutConfirm = () => {
-    // TODO: 실제 로그아웃 로직 (토큰 삭제 등)
-    console.log('로그아웃 처리됨');
-    setLogoutModalOpen(false);
-    navigate('/onboardingLandingPage');
+  const handleLogoutConfirm = async () => {
+    if (processing) return;
+    try {
+      setProcessing(true);
+      await logout(); // 토큰 정리 + 서버에 logout 요청
+      setLogoutModalOpen(false);
+      navigate('/onboardingLandingPage', { replace: true });
+    } catch (err) {
+      console.error('로그아웃 처리 중 오류:', err);
+    } finally {
+      setProcessing(false);
+    }
   };
 
   // 3. 회원 탈퇴 처리
-  const handleDeleteConfirm = () => {
-    // TODO: 실제 회원탈퇴 API 호출
-    console.log('회원탈퇴 처리됨');
-    setDeleteModalOpen(false);
-    navigate('/onboardingLandingPage');
+  const handleDeleteConfirm = async () => {
+    if (processing) return;
+    try {
+      setProcessing(true);
+      await deleteAccount(); // 서버에서 탈퇴 처리
+      setDeleteModalOpen(false);
+      navigate('/onboardingLandingPage', { replace: true });
+    } catch (err) {
+      console.error('회원탈퇴 처리 중 오류:', err);
+    } finally {
+      setProcessing(false);
+    }
   };
 
   return (
@@ -43,14 +92,25 @@ const Setting: React.FC = () => {
       />
 
       <main className="w-full">
-        {/* 2. 유저 정보 영역 (Mock Data 연결) */}
+        {/* 2. 유저 정보 영역 */}
         <section className="px-[37px] py-6 flex flex-col gap-1">
-          <h2 className="text-caption1 text-black">
-            {userProfileMock.nickname}
-          </h2>
-          <p className="text-body4 text-gray3 font-normal">
-            {userProfileMock.email}
-          </p>
+          {loadingProfile ? (
+            <>
+              <div className="h-5 w-32 bg-gray1 rounded-m animate-pulse" />
+              <div className="h-4 w-40 bg-gray1 rounded-m animate-pulse" />
+            </>
+          ) : profileError ? (
+            <p className="text-body4 text-pink">{profileError}</p>
+          ) : (
+            <>
+              <h2 className="text-caption1 text-black">
+                {profile?.nickname ?? ''}
+              </h2>
+              <p className="text-body4 text-gray3 font-normal">
+                {profile?.email ?? ''}
+              </p>
+            </>
+          )}
         </section>
 
         {/* 구분선 */}
@@ -71,7 +131,9 @@ const Setting: React.FC = () => {
           {/* 버전 정보 */}
           <div className="flex w-full items-center justify-between py-4">
             <span className="text-caption3 text-black">버전 정보</span>
-            <span className="text-caption3 text-black font-medium">1.0.0</span>
+            <span className="text-caption3 text-black font-medium">
+              1.0.0
+            </span>
           </div>
         </section>
 
@@ -101,7 +163,7 @@ const Setting: React.FC = () => {
       </main>
 
       {/* ========================= */}
-      {/* 모달 영역         */}
+      {/* 모달 영역 */}
       {/* ========================= */}
 
       {/* 1. 로그아웃 모달 */}
@@ -111,24 +173,26 @@ const Setting: React.FC = () => {
         title="로그아웃"
         footer={
           <div className="flex justify-center gap-3 w-full">
-             <Button 
-               variant="outline" 
-               color="gray" 
-               size="md" 
-               className="flex-1"
-               onClick={() => setLogoutModalOpen(false)}
-             >
-               취소
-             </Button>
-             <Button 
-               variant="solid" 
-               color="green" 
-               size="md" 
-               className="flex-1"
-               onClick={handleLogoutConfirm}
-             >
-               확인
-             </Button>
+            <Button
+              variant="outline"
+              color="gray"
+              size="md"
+              className="flex-1"
+              onClick={() => setLogoutModalOpen(false)}
+              disabled={processing}
+            >
+              취소
+            </Button>
+            <Button
+              variant="solid"
+              color="green"
+              size="md"
+              className="flex-1"
+              onClick={handleLogoutConfirm}
+              disabled={processing}
+            >
+              확인
+            </Button>
           </div>
         }
       >
@@ -146,37 +210,36 @@ const Setting: React.FC = () => {
         title="회원 탈퇴"
         footer={
           <div className="flex justify-center gap-3 w-full">
-             <Button 
-               variant="outline" 
-               color="gray" 
-               size="md" 
-               className="flex-1"
-               onClick={() => setDeleteModalOpen(false)}
-             >
-               취소
-             </Button>
-             <Button 
-               variant="solid" 
-               color="green" 
-               size="md" 
-               className="flex-1"
-               onClick={handleDeleteConfirm}
-             >
-               탈퇴
-             </Button>
+            <Button
+              variant="outline"
+              color="gray"
+              size="md"
+              className="flex-1"
+              onClick={() => setDeleteModalOpen(false)}
+              disabled={processing}
+            >
+              취소
+            </Button>
+            <Button
+              variant="solid"
+              color="green"
+              size="md"
+              className="flex-1"
+              onClick={handleDeleteConfirm}
+              disabled={processing}
+            >
+              탈퇴
+            </Button>
           </div>
         }
       >
         <div className="text-center -mt-1 pb-2 space-y-1">
-          <p className="text-body4 text-gray3">
-            정말 탈퇴하시겠습니까?
-          </p>
+          <p className="text-body4 text-gray3">정말 탈퇴하시겠습니까?</p>
           <p className="text-caption5 text-pink">
             이 작업은 되돌릴 수 없습니다.
           </p>
         </div>
       </BaseModal>
-
     </div>
   );
 };
