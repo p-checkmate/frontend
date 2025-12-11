@@ -45,7 +45,7 @@ const OnboardingPage1: React.FC = () => {
       localStorage.setItem(
         "user",
         JSON.stringify({
-          user_id: user.userId,
+          user_id: user.user_id,
           email: user.email,
           nickname: user.nickname,
           profile_url:""
