@@ -182,7 +182,7 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({
             </div>
           </div>
 
-          {/* 🔥 최종 투표 카드 */}
+          {/* 최종 투표 카드 */}
           <div className="rounded-l bg-white p-4 shadow-sm">
             <h3 className="mb-2 text-title6">최종 투표</h3>
             <p className="mb-4 text-body2 text-gray3">
