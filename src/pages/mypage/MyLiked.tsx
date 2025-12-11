@@ -12,29 +12,12 @@ const MyLiked: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('인용구');
 
   // 1. Mock Data를 State로 변환 (삭제 시 리렌더링을 위해)
-  const [quotes, setQuotes] = useState(likedQuotesMock);
-  const [discussions, setDiscussions] = useState(likedDiscussionsMock);
+  const [quotes,] = useState(likedQuotesMock);
+  const [discussions,] = useState(likedDiscussionsMock);
 
   // 2. 삭제 애니메이션 및 토스트 상태 관리
-  const [leavingId, setLeavingId] = useState<number | null>(null);
+  const [leavingId,] = useState<number | null>(null);
   const [toastVisible, setToastVisible] = useState(false);
-
-  // 3. 좋아요 취소 핸들러 (DiscussionCard의 onLikeClick에서 호출)
-  const handleUnlike = (id: number, type: 'quote' | 'discussion') => {
-    // (1) 애니메이션 시작: 카드가 옆으로 밀려남
-    setLeavingId(id);
-
-    // (2) 0.3초(애니메이션 시간) 뒤에 실제 데이터 삭제
-    setTimeout(() => {
-      if (type === 'quote') {
-        setQuotes((prev) => prev.filter((q) => q.id !== id));
-      } else {
-        setDiscussions((prev) => prev.filter((d) => d.id !== id));
-      }
-      setLeavingId(null); // 상태 초기화
-      setToastVisible(true); // "삭제되었습니다" 토스트 표시
-    }, 300);
-  };
 
   // 토스트 자동 숨김 타이머
   useEffect(() => {
