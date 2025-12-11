@@ -3,14 +3,17 @@ import api from "../api";
 export interface SignupRequest {
   email: string;
   password: string;
+  nickname: string;
 }
 
 export interface SignupData {
   accessToken: string;
   refreshToken: string;
   user: {
-    userId: number;
+    user_id: number;
     email: string;
+    nickname: string;
+    profile_url:string
   };
 }
 

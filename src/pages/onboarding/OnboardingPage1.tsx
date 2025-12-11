@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {Header, Button, Input, Toast} from '@/components'; 
+import { Header, Button, Input, Toast } from "@/components";
 import { useOnboardingStore } from "@/store/useOnboardingStore";
-import { updateNickname } from "@/api/user/nickname.api";
+import { signup } from "@/api/auth/auth.api";
 
 const OnboardingPage1: React.FC = () => {
   const navigate = useNavigate();
-  const { nickname, setNickname } = useOnboardingStore();
+
+  const { email, password, nickname, setNickname } = useOnboardingStore();
 
   const [isLoading, setIsLoading] = useState(false);
-
   const isFilled = nickname.trim().length > 0;
+
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
 
@@ -25,26 +26,48 @@ const OnboardingPage1: React.FC = () => {
   const handleNext = async () => {
     if (!isFilled || isLoading) return;
 
+    if (!email || !password) {
+      showToast("다시 회원가입 정보를 입력해 주세요.");
+      navigate("/signup");
+      return;
+    }
+
     try {
       setIsLoading(true);
 
-      await updateNickname(nickname);
+      const res = await signup({ email, password, nickname });
+
+      const { accessToken, refreshToken, user } = res;
+
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
+      localStorage.setItem(
+        "user",
+        JSON.stringify({
+          user_id: user.user_id,
+          email: user.email,
+          nickname: user.nickname,
+          profile_url:""
+        }),
+      );
 
       navigate("/onboarding/book");
-
     } catch (error: any) {
-      showToast(error.message ?? "프로필 설정 중 오류가 발생했습니다.");
+      showToast(
+        error?.response?.data?.error?.message ??
+          error.message ??
+          "프로필 설정 중 오류가 발생했습니다.",
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
-
-
-
   return (
     <div className="bg-beige1 h-screen w-full flex flex-col overflow-hidden items-center">
-       <Toast variant="alert" visible={toastVisible} message={toastMessage} />
+      <Toast variant="alert" visible={toastVisible} message={toastMessage} />
+
       {/* 1. 헤더 */}
       <Header
         variant="back"
@@ -59,7 +82,6 @@ const OnboardingPage1: React.FC = () => {
 
       {/* 3. 메인 컨텐츠 영역 */}
       <main className="flex-1 w-full max-w-[375px] mx-auto px-[18px] overflow-y-auto">
-        
         {/* 타이틀 영역 */}
         <section className="mt-5 mb-12">
           <h1 className="text-title3 text-black whitespace-pre-line">
@@ -77,25 +99,22 @@ const OnboardingPage1: React.FC = () => {
             onChange={(e) => setNickname(e.target.value)}
           />
         </section>
-
       </main>
 
       {/* 4. 하단 버튼 영역 (고정) */}
       <div className="w-full max-w-[363px] mx-auto px-[18px] pb-10 bg-beige1 flex-shrink-0 pt-4 relative">
-        
         <Button
-          type="submit"
+          type="button"
           variant="solid"
-          color="yellow" 
+          color="yellow"
           size="lg"
           fullWidth
-          disabled={!isFilled}
+          disabled={!isFilled || isLoading}
           onClick={handleNext}
         >
-          다음
+          {isLoading ? "가입 중..." : "다음"}
         </Button>
       </div>
-
     </div>
   );
 };

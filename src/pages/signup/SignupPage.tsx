@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, Button, Input, Toast } from "@/components";
 import { LoginCharacter } from "@/assets";
-
-import { signup } from "@/api/auth/auth.api";
+import { useOnboardingStore } from "@/store/useOnboardingStore";
 
 const SignupPage: React.FC = () => {
   const navigate = useNavigate();
+
+  // 온보딩 스토어에 회원가입 정보 저장용
+  const { setEmail: setSignupEmail, setPassword: setSignupPassword } =
+    useOnboardingStore();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,41 +28,37 @@ const SignupPage: React.FC = () => {
     }, 2500);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!email.trim()) {
+      showToast("이메일을 입력해 주세요.");
+      return;
+    }
+
+    if (!password.trim()) {
+      showToast("비밀번호를 입력해 주세요.");
+      return;
+    }
 
     if (password !== passwordCheck) {
       showToast("비밀번호가 일치하지 않습니다.");
       return;
     }
 
-    try {
-      setIsLoading(true);
+    setIsLoading(true);
 
-      const res = await signup({ email, password });
+    // 여기서는 API 호출 X, 온보딩 스토어에만 저장
+    setSignupEmail(email);
+    setSignupPassword(password);
 
-      const { accessToken, refreshToken } = res;
-
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-
-      navigate("/onboarding/nickname");
-    } catch (error: any) {
-      showToast(error.message ?? "회원가입 중 오류가 발생했습니다.");
-    } finally {
-      setIsLoading(false);
-    }
-
+    navigate("/onboarding/nickname");
+    setIsLoading(false);
   };
 
   return (
     <div className="bg-beige1 min-h-screen flex flex-col items-center">
-
-      <Toast
-        variant="alert"
-        visible={toastVisible}
-        message={toastMessage}
-      />
+      <Toast variant="alert" visible={toastVisible} message={toastMessage} />
 
       <Header
         variant="back"
@@ -126,7 +125,7 @@ const SignupPage: React.FC = () => {
               fullWidth
               disabled={isLoading}
             >
-              {isLoading ? "가입 중..." : "다음"}
+              {isLoading ? "다음으로..." : "다음"}
             </Button>
           </div>
         </form>

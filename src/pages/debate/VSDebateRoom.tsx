@@ -83,40 +83,46 @@ const VSDebateRoomPage: React.FC<VSDebateRoomPageProps> = ({ discussion }) => {
 
   return (
     <div className="flex min-h-screen justify-center bg-beige1">
-      <div className="flex w-full flex-col">
-        <Header
-          variant="backTitleDropdown"
-          onBackClick={() => navigate(-1)}
-          title={discussion.title}
-          dropdownContent={
-            <div className="bg-beige2 pt-1">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex h-8 w-14 items-center justify-center rounded-[8px] bg-yellow text-body2">
-                    1번
-                  </span>
-                  <span className="text-body2">{option1}</span>
-                </div>
-                <div className="flex items-center gap-2 pt-1">
-                  <span className="inline-flex h-8 w-14 items-center justify-center rounded-[8px] bg-green1 text-body2 text-white">
-                    2번
-                  </span>
-                  <span className="text-body2">{option2}</span>
+      {/* 가운데 정렬용 래퍼 + 최대 너비 */}
+      <div className="relative flex w-full max-w-[480px] flex-col">
+        {/* 상단 고정 헤더 */}
+        <div className="sticky top-0 z-10 bg-beige1">
+          <Header
+            variant="backTitleDropdown"
+            onBackClick={() => navigate(-1)}
+            title={discussion.title}
+            dropdownContent={
+              <div className="bg-beige2 pt-1">
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex h-8 w-14 items-center justify-center rounded-[8px] bg-yellow text-body2">
+                      1번
+                    </span>
+                    <span className="text-body2">{option1}</span>
+                  </div>
+                  <div className="flex items-center gap-2 pt-1">
+                    <span className="inline-flex h-8 w-14 items-center justify-center rounded-[8px] bg-green1 text-body2 text-white">
+                      2번
+                    </span>
+                    <span className="text-body2">{option2}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          }
-        />
-
-        <div className="flex flex-1 flex-col bg-beige1">
-          <section className="flex-1 px-5 pb-4 pt-6">
-            {messages.map((m) => (
-              <DebateMessageBubble key={m.id} message={m} type="VS" />
-            ))}
-          </section>
+            }
+          />
         </div>
 
-        <DebateOpinionBar type="vs" onSubmit={handleSubmit} />
+        {/* 메시지 리스트: 가운데만 스크롤 */}
+        <section className="flex-1 overflow-y-auto px-5 pb-24 pt-6">
+          {messages.map((m) => (
+            <DebateMessageBubble key={m.id} message={m} type="VS" />
+          ))}
+        </section>
+
+        {/* 하단 고정 인풋바 */}
+        <div className="sticky bottom-0 z-20 left-0 w-full mx-auto bg-beige1">
+          <DebateOpinionBar type="vs" onSubmit={handleSubmit} />
+        </div>
       </div>
     </div>
   );

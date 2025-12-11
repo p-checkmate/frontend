@@ -69,8 +69,9 @@ const FreeDebateRoomPage: React.FC<FreeProps> = ({ discussion }) => {
   };
 
   return (
-    <div className="flex min-h-screen justify-center bg-beige1">
-      <div className="flex w-full flex-col">
+    <div className="flex min-h-screen flex-col bg-beige1">
+      {/* 상단 고정 헤더 */}
+      <div className="sticky top-0 z-10 bg-beige1">
         <Header
           variant="backTitleDropdown"
           onBackClick={() => navigate(-1)}
@@ -81,15 +82,17 @@ const FreeDebateRoomPage: React.FC<FreeProps> = ({ discussion }) => {
             </section>
           }
         />
+      </div>
 
-        <div className="flex flex-1 flex-col bg-beige1">
-          <section className="flex-1 px-5 pb-4 pt-6">
-            {messages.map((m) => (
-              <DebateMessageBubble key={m.id} message={m} />
-            ))}
-          </section>
-        </div>
+      {/* 메시지 리스트 (스크롤 영역) */}
+      <div className="flex-1 overflow-y-auto px-5 pb-24 pt-6">
+        {messages.map((m) => (
+          <DebateMessageBubble key={m.id} message={m} />
+        ))}
+      </div>
 
+      {/* 하단 고정 input bar */}
+      <div className="sticky bottom-0 z-20 left-0 w-full mx-auto bg-beige1">
         <DebateOpinionBar type="default" onSubmit={handleSubmit} />
       </div>
     </div>
