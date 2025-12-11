@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { BaseModal, Button, Input, Textarea } from '@/components';
-import { createDiscussion } from '@/api/detail/discusstion.api';
+import { createDiscussion } from '@/api/detail/discussion.api';
 
 type CreateStep = 'selectType' | 'free' | 'vs';
 

@@ -1,29 +1,59 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-import { getDebateRoomById } from "@/_mocks/debateMock";
 
 import FreeDebateRoomPage from "./FreeDebateRoom";
 import VSDebateRoomPage from "./VSDebateRoom";
 
+import { fetchDiscussionDetail } from "@/api/detail/discussion.api";
+import type { Discussion } from "@/api/detail/discussion.api";
+
 const DebateRoomPage: React.FC = () => {
   const { debateRoomId } = useParams();
-  const roomId = Number(debateRoomId);
+  const discussionId = Number(debateRoomId);
 
-  const roomInfo = getDebateRoomById(roomId);
+  const [discussion, setDiscussion] = useState<Discussion | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!roomInfo) return <div>토론방을 찾을 수 없습니다.</div>;
+  useEffect(() => {
+    if (!discussionId) {
+      setError("잘못된 토론방 ID입니다.");
+      setLoading(false);
+      return;
+    }
 
-  // 타입에 따라 페이지 분기
-  if (roomInfo.type === "FREE") {
-    return <FreeDebateRoomPage debateRoomId={roomId} />;
+    (async () => {
+      try {
+        setLoading(true);
+
+        const data = await fetchDiscussionDetail(discussionId);
+
+        setDiscussion(data);
+        setError(null);
+      } catch (e: any) {
+        console.error("토론 상세 불러오기 실패:", e);
+        setError(e?.message ?? "토론방 정보를 불러올 수 없습니다.");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [discussionId]);
+
+  if (loading) return <div>토론 정보를 불러오는 중입니다…</div>;
+
+  if (error || !discussion) {
+    return <div>{error ?? "토론방을 찾을 수 없습니다."}</div>;
   }
 
-  if (roomInfo.type === "VS") {
-    return <VSDebateRoomPage debateRoomId={roomId} />;
+  if (discussion.discussion_type === "FREE") {
+    return <FreeDebateRoomPage discussion={discussion} />;
   }
 
-  return null;
+  if (discussion.discussion_type === "VS") {
+    return <VSDebateRoomPage discussion={discussion} />;
+  }
+
+  return <div>지원하지 않는 토론방 유형입니다.</div>;
 };
 
 export default DebateRoomPage;

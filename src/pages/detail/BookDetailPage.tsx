@@ -278,7 +278,7 @@ const BookDetailPage: React.FC = () => {
         bookId={book.bookId}
         onCreated={(id) => {
           console.log('새 토론 생성됨:', id);
-          navigate(`/discussion/${id}`)
+          navigate(`/debate/${id}`)
         }}
       />
       <QuoteCreateModal
