@@ -1,4 +1,3 @@
-// src/api/mypage/mybook.api.ts
 import api from '../api';
 
 export interface MyBookBookmark {
@@ -25,7 +24,7 @@ export const fetchMyBookBookmarks = async (): Promise<MyBookResponse> => {
   return api.get('/users/bookmarks/books');
 };
 
-// ✅ 북마크 삭제: itemId를 사용해 보자
+// 북마크 삭제
 export const deleteBookmark = async (itemId: number): Promise<void> => {
   await api.delete(`/books/${itemId}/bookmark`);
 };
