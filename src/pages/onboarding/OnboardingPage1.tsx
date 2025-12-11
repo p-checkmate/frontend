@@ -48,6 +48,7 @@ const OnboardingPage1: React.FC = () => {
           user_id: user.userId,
           email: user.email,
           nickname: user.nickname,
+          profile_url:""
         }),
       );
 

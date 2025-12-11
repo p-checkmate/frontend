@@ -37,7 +37,7 @@ const FreeDebateRoomPage: React.FC<FreeProps> = ({ discussion }) => {
         content: m.content,
       }),
     );
-
+    console.log(myId)
     setMessages(mapped);
   };
 

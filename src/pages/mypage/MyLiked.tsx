@@ -45,7 +45,7 @@ const MyLiked: React.FC = () => {
   }, [toastVisible]);
 
   return (
-    <div className="bg-beige1 min-h-screen w-full relative overflow-x-hidden">
+    <div className="bg-beige1 min-h-screen w-full relative">
       <Header
         variant="backTitle"
         title="내가 좋아요 한 콘텐츠"

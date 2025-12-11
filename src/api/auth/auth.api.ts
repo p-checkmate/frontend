@@ -10,9 +10,10 @@ export interface SignupData {
   accessToken: string;
   refreshToken: string;
   user: {
-    userId: number;
+    user_id: number;
     email: string;
     nickname: string;
+    profile_url:string
   };
 }
 
