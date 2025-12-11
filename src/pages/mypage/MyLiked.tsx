@@ -78,7 +78,6 @@ const MyLiked: React.FC = () => {
                     key={q.id}
                     type="quote"
                     isLiked={true} // 좋아요 목록이므로 true로 시작
-                    onLikeClick={() => handleUnlike(q.id, 'quote')} 
                     
                     bookTitle={q.bookTitle}
                     content={q.content}
@@ -114,7 +113,6 @@ const MyLiked: React.FC = () => {
                     key={d.id}
                     type="discussion"
                     isLiked={true} // 좋아요 목록이므로 true로 시작
-                    onLikeClick={() => handleUnlike(d.id, 'discussion')} // 하트 클릭 시 handleUnlike 실행
                     
                     bookTitle={d.bookTitle}
                     title={d.title}
