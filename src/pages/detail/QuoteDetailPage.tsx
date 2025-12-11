@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Image, Badge, Header } from "@/components";
+import { Image, Badge, Header, Toast } from "@/components";
 import { QuoteIcon } from "@/assets";
 import {
   fetchQuoteDetail,
@@ -16,6 +16,14 @@ const QuoteDetailPage: React.FC = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2500);
+  };
 
   // 인용구 상세 데이터
   const [quote, setQuote] = useState<{
@@ -85,6 +93,7 @@ const QuoteDetailPage: React.FC = () => {
               }
             : prev,
         );
+        showToast("좋아요를 취소했어요")
       } else {
         await likeQuote(quote.quote_id);
         setLiked(true);
@@ -97,10 +106,10 @@ const QuoteDetailPage: React.FC = () => {
               }
             : prev,
         );
+        showToast("해당 인용구를 좋아합니다.")
       }
     } catch (err) {
-      console.error("인용구 좋아요 토글 실패:", err);
-      //토스트로
+      showToast("인용구 좋아요에 실패했어요.");
     }
   };
 
@@ -140,6 +149,7 @@ const QuoteDetailPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-beige1">
+      <Toast visible={toastVisible} message={toastMessage} variant="like" />
       {/* 상단 헤더: 뒤로가기 + 하트 */}
       <Header
         variant="back"
