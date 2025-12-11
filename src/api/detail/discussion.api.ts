@@ -97,3 +97,18 @@ export const createDiscussionMessage = async (
   const res = await api.post(`/discussions/${discussionId}/messages`, payload);
   return res as unknown as DiscussionMessageCreateResponse;
 };
+
+//좋아요
+export const fetchDiscussionLikeStatus = async (discussionId: number): Promise<boolean> => {
+  const res = await api.get(`/discussions/${discussionId}/like-status`);
+  const data = (res as any).data ?? res;
+  return data.isLiked ?? false;
+};
+
+export const likeDiscussion = async (discussionId: number) => {
+  return api.post(`/discussions/${discussionId}/like`);
+};
+
+export const unlikeDiscussion = async (discussionId: number) => {
+  return api.delete(`/discussions/${discussionId}/like`);
+};
