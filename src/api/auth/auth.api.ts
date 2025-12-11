@@ -3,6 +3,7 @@ import api from "../api";
 export interface SignupRequest {
   email: string;
   password: string;
+  nickname: string;
 }
 
 export interface SignupData {
@@ -11,6 +12,7 @@ export interface SignupData {
   user: {
     userId: number;
     email: string;
+    nickname: string;
   };
 }
 
