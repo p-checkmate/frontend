@@ -3,9 +3,12 @@ import React, { useState, useEffect } from "react";
 import { Header, DebateOpinionBar, DebateMessageBubble } from "@/components";
 
 import type { DebateMessage } from "@/_mocks/debateMock";
-import { getMessagesByDebateRoomId } from "@/_mocks/debateMock";
 import { useNavigate } from "react-router-dom";
-import type { Discussion } from "@/api/detail/discussion.api";
+import {
+  fetchDiscussionMessages,
+  type Discussion,
+  type DiscussionMessage} from "@/api/detail/discussion.api";
+import { getCurrentUserId } from "@/utils/auth";
 
 interface FreeProps {
   discussion: Discussion;
@@ -20,11 +23,28 @@ const FreeDebateRoomPage: React.FC<FreeProps> = ({ discussion }) => {
   useEffect(() => {
     if (!roomId) return;
 
-    const msgs = getMessagesByDebateRoomId(roomId);
-    setMessages(msgs);
+    (async () => {
+      try {
+        const apiMessages = await fetchDiscussionMessages(roomId);
+        const myId=getCurrentUserId();
+
+        const mapped = apiMessages.map(
+          (m: DiscussionMessage): DebateMessage => ({
+            id: m.comment_id,
+            debateRoomId: m.discussion_id,
+            author: myId&&m.user_id===myId?"me":"other",
+            nickname: m.nickname,
+            content: m.content,
+          }),
+        );
+
+        setMessages(mapped);
+      } catch (e) {
+        console.error("자유토론 메시지 불러오기 실패:", e);
+      }
+    })();
   }, [roomId]);
 
-  /** 메시지 전송 */
   const handleSubmit = ({ content }: { side: 1 | 2; content: string }) => {
     if (!roomId) return;
 

@@ -17,6 +17,17 @@ export interface Discussion {
   comment_count: number;
 }
 
+export interface DiscussionMessage {
+  comment_id: number;
+  discussion_id: number;
+  user_id: number;
+  nickname: string;
+  choice: number;
+  content: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface DiscussionCreateRequest {
   title: string;
   content: string;
@@ -57,4 +68,13 @@ export const fetchDiscussionDetail = async (
   const data = res as unknown as { discussion: Discussion };
 
   return data.discussion;
+};
+
+//메시지 목록 조회
+export const fetchDiscussionMessages = async (
+  discussionId: number | string,
+): Promise<DiscussionMessage[]> => {
+  const res = await api.get(`/discussions/${discussionId}/messages`);
+  const data = res as unknown as { messages: DiscussionMessage[] };
+  return data.messages;
 };
