@@ -10,6 +10,7 @@ import type {
 } from "@/api/detail/discussion.api";
 import {
   fetchDiscussionMessages,
+  createDiscussionMessage,
 } from "@/api/detail/discussion.api";
 import { getCurrentUserId } from "@/utils/auth";
 
@@ -23,38 +24,38 @@ const VSDebateRoomPage: React.FC<VSDebateRoomPageProps> = ({ discussion }) => {
 
   const [messages, setMessages] = useState<DebateMessage[]>([]);
 
-  useEffect(() => {
+  const loadMessages = async () => {
     if (!roomId) return;
 
-    (async () => {
-      try {
-        const apiMessages = await fetchDiscussionMessages(roomId);
-        const myId = getCurrentUserId();
+    const apiMessages = await fetchDiscussionMessages(roomId);
+    const myId = getCurrentUserId();
 
-        const mapped = apiMessages.map(
-          (m: DiscussionMessage): DebateMessage => ({
-            id: m.comment_id,
-            debateRoomId: m.discussion_id,
-            author: myId && m.user_id === myId ? "me" : "other",
-            nickname: m.nickname,
-            content: m.content,
-            side:
-              m.choice === 1
-                ? 1
-                : m.choice === 2
-                ? 2
-                : undefined,
-          }),
-        );
+    const mapped = apiMessages.map(
+      (m: DiscussionMessage): DebateMessage => ({
+        id: m.comment_id,
+        debateRoomId: m.discussion_id,
+        author: myId && m.user_id === myId ? "me" : "other",
+        nickname: m.nickname,
+        content: m.content,
+        side:
+          m.choice === 1
+            ? 1
+            : m.choice === 2
+            ? 2
+            : undefined,
+      }),
+    );
 
-        setMessages(mapped);
-      } catch (e) {
-        console.error("VS 토론 메시지 불러오기 실패:", e);
-      }
-    })();
+    setMessages(mapped);
+  };
+
+  useEffect(() => {
+    loadMessages().catch((e) => {
+      console.error("VS 토론 메시지 불러오기 실패:", e);
+    });
   }, [roomId]);
 
-  const handleSubmit = ({
+  const handleSubmit = async ({
     side,
     content,
   }: {
@@ -62,18 +63,19 @@ const VSDebateRoomPage: React.FC<VSDebateRoomPageProps> = ({ discussion }) => {
     content: string;
   }) => {
     if (!roomId) return;
+    if (!content.trim()) return;
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: prev.length + 1,
-        debateRoomId: roomId,
-        author: "me",
-        nickname: "나",
-        content,
-        side,
-      },
-    ]);
+    try {
+      await createDiscussionMessage(roomId, {
+        content: content.trim(),
+        choice: side,
+      });
+
+      await loadMessages();
+    } catch (e) {
+      console.error("VS 토론 메시지 작성 실패:", e);
+      alert("댓글 작성에 실패했습니다.");
+    }
   };
 
   const option1 = discussion.option1 ?? "1번 의견";

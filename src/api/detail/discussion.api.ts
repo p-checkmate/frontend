@@ -28,6 +28,16 @@ export interface DiscussionMessage {
   updated_at: string;
 }
 
+export interface DiscussionMessageCreateRequest {
+  content: string;
+  choice?: number;
+}
+
+export interface DiscussionMessageCreateResponse {
+  comment_id: number;
+  exp_earned: number;
+}
+
 export interface DiscussionCreateRequest {
   title: string;
   content: string;
@@ -77,4 +87,13 @@ export const fetchDiscussionMessages = async (
   const res = await api.get(`/discussions/${discussionId}/messages`);
   const data = res as unknown as { messages: DiscussionMessage[] };
   return data.messages;
+};
+
+//메시지 생성
+export const createDiscussionMessage = async (
+  discussionId: number | string,
+  payload: DiscussionMessageCreateRequest,
+): Promise<DiscussionMessageCreateResponse> => {
+  const res = await api.post(`/discussions/${discussionId}/messages`, payload);
+  return res as unknown as DiscussionMessageCreateResponse;
 };
