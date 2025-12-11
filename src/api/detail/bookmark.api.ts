@@ -9,3 +9,11 @@ export const createBookBookmark = async (bookId: number | string) => {
 export const deleteBookBookmark = async (bookId: number | string) => {
   return api.delete(`/books/${bookId}/bookmark`);
 };
+
+export const fetchBookBookmarkStatus = async (
+  bookId: string | number,
+): Promise<boolean> => {
+  const data = await api.get(`/books/${bookId}/bookmark`);
+
+  return (data as unknown as { isBookmarked: boolean }).isBookmarked;
+};

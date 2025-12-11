@@ -7,6 +7,7 @@ import {
   Image,
   DiscussionCreateModal,
   QuoteCreateModal,
+  Toast,
 } from '@/components';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchBookDetail } from '@/api/detail/detail.api';
@@ -17,6 +18,7 @@ import { formatKoreanDate } from '@/utils/date';
 import {
   createBookBookmark,
   deleteBookBookmark,
+  fetchBookBookmarkStatus,
 } from '@/api/detail/bookmark.api';
 
 const TAB_OPTIONS = ['토론', '인용구'] as const;
@@ -38,6 +40,15 @@ const BookDetailPage: React.FC = () => {
   const navigate = useNavigate();
 
   const [isBookmarked, setIsBookmarked] = useState(false);
+
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 2500);
+  };
 
   const handleCreateDiscussion = () => {
     setOpenCreateModal(true);
@@ -85,6 +96,31 @@ const BookDetailPage: React.FC = () => {
     })();
   }, [bookId]);
 
+  // 북마크 여부 조회
+  useEffect(() => {
+  if (!bookId) return;
+
+  (async () => {
+    try {
+      setLoading(true);
+
+      const data = await fetchBookDetail(bookId);
+      setBook(data);
+
+      try {
+        const status = await fetchBookBookmarkStatus(bookId);
+        setIsBookmarked(status);
+      } catch (err) {
+        console.error("북마크 여부 조회 실패:", err);
+      }
+    } catch (err: any) {
+      setError(err.message ?? "도서 정보를 불러오지 못했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  })();
+}, [bookId]);
+
   const handleToggleBookmark = async () => {
     if (!bookId) return;
 
@@ -92,13 +128,15 @@ const BookDetailPage: React.FC = () => {
       if (isBookmarked) {
         await deleteBookBookmark(bookId);
         setIsBookmarked(false);
+        showToast("북마크에서 제거했어요.");
       } else {
         await createBookBookmark(bookId);
         setIsBookmarked(true);
+        showToast("북마크에 추가했어요!");
       }
     } catch (err: any) {
       console.error('북마크 토글 실패:', err);
-      // TODO: 토스트로 바꾸기
+      showToast("북마크 변경에 실패했습니다.");
     }
   };
 
@@ -142,6 +180,7 @@ const BookDetailPage: React.FC = () => {
 
   return (
     <div className="bg-beige1 min-h-screen">
+      <Toast visible={toastVisible} message={toastMessage} variant="alert" />
       <div className="fixed left-0 right-0 top-0 z-40">
         <Header
           variant="logoBookmark"

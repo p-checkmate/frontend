@@ -11,6 +11,9 @@ import type {
 import {
   fetchDiscussionMessages,
   createDiscussionMessage,
+  fetchDiscussionLikeStatus,
+  likeDiscussion,
+  unlikeDiscussion,
 } from "@/api/detail/discussion.api";
 import { getCurrentUserId } from "@/utils/auth";
 
@@ -23,6 +26,11 @@ const VSDebateRoomPage: React.FC<VSDebateRoomPageProps> = ({ discussion }) => {
   const navigate = useNavigate();
 
   const [messages, setMessages] = useState<DebateMessage[]>([]);
+
+  const [liked, setLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(
+    (discussion as any).likeCount ?? (discussion as any).like_count ?? 0,
+  );
 
   const loadMessages = async () => {
     if (!roomId) return;
@@ -49,9 +57,23 @@ const VSDebateRoomPage: React.FC<VSDebateRoomPageProps> = ({ discussion }) => {
     setMessages(mapped);
   };
 
+  const loadLikeStatus = async () => {
+    if (!roomId) return;
+    try {
+      const isLiked = await fetchDiscussionLikeStatus(roomId);
+      setLiked(isLiked);
+    } catch (e) {
+      console.error("VS 토론 좋아요 상태 조회 실패:", e);
+    }
+  };
+
   useEffect(() => {
     loadMessages().catch((e) => {
       console.error("VS 토론 메시지 불러오기 실패:", e);
+    });
+
+    loadLikeStatus().catch((e) => {
+      console.error("VS 토론 좋아요 상태 불러오기 실패:", e);
     });
   }, [roomId]);
 
@@ -78,6 +100,25 @@ const VSDebateRoomPage: React.FC<VSDebateRoomPageProps> = ({ discussion }) => {
     }
   };
 
+  const handleToggleLike = async () => {
+    if (!roomId) return;
+
+    try {
+      if (liked) {
+        await unlikeDiscussion(roomId);
+        setLiked(false);
+        setLikeCount((prev: number) => Math.max(prev - 1, 0));
+      } else {
+        await likeDiscussion(roomId);
+        setLiked(true);
+        setLikeCount((prev: number) => prev + 1);
+      }
+    } catch (e) {
+      console.error("VS 토론 좋아요 토글 실패:", e);
+      alert("좋아요 처리에 실패했습니다.");
+    }
+  };
+
   const option1 = discussion.option1 ?? "1번 의견";
   const option2 = discussion.option2 ?? "2번 의견";
 
@@ -91,6 +132,9 @@ const VSDebateRoomPage: React.FC<VSDebateRoomPageProps> = ({ discussion }) => {
             variant="backTitleDropdown"
             onBackClick={() => navigate(-1)}
             title={discussion.title}
+            isLiked={liked}                 // ✅ 하트 상태
+            likeCount={likeCount}           // ✅ 좋아요 수
+            onToggleLike={handleToggleLike} // ✅ 토글 핸들러
             dropdownContent={
               <div className="bg-beige2 pt-1">
                 <div className="flex flex-col gap-2">
@@ -120,7 +164,7 @@ const VSDebateRoomPage: React.FC<VSDebateRoomPageProps> = ({ discussion }) => {
         </section>
 
         {/* 하단 고정 인풋바 */}
-        <div className="sticky bottom-0 z-20 left-0 w-full mx-auto bg-beige1">
+        <div className="sticky bottom-0 left-0 z-20 mx-auto w-full bg-beige1">
           <DebateOpinionBar type="vs" onSubmit={handleSubmit} />
         </div>
       </div>
