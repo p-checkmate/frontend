@@ -1,32 +1,112 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Header, ToggleTab, Toast } from '@/components';
-import DiscussionCard from '@/components/common/cards/ListCard'; 
-import { likedDiscussionsMock, likedQuotesMock } from '@/_mocks/myLikedContentMock';
-import { cn } from '@/utils/cn';
 
+import { Header, ToggleTab } from '@/components';
+import DiscussionCard from '@/components/common/cards/ListCard';
+
+import {
+  fetchLikedQuotes,
+  fetchLikedDiscussions,
+  type LikedQuotesResponse,
+  type LikedDiscussionsResponse,
+} from '@/api/mypage/myLiked.api';
+
+import type { UILikedQuote, UILikedDiscussion } from '@/types/myLiked';
+
+// 탭 타입
 type Tab = '인용구' | '토론';
+
+// 날짜 포맷
+function formatDateLabel(createdAt: string): string {
+  return createdAt?.slice(0, 10) ?? '';
+}
 
 const MyLiked: React.FC = () => {
   const navigate = useNavigate();
+
   const [activeTab, setActiveTab] = useState<Tab>('인용구');
 
-  // 1. Mock Data를 State로 변환 (삭제 시 리렌더링을 위해)
-  const [quotes,] = useState(likedQuotesMock);
-  const [discussions,] = useState(likedDiscussionsMock);
+  // 데이터 상태
+  const [quotes, setQuotes] = useState<UILikedQuote[]>([]);
+  const [discussions, setDiscussions] = useState<UILikedDiscussion[]>([]);
 
-  // 2. 삭제 애니메이션 및 토스트 상태 관리
-  const [leavingId,] = useState<number | null>(null);
-  const [toastVisible, setToastVisible] = useState(false);
+  // 로딩/오류 상태
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // 토스트 자동 숨김 타이머
+  // ==========================
+  // API 호출
+  // ==========================
   useEffect(() => {
-    if (toastVisible) {
-      const timer = setTimeout(() => setToastVisible(false), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [toastVisible]);
+    const loadLikedContent = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
+        const [likedQuotes, likedDiscussions] = await Promise.all([
+            fetchLikedQuotes(),
+            fetchLikedDiscussions(),
+        ]) as [LikedQuotesResponse, LikedDiscussionsResponse];
+
+        // 인용구 매핑
+        const mappedQuotes: UILikedQuote[] = likedQuotes.quotes.map((q) => ({
+          id: q.quote_id,
+          bookTitle: q.book.title,
+          content: q.content,
+          tags: q.book.genres ?? [],
+          nickname: q.user.nickname,
+          dateLabel: formatDateLabel(q.created_at),
+          likeCount: q.like_count,
+        }));
+
+        // 토론 매핑
+        const mappedDiscussions: UILikedDiscussion[] =
+          likedDiscussions.discussions.map((d) => ({
+            id: d.discussion_id,
+            bookTitle: d.book.title,
+            title: d.title,
+            content: d.content,
+            nickname: d.user.nickname,
+            dateLabel: formatDateLabel(d.created_at),
+            likeCount: d.like_count,
+            commentCount: d.comment_count,
+          }));
+
+        setQuotes(mappedQuotes);
+        setDiscussions(mappedDiscussions);
+      } catch (e) {
+        console.error('좋아요 한 콘텐츠 로딩 실패:', e);
+        setError('좋아요 한 콘텐츠를 불러올 수 없습니다.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadLikedContent();
+  }, []);
+
+  // ==========================
+  // 로딩 / 오류 처리
+  // ==========================
+  if (loading) {
+    return (
+      <div className="bg-beige1 min-h-screen flex items-center justify-center">
+        <p className="text-gray3">불러오는 중...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-beige1 min-h-screen flex items-center justify-center">
+        <p className="text-red-like">{error}</p>
+      </div>
+    );
+  }
+
+  // ==========================
+  // 렌더링
+  // ==========================
   return (
     <div className="bg-beige1 min-h-screen w-full relative">
       <Header
@@ -36,23 +116,22 @@ const MyLiked: React.FC = () => {
         className="sticky top-0 z-50 bg-beige1"
       />
 
-      <main className="w-full pb-20">
+      <main className="pb-20">
         <section className="px-5 py-4">
           <ToggleTab
             variant="pill"
             options={['인용구', '토론']}
             selected={activeTab}
-            onSelect={(option) => setActiveTab(option as Tab)}
+            onSelect={(tab) => setActiveTab(tab as Tab)}
           />
         </section>
 
         <section className="px-5 space-y-3">
-          
-          {/* (A) 인용구 리스트 */}
+          {/* 인용구 탭 */}
           {activeTab === '인용구' && (
             <>
               {quotes.length === 0 ? (
-                <div className="flex h-[50vh] items-center justify-center text-body3 text-gray3">
+                <div className="h-[50vh] flex items-center justify-center text-gray3">
                   좋아요 한 인용구가 없습니다.
                 </div>
               ) : (
@@ -60,34 +139,25 @@ const MyLiked: React.FC = () => {
                   <DiscussionCard
                     key={q.id}
                     type="quote"
-                    isLiked={true} // 좋아요 목록이므로 true로 시작
-                    
+                    isLiked={true} // 항상 FilledHeart
                     bookTitle={q.bookTitle}
                     content={q.content}
                     tags={q.tags}
                     nickname={q.nickname}
                     dateLabel={q.dateLabel}
                     likeCount={q.likeCount}
-                    onClickCard={() => console.log(`인용구 ${q.id} 상세 이동`)}
-                    
-                    // 삭제 애니메이션 클래스 적용
-                    className={cn(
-                      "transition-all duration-300 ease-out",
-                      leavingId === q.id 
-                        ? "translate-x-full opacity-0" 
-                        : "translate-x-0 opacity-100"
-                    )}
+                    onClickCard={() => navigate(`/quote/${q.id}`)}
                   />
                 ))
               )}
             </>
           )}
 
-          {/* (B) 토론 리스트 */}
+          {/* 토론 탭 */}
           {activeTab === '토론' && (
             <>
               {discussions.length === 0 ? (
-                <div className="flex h-[50vh] items-center justify-center text-body3 text-gray3">
+                <div className="h-[50vh] flex items-center justify-center text-gray3">
                   좋아요 한 토론이 없습니다.
                 </div>
               ) : (
@@ -95,8 +165,7 @@ const MyLiked: React.FC = () => {
                   <DiscussionCard
                     key={d.id}
                     type="discussion"
-                    isLiked={true} // 좋아요 목록이므로 true로 시작
-                    
+                    isLiked={true} // 항상 FilledHeart
                     bookTitle={d.bookTitle}
                     title={d.title}
                     content={d.content}
@@ -104,15 +173,7 @@ const MyLiked: React.FC = () => {
                     dateLabel={d.dateLabel}
                     likeCount={d.likeCount}
                     commentCount={d.commentCount}
-                    onClickCard={() => console.log(`토론 ${d.id} 상세 이동`)}
-                    
-                    // 삭제 애니메이션 클래스 적용
-                    className={cn(
-                      "transition-all duration-300 ease-out",
-                      leavingId === d.id 
-                        ? "translate-x-full opacity-0" 
-                        : "translate-x-0 opacity-100"
-                    )}
+                    onClickCard={() => navigate(`/debate/${d.id}`)}
                   />
                 ))
               )}
@@ -120,13 +181,6 @@ const MyLiked: React.FC = () => {
           )}
         </section>
       </main>
-
-      {/* 삭제 알림 토스트 */}
-      <Toast 
-        variant="alert"
-        visible={toastVisible}
-        message="목록에서 삭제되었습니다"
-      />
     </div>
   );
 };
