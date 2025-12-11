@@ -1,14 +1,22 @@
 import { useState } from 'react';
 import { BaseModal, Button, Input, Textarea } from '@/components';
+import { createDiscussion } from '@/api/detail/discusstion.api';
 
 type CreateStep = 'selectType' | 'free' | 'vs';
 
 interface DiscussionCreateModalProps {
   open: boolean;
   onClose: () => void;
+  bookId: number;
+  onCreated?: (discussionId: number) => void;
 }
 
-const DiscussionCreateModal = ({ open, onClose }: DiscussionCreateModalProps) => {
+const DiscussionCreateModal = ({
+  open,
+  onClose,
+  bookId,
+  onCreated,
+}: DiscussionCreateModalProps) => {
   const [step, setStep] = useState<CreateStep>('selectType');
 
   const [freeTitle, setFreeTitle] = useState('');
@@ -17,6 +25,8 @@ const DiscussionCreateModal = ({ open, onClose }: DiscussionCreateModalProps) =>
   const [vsTitle, setVsTitle] = useState('');
   const [vsSide1, setVsSide1] = useState('');
   const [vsSide2, setVsSide2] = useState('');
+
+  const [submitting, setSubmitting] = useState(false);
 
   const resetState = () => {
     setStep('selectType');
@@ -32,6 +42,58 @@ const DiscussionCreateModal = ({ open, onClose }: DiscussionCreateModalProps) =>
     onClose();
   };
 
+  const handleCreateFreeDiscussion = async () => {
+    if (!freeTitle.trim()) {
+      alert('제목을 입력해 주세요.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+
+      const res = await createDiscussion(bookId, {
+        title: freeTitle,
+        content: freeDetail,
+        discussion_type: 'FREE',
+      });
+
+      onCreated?.(res.discussion_id);
+      handleClose();
+    } catch (e: any) {
+      console.error('자유토론 생성 실패:', e);
+      alert(e?.message ?? '자유토론 생성에 실패했습니다.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleCreateVsDiscussion = async () => {
+    if (!vsTitle.trim() || !vsSide1.trim() || !vsSide2.trim()) {
+      alert('제목과 양쪽 의견을 모두 입력해 주세요.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+
+      const res = await createDiscussion(bookId, {
+        title: vsTitle,
+        content: `${vsSide1} vs ${vsSide2}`,
+        discussion_type: 'VS',
+        option1: vsSide1,
+        option2: vsSide2,
+      });
+
+      onCreated?.(res.discussion_id);
+      handleClose();
+    } catch (e: any) {
+      console.error('VS 토론 생성 실패:', e);
+      alert(e?.message ?? 'VS 토론 생성에 실패했습니다.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   /* =========================
    * 1단계: 토론 유형 선택 모달
    * ========================= */
@@ -43,10 +105,20 @@ const DiscussionCreateModal = ({ open, onClose }: DiscussionCreateModalProps) =>
         title="생성할 토론의 유형을 선택하세요"
         footer={
           <div className="flex justify-center gap-10">
-            <Button variant="solid" color="green" onClick={() => setStep('free')}>
+            <Button
+              variant="solid"
+              color="green"
+              onClick={() => setStep('free')}
+              disabled={submitting}
+            >
               자유토론
             </Button>
-            <Button variant="outline" color="green" onClick={() => setStep('vs')}>
+            <Button
+              variant="outline"
+              color="green"
+              onClick={() => setStep('vs')}
+              disabled={submitting}
+            >
               VS 토론
             </Button>
           </div>
@@ -74,14 +146,18 @@ const DiscussionCreateModal = ({ open, onClose }: DiscussionCreateModalProps) =>
               className="flex-1"
               variant="solid"
               color="green"
-              onClick={() => {
-                console.log('자유토론 생성', { freeTitle, freeDetail });
-                handleClose();
-              }}
+              onClick={handleCreateFreeDiscussion}
+              disabled={submitting}
             >
-              게시하기
+              {submitting ? '게시 중...' : '게시하기'}
             </Button>
-            <Button className="flex-1" variant="outline" color="gray" onClick={handleClose}>
+            <Button
+              className="flex-1"
+              variant="outline"
+              color="gray"
+              onClick={handleClose}
+              disabled={submitting}
+            >
               취소하기
             </Button>
           </div>
@@ -135,14 +211,18 @@ const DiscussionCreateModal = ({ open, onClose }: DiscussionCreateModalProps) =>
             className="flex-1"
             variant="solid"
             color="green"
-            onClick={() => {
-              console.log('VS 토론 생성', { vsTitle, vsSide1, vsSide2 });
-              handleClose();
-            }}
+            onClick={handleCreateVsDiscussion}
+            disabled={submitting}
           >
-            게시하기
+            {submitting ? '게시 중...' : '게시하기'}
           </Button>
-          <Button className="flex-1" variant="outline" color="gray" onClick={handleClose}>
+          <Button
+            className="flex-1"
+            variant="outline"
+            color="gray"
+            onClick={handleClose}
+            disabled={submitting}
+          >
             취소하기
           </Button>
         </div>
