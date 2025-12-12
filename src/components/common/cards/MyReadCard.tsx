@@ -79,10 +79,10 @@ const MyReadCard: React.FC<MyReadCardProps> = ({
         <span className="text-caption4 text-gray3 ml-1">내 진행</span>
         <div className="flex items-baseline gap-1">
           <span className="text-title6 text-black ml-1">
-            {currentDisplayPage > 0 ? `${percent}%` : '-%'}
+            {currentDisplayPage > 0 ? `${percent}%` : '0%'}
           </span>
           <span className="text-caption5 text-gray3">
-            {currentDisplayPage > 0 ? `(${currentDisplayPage}p)` : '(-p)'}
+            {currentDisplayPage > 0 ? `(${currentDisplayPage}p)` : '(0p)'}
           </span>
         </div>
 

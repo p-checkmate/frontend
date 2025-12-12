@@ -15,6 +15,24 @@ export type ReadingGroupOverview = {
   my_progress: ReadingGroupProgress | null; // 참여 안 했으면 null
 };
 
+export type ReadingGroupMembersResponse = {
+  page: number;
+  limit: number;
+  total_count: number;
+  total_pages: number;
+  has_next: boolean;
+  total_page_count: number; // ✅ 이게 책 총 페이지
+  members: Array<{
+    member_id: number;
+    user_id: number;
+    nickname: string;
+    level: 1 | 2 | 3 | 4 | 5;
+    current_page: number;
+    memo: string | null;
+    is_current_user: boolean;
+  }>;
+};
+
 // ✅ 단일 overview
 export async function fetchReadingGroupOverview(
   groupId: number,
@@ -43,4 +61,8 @@ export async function joinReadingGroup(
   groupId: number,
 ): Promise<{ reading_group_id: number }> {
   return api.post(`/reading-groups/${groupId}/join`, {});
+}
+
+export async function fetchReadingGroupMembers(groupId: number) {
+  return api.get<ReadingGroupMembersResponse>(`/reading-groups/${groupId}/members`);
 }
