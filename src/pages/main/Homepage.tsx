@@ -269,15 +269,15 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
   onClickDebate,
 }) => {
   // progress 계산
-  const isJoined = !!readingGroup?.my_progress;
-  const progressPercent =
+  //const isJoined = !!readingGroup?.my_progress;
+  /*const progressPercent =
     readingGroup && readingGroup.my_progress && readingGroup.total_pages > 0
       ? Math.round(
           (readingGroup.my_progress.current_page /
             readingGroup.total_pages) *
             100,
         )
-      : 0;
+      : 0;*/
 
   return (
     <>
