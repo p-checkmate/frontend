@@ -129,6 +129,7 @@ const AIChatRoomPage: React.FC = () => {
                   ...m,
                   nickname: "",
                 }}
+                markdown={isAI}
               />
             </div>
           );

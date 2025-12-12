@@ -7,7 +7,6 @@ import remarkGfm from "remark-gfm";
 interface Props {
   message: DebateMessage;
   type?: DebateType;
-  /** AI 방 등에서만 켜는 옵션 */
   markdown?: boolean;
 }
 
@@ -27,7 +26,7 @@ const DebateMessageBubble: React.FC<Props> = ({
     return isMine ? "bg-green1 btn-text-white" : "bg-yellow";
   })();
 
-  const shouldRenderMarkdown = markdown && !isMine; // 내 말은 그대로, 남의 말만 MD
+  const shouldRenderMarkdown = markdown && !isMine;
 
   return (
     <div className={cn("mb-4 flex", isMine ? "justify-end" : "justify-start")}>
@@ -43,7 +42,6 @@ const DebateMessageBubble: React.FC<Props> = ({
           )}
         >
           {shouldRenderMarkdown ? (
-            // className은 ReactMarkdown이 아니라 바깥 div에만 줌
             <div className="whitespace-pre-wrap break-words prose prose-sm max-w-none prose-p:mb-2 last:prose-p:mb-0 prose-strong:font-semibold prose-li:my-0">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {message.content}
