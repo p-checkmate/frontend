@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Image} from '@/components'
+import { cn } from "@/utils/cn";
 
 type TogetherReadCardProps = {
   title: string;
@@ -10,6 +10,10 @@ type TogetherReadCardProps = {
   rank?: number;
   thumbnailUrl?: string;
   onClick?: () => void;
+  periodWeeks?: number;
+
+  // 외부에서 가로폭/스타일 더 줄 수 있게
+  className?: string;
 };
 
 const TogetherReadCard: React.FC<TogetherReadCardProps> = ({
@@ -19,8 +23,9 @@ const TogetherReadCard: React.FC<TogetherReadCardProps> = ({
   isJoined,
   progress = 0,
   rank,
-  thumbnailUrl,
   onClick,
+  periodWeeks = 3,
+  className,
 }) => {
   const [animatedProgress, setAnimatedProgress] = useState(0);
 
@@ -36,23 +41,18 @@ const TogetherReadCard: React.FC<TogetherReadCardProps> = ({
   }, [isJoined, progress]);
 
   return (
-    <div className="w-full rounded-[8px] bg-beige2 p-7">
+    <div
+      className={cn(
+        "w-full rounded-l bg-beige2 px-5 py-5 shadow-sm",
+        className,
+      )}
+    >
       <div className="flex items-center justify-between gap-4">
-        {/* 썸네일 */}
-        {!isJoined && (
-          <div className="h-22 w-16 flex-shrink-0">
-            <Image
-              src={thumbnailUrl}
-              alt="책 표지"
-              aspectRatio="aspect-square"
-              className="h-full w-full"
-            />
-          </div>
-        )}
-
         {/* 텍스트 영역 */}
         <div className="flex flex-1 flex-col gap-[5px]">
-          <p className="text-caption4 text-gray3">3주 동안 함께 읽는 책</p>
+          <p className="text-caption4 text-gray3">
+            {periodWeeks}주 동안 함께 읽는 책
+          </p>
           <h3 className="text-title6">{title}</h3>
 
           <p className="text-caption4 text-gray3">
@@ -61,9 +61,13 @@ const TogetherReadCard: React.FC<TogetherReadCardProps> = ({
           </p>
 
           {isJoined ? (
-            <p className="text-caption4">참여자 중 {rank}번째로 많이 읽었어요</p>
+            <p className="text-caption4">
+              참여자 중 {rank}번째로 많이 읽었어요
+            </p>
           ) : (
-            <p className="text-caption4 text-gray3">아직 참여하지 않았어요</p>
+            <p className="text-caption4 text-gray3">
+              아직 참여하지 않았어요
+            </p>
           )}
         </div>
 
@@ -78,7 +82,10 @@ const TogetherReadCard: React.FC<TogetherReadCardProps> = ({
 
       {/* 버튼 */}
       <div className="mt-5 flex justify-center">
-        <button className="cursor-pointer bg-green1 btn-text-white text-caption5 h-7.5 px-10 rounded-2xl" onClick={onClick}>
+        <button
+          className="cursor-pointer bg-green1 btn-text-white text-caption5 h-7.5 px-10 rounded-2xl"
+          onClick={onClick}
+        >
           {isJoined ? "함께 읽기 방으로" : "함께 읽기 참여하기"}
         </button>
       </div>
