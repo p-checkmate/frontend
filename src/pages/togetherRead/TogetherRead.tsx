@@ -70,7 +70,7 @@ const TogetherRead = () => {
     alert('도서 함께 읽기 링크 공유 기능은\n추후에 추가될 예정입니다 :)');
   };
 
-  // ✅ 내 진행 업데이트 (PATCH)
+  // 내 진행 업데이트 (PATCH)
   const handleUpdateMyReading = async (newReadPage: number, newMemo: string) => {
     if (!overview) return;
 
@@ -81,7 +81,7 @@ const TogetherRead = () => {
         memo: newMemo,
       });
 
-      // 2) 낙관적 UI 반영 - overview
+      // 2) overview
       setOverview((prev) =>
         prev
           ? {
@@ -94,7 +94,7 @@ const TogetherRead = () => {
           : prev,
       );
 
-      // 3) 낙관적 UI 반영 - members 리스트에서 내 항목 갱신
+      // 3) members 리스트에서 내 항목 갱신
       setMembers((prev) =>
         prev.map((m) =>
           m.is_current_user
@@ -103,13 +103,6 @@ const TogetherRead = () => {
         ),
       );
 
-      // (선택) 서버 값을 “확정”으로 다시 받고 싶으면 아래 주석 해제
-      // const [ov, mem] = await Promise.all([
-      //   fetchReadingGroupOverview(gid),
-      //   fetchReadingGroupMembers(gid, { page: 1, limit: 50 }),
-      // ]);
-      // setOverview(ov);
-      // setMembers(mem.members ?? []);
     } catch (e: any) {
       console.error(e);
       alert(e?.message ?? '업데이트에 실패했어요. 잠시 후 다시 시도해주세요.');

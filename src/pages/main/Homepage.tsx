@@ -8,6 +8,7 @@ import {
   TogetherReadCard,
   HorizontalBookScrollSection,
   CardCarousel,
+  ChatFloater,
 } from '@/components';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/utils/cn';
@@ -61,7 +62,7 @@ const MainPage: React.FC = () => {
 
         const list = await fetchReadingGroupsOverviews(READING_GROUP_IDS);
 
-        // READING_GROUP_IDS 순서대로 정렬 (Promise.allSettled로 순서 깨질 수 있어서)
+        // READING_GROUP_IDS 순서대로 정렬
         const map = new Map(list.map((g) => [g.reading_group_id, g]));
         const ordered = READING_GROUP_IDS.map((id) => map.get(id)).filter(
           Boolean,
@@ -90,7 +91,6 @@ const MainPage: React.FC = () => {
       try {
         await joinReadingGroup(groupId);
 
-        // 낙관적 업데이트
         setReadingGroups((prev) =>
           prev.map((g) =>
             g.reading_group_id === groupId
@@ -115,8 +115,12 @@ const MainPage: React.FC = () => {
 
     // 방으로 이동 (라우팅에 맞게 수정 가능)
     navigate(`/togetherRead/${groupId}`);
-    // 만약 라우트가 /togetherRead/:groupId 라면
   };
+
+  // === AI 챗 핸들러 ===
+  const handleChatClick=()=>{
+    navigate(`/ai`)
+  }
 
   return (
     <div className="min-h-screen bg-beige1">
@@ -168,6 +172,7 @@ const MainPage: React.FC = () => {
           />
         )}
       </div>
+      <ChatFloater onClick={handleChatClick}/>
     </div>
   );
 };
@@ -276,18 +281,7 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
   onClickTogetherRead,
   onClickDebate,
 }) => {
-  /*
-  // progress 계산
-  const isJoined = !!readingGroup?.my_progress;
-  const progressPercent =
-    readingGroup && readingGroup.my_progress && readingGroup.total_pages > 0
-      ? Math.round(
-          (readingGroup.my_progress.current_page /
-            readingGroup.total_pages) *
-            100,
-        )
-      : 0;
-  */
+
   return (
     <>
       {/* 배너 */}
@@ -300,7 +294,6 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
         <section className="mt-6">
           <h2 className="mb-4 px-5 text-title5 text-black">현재 진행되고 있는 함께 읽기</h2>
 
-          {/* ✅ 여기서 “5장 캐러셀” 구현 (CardCarousel 안 써도 됨) */}
           <TogetherReadCarousel
             items={readingGroups}
             onClickTogetherRead={onClickTogetherRead}
@@ -398,9 +391,7 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
 };
 
 /* ===========================
- * 함께 읽기 캐러셀 (5장)
- * - “토론 카드”처럼 꽉 차게 보이도록 px-5 안쪽 폭에 맞춤
- * - 스와이프/가로스크롤 + dots 포함
+ * 함께 읽기 캐러셀
  * =========================== */
 function TogetherReadCarousel({
   items,
@@ -414,7 +405,6 @@ function TogetherReadCarousel({
 
   const slideCount = items.length;
 
-  // 스크롤 위치 기반 active index 계산
   const onScroll = () => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -445,8 +435,8 @@ function TogetherReadCarousel({
         style={{
           scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch',
-          msOverflowStyle: 'none',  /* IE and Edge */
-          scrollbarWidth: 'none',  /* Firefox */
+          msOverflowStyle: 'none',
+          scrollbarWidth: 'none',  
         }}
       >
         {items.map((g) => {
@@ -461,7 +451,7 @@ function TogetherReadCarousel({
               key={g.reading_group_id}
               className={cn(
                 'w-full flex-shrink-0 snap-center',
-                'px-5', // ✅ 토론 카드랑 동일하게 좌우 여백 5
+                'px-5', 
               )}
             >
               <TogetherReadCard
@@ -471,7 +461,6 @@ function TogetherReadCarousel({
                 isJoined={isJoined}
                 progress={progressPercent}
                 rank={undefined}
-                //thumbnailUrl={undefined}
                 onClick={() => onClickTogetherRead(g.reading_group_id)}
               />
             </div>
@@ -479,7 +468,7 @@ function TogetherReadCarousel({
         })}
       </div>
 
-      {/* ✅ dots */}
+      {/* dots */}
       <div className="mt-3 flex justify-center gap-1">
         {Array.from({ length: slideCount }).map((_, i) => (
           <button

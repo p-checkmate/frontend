@@ -5,20 +5,18 @@ import { cn } from '@/utils/cn';
 
 interface MyReadCardProps {
   totalPage: number;
-  initialReadPage?: number;   // 서버에 저장된 내 현재 페이지 (표시용)
-  initialMemo?: string;       // 서버에 저장된 메모 (표시용 - 입력창에 넣지 않음)
+  initialReadPage?: number;   // 서버에 저장된 내 현재 페이지
+  initialMemo?: string;       // 서버에 저장된 메모
   onUpdate?: (readPage: number, memo: string) => void;
 }
 
 const MyReadCard: React.FC<MyReadCardProps> = ({
   totalPage,
   initialReadPage = 0,
-  initialMemo = '',
   onUpdate,
 }) => {
-  // ✅ 입력창 state는 "항상 새 입력"용
   const [readPageStr, setReadPageStr] = useState<string>('');
-  const [memoInput, setMemoInput] = useState<string>(''); // ✅ 서버 memo로 초기화하지 않음
+  const [memoInput, setMemoInput] = useState<string>('');
   const [toast, setToast] = useState({ visible: false, message: '' });
 
   const currentDisplayPage =
@@ -51,7 +49,6 @@ const MyReadCard: React.FC<MyReadCardProps> = ({
   };
 
   const handleUpdateClick = () => {
-    // ✅ 아무것도 입력 안 했으면 막기 (메모만/페이지만 업데이트는 허용하고 싶으면 조건 바꿔도 됨)
     if (readPageStr === '' && memoInput.trim() === '') {
       setToast({ visible: true, message: '업데이트할 내용을 입력해주세요!' });
       return;
@@ -61,7 +58,6 @@ const MyReadCard: React.FC<MyReadCardProps> = ({
 
     onUpdate?.(newPage, memoInput);
 
-    // ✅ 업데이트 후 입력창은 비움 (다음 입력을 위해)
     setReadPageStr('');
     setMemoInput('');
     setToast({ visible: true, message: '독서 기록이 업데이트 되었어요!' });
@@ -120,7 +116,7 @@ const MyReadCard: React.FC<MyReadCardProps> = ({
           </span>
         </div>
 
-        {/* 2. 한줄 감상 입력 (✅ 서버 memo랑 분리) */}
+        {/* 2. 한줄 감상 입력 */}
         <div
           className={cn(
             'relative h-[68px] w-full rounded-m border bg-transparent transition-colors',

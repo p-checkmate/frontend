@@ -19,6 +19,7 @@ import HorizontalBookScrollSection from './common/Scroll/HorizontalBookScroll';
 import CardCarousel from './common/Scroll/CardCarousel';
 import MyReadCard from './common/cards/MyReadCard';
 import BookMarathonCard from './common/cards/BookMarathonCard';
+import ChatFloater from './common/ai/ChatFloater';
 
 export {
   Button,
@@ -42,4 +43,5 @@ export {
   CardCarousel,
   MyReadCard,
   BookMarathonCard,
+  ChatFloater
 };

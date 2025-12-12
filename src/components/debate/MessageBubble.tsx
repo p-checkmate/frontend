@@ -1,33 +1,39 @@
 import React from "react";
 import { cn } from "@/utils/cn";
 import type { DebateMessage, DebateType } from "@/_mocks/debateMock";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface Props {
   message: DebateMessage;
   type?: DebateType;
+  markdown?: boolean;
 }
 
-const DebateMessageBubble: React.FC<Props> = ({ message, type = "FREE" }) => {
+const DebateMessageBubble: React.FC<Props> = ({
+  message,
+  type = "FREE",
+  markdown = false,
+}) => {
   const isMine = message.author === "me";
   const isVS = type === "VS";
 
   const bubbleColorClass = (() => {
-    // VS 토론: 진영(side)에 따라 색상 고정
     if (isVS && message.side) {
-      if (message.side === 1) {
-        return "bg-yellow btn-text-black";
-      }
+      if (message.side === 1) return "bg-yellow btn-text-black";
       return "bg-green1 btn-text-white";
     }
-
-    // 기본(FREE) 토론: 내가 보낸 건 초록, 남이 보낸 건 노랑
     return isMine ? "bg-green1 btn-text-white" : "bg-yellow";
   })();
+
+  const shouldRenderMarkdown = markdown && !isMine;
 
   return (
     <div className={cn("mb-4 flex", isMine ? "justify-end" : "justify-start")}>
       <div>
-        {!isMine && <p className="mb-1 text-caption4">{message.nickname}</p>}
+        {!isMine && (
+          <p className="mb-1 text-caption4">{message.nickname}</p>
+        )}
 
         <div
           className={cn(
@@ -35,7 +41,17 @@ const DebateMessageBubble: React.FC<Props> = ({ message, type = "FREE" }) => {
             bubbleColorClass,
           )}
         >
-          {message.content}
+          {shouldRenderMarkdown ? (
+            <div className="whitespace-pre-wrap break-words prose prose-sm max-w-none prose-p:mb-2 last:prose-p:mb-0 prose-strong:font-semibold prose-li:my-0">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {message.content}
+              </ReactMarkdown>
+            </div>
+          ) : (
+            <span className="whitespace-pre-wrap break-words">
+              {message.content}
+            </span>
+          )}
         </div>
       </div>
     </div>
