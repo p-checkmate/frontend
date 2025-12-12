@@ -6,6 +6,10 @@ import VSDebateRoomPage from "./VSDebateRoom";
 
 import { fetchDiscussionDetail } from "@/api/detail/discussion.api";
 import type { Discussion } from "@/api/detail/discussion.api";
+import VSDebateResultPage from "@/components/debate/ResultPage";
+
+const DAY_MS=24*60*60*1000;
+const DEBATE_DURATION_DAYS=7;
 
 const DebateRoomPage: React.FC = () => {
   const { debateRoomId } = useParams();
@@ -45,11 +49,24 @@ const DebateRoomPage: React.FC = () => {
     return <div>{error ?? "토론방을 찾을 수 없습니다."}</div>;
   }
 
+  //테스트용
+  //discussion.created_at=new Date(Date.now() -10*DAY_MS).toISOString();
+
+  const isVSClosed=
+    discussion.discussion_type==='VS'&&discussion.created_at
+    ? new Date(discussion.created_at).getTime()+
+      DEBATE_DURATION_DAYS*DAY_MS<=
+    Date.now()
+    :false;
+
   if (discussion.discussion_type === "FREE") {
     return <FreeDebateRoomPage discussion={discussion} />;
   }
 
   if (discussion.discussion_type === "VS") {
+    if(isVSClosed){
+      return <VSDebateResultPage discussion={discussion}/>;
+    }
     return <VSDebateRoomPage discussion={discussion} />;
   }
 
