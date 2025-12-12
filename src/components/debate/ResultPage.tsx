@@ -8,7 +8,7 @@ import type {
   Discussion,
   DiscussionMessage,
 } from "@/api/detail/discussion.api";
-import { fetchDiscussionMessages } from "@/api/detail/discussion.api";
+import { fetchDiscussionMessages, voteDiscussion } from "@/api/detail/discussion.api"; // 💡 voteDiscussion 임포트 추가
 import { getCurrentUserId } from "@/utils/auth";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -27,9 +27,11 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({
   const [messages, setMessages] = useState<DebateMessage[]>([]);
   const [selectedSide, setSelectedSide] = useState<1 | 2 | null>(null);
   const [hasVoted, setHasVoted] = useState(false);
+  const [voting, setVoting] = useState(false); // 💡 voting 상태 추가
 
-  // ===== 메시지 로드 =====
+  // ===== 메시지 로드 (기존과 동일) =====
   useEffect(() => {
+    // ... (기존 useEffect 로직 생략)
     if (!roomId) return;
 
     (async () => {
@@ -60,7 +62,8 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({
     })();
   }, [roomId]);
 
-  // ===== 통계 계산 =====
+
+  // ===== 통계 계산 (기존과 동일) =====
   const total = messages.length;
   const side1Count = messages.filter((m) => m.side === 1).length;
   const side2Count = messages.filter((m) => m.side === 2).length;
@@ -68,7 +71,6 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({
   const side1Ratio = total ? Math.round((side1Count / total) * 100) : 0;
   const side2Ratio = total ? 100 - side1Ratio : 0;
 
-  // 종료 날짜 계산 (created_at 기준 + 7일)
   const createdAt = discussion.created_at
     ? new Date(discussion.created_at)
     : null;
@@ -87,18 +89,41 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({
   const option1 = discussion.option1 ?? "1번 의견";
   const option2 = discussion.option2 ?? "2번 의견";
 
-  const handleVote = (side: 1 | 2) => {
-    if (hasVoted) return;
-    setSelectedSide(side);
-    setHasVoted(true);
+  // 💡 투표 API 연동 로직
+  const handleVote = async (side: 1 | 2) => {
+    console.log(`[HANDLE VOTE] Clicked on side ${side}. hasVoted: ${hasVoted}, voting: ${voting}`);
 
-    // TODO: 여기서 실제 최종 투표 API 연동
-    // postFinalVote({ discussionId: roomId, choice: side });
+    if (hasVoted) {
+        console.log("[HANDLE VOTE] Already voted, returning.");
+        return;
+    }
+    if (voting) {
+        console.log("[HANDLE VOTE] Currently voting, returning.");
+        return;
+    }
+    
+    try {
+      setVoting(true); // API 호출 시작
+      
+      // 💡 실제 최종 투표 API 연동
+      const res = await voteDiscussion(roomId, side); 
+      console.log("투표 API 호출 성공:", res.message);
+
+      setSelectedSide(side);
+      setHasVoted(true); // 성공 시에만 상태 업데이트
+      // TODO: 투표 완료 토스트 메시지 띄우기
+    } catch (e: any) {
+      console.error("투표 API 호출 실패:", e.message || e); // 에러 상세 로그
+      // TODO: 에러 토스트 메시지 띄우기
+    } finally {
+      setVoting(false); // API 호출 완료
+    }
   };
 
   return (
     <div className="flex min-h-screen justify-center bg-beige1">
       <div className="flex w-full flex-col">
+        {/* Header 부분 (생략) */}
         <Header
           variant="backTitleDropdown"
           onBackClick={() => navigate(-1)}
@@ -124,7 +149,7 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({
         />
 
         <section className="flex-1 px-5 pb-6 pt-6">
-          {/* 상단 카드 - 종료 안내 */}
+          {/* 상단 카드 - 종료 안내 (생략) */}
           <div className="mb-4 rounded-l bg-white p-4 shadow-sm">
             <div className="mb-2 inline-flex items-center rounded-full border border-green1 bg-white px-3 py-1 text-caption5 text-green1">
               VS 토론 종료
@@ -140,7 +165,7 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({
             </p>
           </div>
 
-          {/* 토론 요약 영역 (AI 요약 자리) */}
+          {/* 토론 요약 영역 (생략) */}
           <div className="mb-4 rounded-l bg-white p-4 shadow-sm">
             <h3 className="mb-2 text-title6">토론 요약</h3>
             <p className="text-body2 text-gray3">
@@ -153,7 +178,7 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({
             </p>
           </div>
 
-          {/* 의견 비율 바 */}
+          {/* 의견 비율 바 (생략) */}
           <div className="mb-4 rounded-l bg-white p-4 shadow-sm">
             <h3 className="mb-3 text-title6">참여자 의견 비율</h3>
 
@@ -196,7 +221,7 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({
               <button
                 type="button"
                 onClick={() => handleVote(1)}
-                disabled={hasVoted && selectedSide !== 1}
+                disabled={(hasVoted && selectedSide !== 1) || voting}
                 className={`
                   group flex h-24 flex-col justify-center rounded-l transition-all
                   ${
@@ -205,12 +230,13 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({
                       : "bg-white text-gray3 shadow-sm active:scale-[0.98]"
                   }
                   ${
-                    hasVoted && selectedSide !== 1
-                      ? "opacity-50"
+                    (hasVoted && selectedSide !== 1) || voting // 💡 voting 상태 CSS에 추가
+                      ? "opacity-50 cursor-not-allowed"
                       : "hover:shadow-md"
                   }
                 `}
               >
+                {/* ... (UI 내용 생략) */}
                 <span
                   className={`
                     mb-2 inline-flex h-7 w-12 items-center justify-center rounded-m 
@@ -233,7 +259,7 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({
               <button
                 type="button"
                 onClick={() => handleVote(2)}
-                disabled={hasVoted && selectedSide !== 2}
+                disabled={(hasVoted && selectedSide !== 2) || voting}
                 className={`
                   group flex h-24 flex-col justify-center rounded-l border transition-all
                   ${
@@ -242,12 +268,13 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({
                       : "border-gray1 bg-white text-gray3 shadow-sm active:scale-[0.98]"
                   }
                   ${
-                    hasVoted && selectedSide !== 2
-                      ? "opacity-50"
+                    (hasVoted && selectedSide !== 2) || voting // 💡 voting 상태 CSS에 추가
+                      ? "opacity-50 cursor-not-allowed"
                       : "hover:shadow-md"
                   }
                 `}
               >
+                {/* ... (UI 내용 생략) */}
                 <span
                   className={`
                     mb-2 inline-flex h-7 w-12 items-center justify-center rounded-m 

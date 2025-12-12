@@ -136,3 +136,16 @@ export const likeDiscussion = async (discussionId: number) => {
 export const unlikeDiscussion = async (discussionId: number) => {
   return api.delete(`/discussions/${discussionId}/like`);
 };
+
+//토론 결과 투표
+export const voteDiscussion = async (
+  discussionId: number,
+  choice: 1 | 2,
+): Promise<{ message: string }> => {
+  const res = await api.post(
+    `/discussions/${discussionId}/vote`,
+    { choice },
+  );
+
+  return res as unknown as { message: string };
+};

@@ -108,7 +108,7 @@ const BookDetailPage: React.FC = () => {
     })();
   }, [bookId]);
 
-    // ===== 북마크 상태 조회 (상세와 분리) =====
+    // ===== 북마크 상태 조회  =====
   useEffect(() => {
     if (!bookId) return;
 

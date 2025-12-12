@@ -50,7 +50,7 @@ const DebateRoomPage: React.FC = () => {
   }
 
   //테스트용
-  //discussion.created_at=new Date(Date.now() -10*DAY_MS).toISOString();
+  discussion.created_at=new Date(Date.now() -10*DAY_MS).toISOString();
 
   const isVSClosed=
     discussion.discussion_type==='VS'&&discussion.created_at
