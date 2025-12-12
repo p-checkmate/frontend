@@ -1,5 +1,5 @@
 // src/pages/Homepage.tsx
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Header,
   DiscussionCard,
@@ -8,26 +8,39 @@ import {
   TogetherReadCard,
   HorizontalBookScrollSection,
   CardCarousel,
-} from "@/components";
-import { useNavigate } from "react-router-dom";
-import { cn } from "@/utils/cn";
-import useScrollHide from "@/hooks/useScrollDirection";
+} from '@/components';
+import { useNavigate } from 'react-router-dom';
+import { cn } from '@/utils/cn';
+import useScrollHide from '@/hooks/useScrollDirection';
 
-import BookCard from "@/components/common/cards/BookSelectCard";
+import BookCard from '@/components/common/cards/BookSelectCard';
 import {
   MOCK_MAIN_BOOKS,
-  MOCK_TOGETHER_READ,
   MOCK_HOT_DISCUSSIONS,
   MOCK_RECOMMENDED_QUOTES,
-} from "@/_mocks/mainPageMock";
+} from '@/_mocks/mainPageMock';
 
-import { useInfiniteBookSearch } from "@/hooks/useInfiniteBookSearch";
+import { useInfiniteBookSearch } from '@/hooks/useInfiniteBookSearch';
+import {
+  fetchReadingGroupOverview,
+  joinReadingGroup,
+  type ReadingGroupOverview,
+} from '@/api/main/readingGroup.api';
+
+// 👉 실제 운영에서 사용할 함께 읽기 그룹 ID (백엔드에서 생성 후 알려준 값으로 교체)
+const READING_GROUP_ID = 1; // TODO: 백엔드에서 실제 reading_group_id로 변경
 
 const MainPage: React.FC = () => {
   const navigate = useNavigate();
   const isHidden = useScrollHide(40);
-  const togetherRead = MOCK_TOGETHER_READ;
 
+  // ====== 함께 읽기 상태 ======
+  const [readingGroup, setReadingGroup] =
+    useState<ReadingGroupOverview | null>(null);
+  const [rgLoading, setRgLoading] = useState(true);
+  const [rgError, setRgError] = useState<string | null>(null);
+
+  // ====== 검색 훅 ======
   const {
     keyword,
     isSearching,
@@ -40,22 +53,79 @@ const MainPage: React.FC = () => {
     loadMoreRef,
   } = useInfiniteBookSearch();
 
+  // ====== 함께 읽기 overview 호출 ======
+  useEffect(() => {
+    const loadReadingGroup = async () => {
+      try {
+        setRgLoading(true);
+        setRgError(null);
+
+        const data = await fetchReadingGroupOverview(READING_GROUP_ID);
+        setReadingGroup(data);
+      } catch (e) {
+        console.error('함께 읽기 정보 로딩 실패:', e);
+        setRgError('함께 읽기 정보를 불러올 수 없습니다.');
+      } finally {
+        setRgLoading(false);
+      }
+    };
+
+    loadReadingGroup();
+  }, []);
+
+  // ====== 함께 읽기 버튼 클릭 핸들러 ======
+  const handleTogetherReadClick = async () => {
+    if (!readingGroup) return;
+
+    const alreadyJoined = !!readingGroup.my_progress;
+
+    // 아직 참여 안 했으면 join 호출
+    if (!alreadyJoined) {
+      try {
+        await joinReadingGroup(readingGroup.reading_group_id);
+
+        // 낙관적 업데이트 (멤버 수 +1, my_progress 생성)
+        setReadingGroup((prev) =>
+          prev
+            ? {
+                ...prev,
+                member_count: prev.member_count + 1,
+                my_progress:
+                  prev.my_progress ??
+                  {
+                    current_page: 0,
+                    memo: null,
+                  },
+              }
+            : prev,
+        );
+      } catch (e) {
+        console.error('함께 읽기 참여 실패:', e);
+        alert('함께 읽기에 참여하지 못했어요. 잠시 후 다시 시도해주세요.');
+        return;
+      }
+    }
+
+    // 참여 여부와 관계 없이 방 페이지로 이동
+    navigate('/togetherRead');
+  };
+
   return (
     <div className="min-h-screen bg-beige1">
       {/* 상단 헤더 + 검색 */}
       <div className="fixed left-0 right-0 top-0 z-50">
         <Header
           variant="logoMy"
-          onMyPageClick={() => navigate("/mypage")}
+          onMyPageClick={() => navigate('/mypage')}
         />
 
         <div
           className={cn(
-            "flex justify-center pt-1 pb-3 transition-all duration-300",
-            "origin-top",
+            'flex justify-center pt-1 pb-3 transition-all duration-300',
+            'origin-top',
             isHidden
-              ? "-translate-y-full opacity-0"
-              : "translate-y-0 opacity-100",
+              ? '-translate-y-full opacity-0'
+              : 'translate-y-0 opacity-100',
           )}
         >
           <Search
@@ -77,17 +147,15 @@ const MainPage: React.FC = () => {
             isLoadingMore={isLoadingMore}
             hasMore={pagination.hasMore}
             loadMoreRef={loadMoreRef}
-            onClickBook={(itemId) =>
-              navigate(`/book/${itemId}`)
-            }
+            onClickBook={(itemId) => navigate(`/book/${itemId}`)}
           />
         ) : (
           <DefaultMainSections
-            togetherRead={togetherRead}
+            readingGroup={readingGroup}
+            readingGroupLoading={rgLoading}
+            readingGroupError={rgError}
             onClickBook={(id) => navigate(`/book/${id}`)}
-            onClickTogetherRead={() =>
-              navigate("/togetherRead")
-            }
+            onClickTogetherRead={handleTogetherReadClick}
             onClickDebate={(id) => navigate(`/debate/${id}`)}
           />
         )}
@@ -114,7 +182,7 @@ type SearchResultSectionProps = {
   loading: boolean;
   isLoadingMore: boolean;
   hasMore: boolean;
-  loadMoreRef: React.RefObject<HTMLDivElement|null>;
+  loadMoreRef: React.RefObject<HTMLDivElement | null>;
   onClickBook: (itemId: number) => void;
 };
 
@@ -184,20 +252,33 @@ const SearchResultSection: React.FC<SearchResultSectionProps> = ({
  * 기본 메인 섹션
  * =========================== */
 type DefaultMainSectionsProps = {
-  togetherRead: (typeof MOCK_TOGETHER_READ) | null;
+  readingGroup: ReadingGroupOverview | null;
+  readingGroupLoading: boolean;
+  readingGroupError: string | null;
   onClickBook: (id: number) => void;
   onClickTogetherRead: () => void;
   onClickDebate: (id: number) => void;
 };
 
-const DefaultMainSections: React.FC<
-  DefaultMainSectionsProps
-> = ({
-  togetherRead,
+const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
+  readingGroup,
+  readingGroupLoading,
+  readingGroupError,
   onClickBook,
   onClickTogetherRead,
   onClickDebate,
 }) => {
+  // progress 계산
+  const isJoined = !!readingGroup?.my_progress;
+  const progressPercent =
+    readingGroup && readingGroup.my_progress && readingGroup.total_pages > 0
+      ? Math.round(
+          (readingGroup.my_progress.current_page /
+            readingGroup.total_pages) *
+            100,
+        )
+      : 0;
+
   return (
     <>
       {/* 배너 */}
@@ -205,25 +286,46 @@ const DefaultMainSections: React.FC<
         <Image className="h-41 w-full" />
       </div>
 
-      {/* 함께 읽기 */}
-      {togetherRead && (
-        <section className="mt-6 px-5">
-          <h2 className="mb-4 text-title5 text-black">
-            현재 진행되고 있는 함께 읽기
-          </h2>
+{/* 함께 읽기 */}
+{!readingGroupLoading && readingGroup && !readingGroupError && (
+  <section className="mt-6 px-5">
+    <h2 className="mb-4 text-title5 text-black">
+      현재 진행되고 있는 함께 읽기
+    </h2>
 
+    <CardCarousel className="mt-1">
+      {Array.from({ length: 5 }).map((_, index) => {
+        const isJoined = !!readingGroup.my_progress;
+        const progressPercent =
+          readingGroup &&
+          readingGroup.my_progress &&
+          readingGroup.total_pages > 0
+            ? Math.round(
+                (readingGroup.my_progress.current_page /
+                  readingGroup.total_pages) *
+                  100,
+              )
+            : 0;
+
+        return (
           <TogetherReadCard
-            title={togetherRead.title}
-            participants={togetherRead.participants}
-            remainDays={togetherRead.remainDays}
-            isJoined={togetherRead.isJoined}
-            progress={togetherRead.progress}
-            rank={togetherRead.rank}
-            thumbnailUrl={togetherRead.thumbnailUrl}
+            key={index}
+            title={readingGroup.title}
+            participants={readingGroup.member_count}
+            remainDays={readingGroup.days_left}
+            isJoined={isJoined}
+            progress={progressPercent}
+            rank={undefined}
+            periodWeeks={3}
             onClick={onClickTogetherRead}
           />
-        </section>
-      )}
+        );
+      })}
+    </CardCarousel>
+  </section>
+)}
+
+
 
       {/* AI 추천 도서 */}
       <HorizontalBookScrollSection
