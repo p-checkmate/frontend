@@ -28,6 +28,7 @@ import InfoIcon from "@/assets/mypage/infoIcon.svg?react";
 import RightArrowIcon from "@/assets/mypage/rightArrowIcon.svg?react";
 import QuoteIcon from '@/assets/icons/quote.svg?react';
 import ShareIcon from '@/assets/icons/share.svg?react';
+import AIIcon from '@/assets/icons/ai_icon.svg?react';
 
 export {
   SendIcon,
@@ -60,4 +61,5 @@ export {
   RightArrowIcon,
   QuoteIcon,
   ShareIcon,
+  AIIcon
 };
