@@ -8,6 +8,7 @@ import {
   TogetherReadCard,
   HorizontalBookScrollSection,
   CardCarousel,
+  ChatFloater,
 } from '@/components';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/utils/cn';
@@ -27,8 +28,7 @@ import {
   type ReadingGroupOverview,
 } from '@/api/main/readingGroup.api';
 
-// 👉 실제 운영에서 사용할 함께 읽기 그룹 ID (백엔드에서 생성 후 알려준 값으로 교체)
-const READING_GROUP_ID = 1; // TODO: 백엔드에서 실제 reading_group_id로 변경
+const READING_GROUP_ID = 1;
 
 const MainPage: React.FC = () => {
   const navigate = useNavigate();
@@ -110,6 +110,11 @@ const MainPage: React.FC = () => {
     navigate('/togetherRead');
   };
 
+  // === AI 챗 핸들러 ===
+  const handleChatClick=()=>{
+    navigate(`/ai`)
+  }
+
   return (
     <div className="min-h-screen bg-beige1">
       {/* 상단 헤더 + 검색 */}
@@ -160,6 +165,7 @@ const MainPage: React.FC = () => {
           />
         )}
       </div>
+      <ChatFloater onClick={handleChatClick}/>
     </div>
   );
 };

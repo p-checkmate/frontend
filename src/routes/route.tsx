@@ -17,6 +17,7 @@ import MyWrite from '@/pages/mypage/MyWrite';
 import MyLiked from '@/pages/mypage/MyLiked';
 import QuoteDetailPage from '@/pages/detail/QuoteDetailPage';
 import TogetherRead from '@/pages/togetherRead/TogetherRead';
+import AIChatRoomPage from '@/pages/main/AIChatRoomPage';
 
 export const router = createBrowserRouter([
   {
@@ -91,4 +92,8 @@ export const router = createBrowserRouter([
     path:'/togetherRead',
     element:<TogetherRead/>
   },
+  {
+    path: '/ai',
+    element:<AIChatRoomPage/>
+  }
 ]);
