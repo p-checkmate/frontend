@@ -144,7 +144,7 @@ const AIChatRoomPage: React.FC = () => {
 
       {/* 하단 고정 입력 바 */}
       <div className="sticky bottom-0 left-0 z-20 mx-auto w-full bg-beige1">
-        <DebateOpinionBar type="default" onSubmit={handleSubmit} disabled={loading}/>
+        <DebateOpinionBar type="default" onSubmit={handleSubmit} disabled={loading||isResponding}/>
       </div>
     </div>
   );
