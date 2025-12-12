@@ -82,6 +82,7 @@ const BookDetailPage: React.FC = () => {
   }, [book?.bookId]);
 
   // ===== 도서 상세 API 호출 =====
+  // ===== 도서 상세 + 북마크 상태 =====
   useEffect(() => {
     if (!bookId) {
       setError('잘못된 접근입니다.');
@@ -92,13 +93,11 @@ const BookDetailPage: React.FC = () => {
     (async () => {
       try {
         setLoading(true);
-        const [detail, status] = await Promise.all([
-          fetchBookDetail(bookId),
-          fetchBookBookmarkStatus(bookId),
-        ]);
+
+        // 1) URL 파라미터(bookId)는 상세 조회용 (ex. itemId)
+        const detail = await fetchBookDetail(bookId);
 
         setBook(detail);
-        setIsBookmarked(!!status);
         setError(null);
       } catch (err: any) {
         console.error(err);
@@ -108,6 +107,23 @@ const BookDetailPage: React.FC = () => {
       }
     })();
   }, [bookId]);
+
+    // ===== 북마크 상태 조회 (상세와 분리) =====
+  useEffect(() => {
+    if (!bookId) return;
+
+    (async () => {
+      try {
+        const status = await fetchBookBookmarkStatus(bookId.toString());
+        setIsBookmarked(!!status);
+      } catch (err) {
+        console.error('북마크 상태 조회 실패:', err);
+        setIsBookmarked(false);
+      }
+    })();
+  }, [bookId]);
+
+
 
   const handleToggleBookmark = async () => {
     if (!bookId) return;
