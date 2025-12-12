@@ -10,12 +10,20 @@ export type AIChatMessageResponse = {
 };
 
 export const createAIChat = async (): Promise<AIChatCreateResponse> => {
-  return api.post("/ai/chats");
+  const res = await api.post("/ai/chats", {}, { timeout: 30000 });
+
+  return res as unknown as AIChatCreateResponse;
 };
 
 export const sendAIChatMessage = async (
   chatId: string,
   message: string,
 ): Promise<AIChatMessageResponse> => {
-  return api.post(`/ai/chats/${chatId}`, { message });
+  const res = await api.post(
+    `/ai/chats/${chatId}`,
+    { message },
+    { timeout: 30000 },
+  );
+
+  return res as unknown as AIChatMessageResponse;
 };
