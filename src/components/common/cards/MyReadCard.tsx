@@ -1,11 +1,12 @@
+// MyReadCard.tsx
 import React, { useState, useEffect } from 'react';
 import Toast from '@/components/common/toast/Toast';
 import { cn } from '@/utils/cn';
 
 interface MyReadCardProps {
-  totalPage: number;          // 전체 페이지 수
-  initialReadPage?: number;   // 백엔드에 저장된 페이지 (DB 데이터)
-  initialMemo?: string;       // 백엔드에 저장된 메모 (DB 데이터)
+  totalPage: number;
+  initialReadPage?: number;   // 서버에 저장된 내 현재 페이지 (표시용)
+  initialMemo?: string;       // 서버에 저장된 메모 (표시용 - 입력창에 넣지 않음)
   onUpdate?: (readPage: number, memo: string) => void;
 }
 
@@ -15,8 +16,9 @@ const MyReadCard: React.FC<MyReadCardProps> = ({
   initialMemo = '',
   onUpdate,
 }) => {
+  // ✅ 입력창 state는 "항상 새 입력"용
   const [readPageStr, setReadPageStr] = useState<string>('');
-  const [memo, setMemo] = useState<string>(initialMemo || '');
+  const [memoInput, setMemoInput] = useState<string>(''); // ✅ 서버 memo로 초기화하지 않음
   const [toast, setToast] = useState({ visible: false, message: '' });
 
   const currentDisplayPage =
@@ -49,19 +51,19 @@ const MyReadCard: React.FC<MyReadCardProps> = ({
   };
 
   const handleUpdateClick = () => {
-    if (readPageStr === '' && memo === '') {
+    // ✅ 아무것도 입력 안 했으면 막기 (메모만/페이지만 업데이트는 허용하고 싶으면 조건 바꿔도 됨)
+    if (readPageStr === '' && memoInput.trim() === '') {
       setToast({ visible: true, message: '업데이트할 내용을 입력해주세요!' });
       return;
     }
 
     const newPage = readPageStr !== '' ? Number(readPageStr) : initialReadPage;
 
-    if (onUpdate) {
-      onUpdate(newPage, memo);
-    }
+    onUpdate?.(newPage, memoInput);
 
+    // ✅ 업데이트 후 입력창은 비움 (다음 입력을 위해)
     setReadPageStr('');
-    setMemo('');
+    setMemoInput('');
     setToast({ visible: true, message: '독서 기록이 업데이트 되었어요!' });
   };
 
@@ -87,6 +89,8 @@ const MyReadCard: React.FC<MyReadCardProps> = ({
             {currentDisplayPage > 0 ? `(${currentDisplayPage}p)` : '(-p)'}
           </span>
         </div>
+
+        
       </div>
 
       {/* --- 입력 폼 영역 --- */}
@@ -102,7 +106,6 @@ const MyReadCard: React.FC<MyReadCardProps> = ({
             내가 읽은 페이지
           </label>
 
-          {/* 입력 */}
           <input
             type="text"
             inputMode="numeric"
@@ -117,7 +120,7 @@ const MyReadCard: React.FC<MyReadCardProps> = ({
           </span>
         </div>
 
-        {/* 2. 한줄 감상 입력 */}
+        {/* 2. 한줄 감상 입력 (✅ 서버 memo랑 분리) */}
         <div
           className={cn(
             'relative h-[68px] w-full rounded-m border bg-transparent transition-colors',
@@ -128,11 +131,10 @@ const MyReadCard: React.FC<MyReadCardProps> = ({
             한줄 감상/메모
           </label>
 
-          {/* 입력 */}
           <input
             type="text"
-            value={memo}
-            onChange={(e) => setMemo(e.target.value)}
+            value={memoInput}
+            onChange={(e) => setMemoInput(e.target.value)}
             className="absolute bottom-[10px] left-[14px] right-[14px] bg-transparent text-caption4 text-black outline-none placeholder:text-gray2"
             placeholder="내용을 입력해주세요"
           />
@@ -147,12 +149,7 @@ const MyReadCard: React.FC<MyReadCardProps> = ({
         </button>
       </div>
 
-      {/* 토스트 */}
-      <Toast
-        variant="alert"
-        message={toast.message}
-        visible={toast.visible}
-      />
+      <Toast variant="alert" message={toast.message} visible={toast.visible} />
     </div>
   );
 };

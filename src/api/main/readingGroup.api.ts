@@ -1,6 +1,10 @@
-// src/api/readingGroup.api.ts
+// src/api/main/readingGroup.api.ts
 import api from '@/api/api';
 
+export type ReadingGroupProgress = {
+  current_page: number;
+  memo: string | null;
+};
 
 export type ReadingGroupOverview = {
   reading_group_id: number;
@@ -8,30 +12,35 @@ export type ReadingGroupOverview = {
   member_count: number;
   days_left: number;
   total_pages: number;
-  my_progress: {
-    current_page: number;
-    memo: string | null;
-  } | null;
-  thumbnail_url?: string;
+  my_progress: ReadingGroupProgress | null; // 참여 안 했으면 null
 };
 
+// ✅ 단일 overview
 export async function fetchReadingGroupOverview(
   groupId: number,
 ): Promise<ReadingGroupOverview> {
-  if (groupId == null || Number.isNaN(groupId)) {
-    throw new Error('유효하지 않은 reading_group_id 입니다.');
-  }
-
-  const data = (await api.get(
-    `/reading-groups/${groupId}/overview`,
-  )) as unknown as ReadingGroupOverview;
-
-  return data;
+  return api.get(`/reading-groups/${groupId}/overview`);
 }
 
-export async function joinReadingGroup(groupId: number): Promise<void> {
-  if (groupId == null || Number.isNaN(groupId)) {
-    throw new Error('유효하지 않은 reading_group_id 입니다.');
-  }
-  await api.post(`/reading-groups/${groupId}/join`, {});
+// ✅ 여러 개 overview 병렬 조회 (실패한 것만 제외하고 반환)
+export async function fetchReadingGroupsOverviews(
+  groupIds: number[],
+): Promise<ReadingGroupOverview[]> {
+  const settled = await Promise.allSettled(
+    groupIds.map((id) => fetchReadingGroupOverview(id)),
+  );
+
+  return settled
+    .filter(
+      (r): r is PromiseFulfilledResult<ReadingGroupOverview> =>
+        r.status === 'fulfilled',
+    )
+    .map((r) => r.value);
+}
+
+// ✅ join
+export async function joinReadingGroup(
+  groupId: number,
+): Promise<{ reading_group_id: number }> {
+  return api.post(`/reading-groups/${groupId}/join`, {});
 }

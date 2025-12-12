@@ -1,5 +1,5 @@
 // src/pages/Homepage.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Header,
   DiscussionCard,
@@ -22,21 +22,20 @@ import {
 
 import { useInfiniteBookSearch } from '@/hooks/useInfiniteBookSearch';
 import {
-  fetchReadingGroupOverview,
+  fetchReadingGroupsOverviews,
   joinReadingGroup,
   type ReadingGroupOverview,
 } from '@/api/main/readingGroup.api';
 
-// 👉 실제 운영에서 사용할 함께 읽기 그룹 ID (백엔드에서 생성 후 알려준 값으로 교체)
-const READING_GROUP_ID = 1; // TODO: 백엔드에서 실제 reading_group_id로 변경
+// 운영에서 “메인에 노출할 그룹 5개”를 room_id로 고정
+const READING_GROUP_IDS = [1, 3, 5, 7, 9];
 
 const MainPage: React.FC = () => {
   const navigate = useNavigate();
   const isHidden = useScrollHide(40);
 
-  // ====== 함께 읽기 상태 ======
-  const [readingGroup, setReadingGroup] =
-    useState<ReadingGroupOverview | null>(null);
+  // ====== 함께 읽기 상태 (5개) ======
+  const [readingGroups, setReadingGroups] = useState<ReadingGroupOverview[]>([]);
   const [rgLoading, setRgLoading] = useState(true);
   const [rgError, setRgError] = useState<string | null>(null);
 
@@ -53,15 +52,22 @@ const MainPage: React.FC = () => {
     loadMoreRef,
   } = useInfiniteBookSearch();
 
-  // ====== 함께 읽기 overview 호출 ======
+  // ====== 함께 읽기 5개 overview 호출 ======
   useEffect(() => {
-    const loadReadingGroup = async () => {
+    const load = async () => {
       try {
         setRgLoading(true);
         setRgError(null);
 
-        const data = await fetchReadingGroupOverview(READING_GROUP_ID);
-        setReadingGroup(data);
+        const list = await fetchReadingGroupsOverviews(READING_GROUP_IDS);
+
+        // READING_GROUP_IDS 순서대로 정렬 (Promise.allSettled로 순서 깨질 수 있어서)
+        const map = new Map(list.map((g) => [g.reading_group_id, g]));
+        const ordered = READING_GROUP_IDS.map((id) => map.get(id)).filter(
+          Boolean,
+        ) as ReadingGroupOverview[];
+
+        setReadingGroups(ordered);
       } catch (e) {
         console.error('함께 읽기 정보 로딩 실패:', e);
         setRgError('함께 읽기 정보를 불러올 수 없습니다.');
@@ -70,34 +76,35 @@ const MainPage: React.FC = () => {
       }
     };
 
-    loadReadingGroup();
+    load();
   }, []);
 
-  // ====== 함께 읽기 버튼 클릭 핸들러 ======
-  const handleTogetherReadClick = async () => {
-    if (!readingGroup) return;
+  // ====== join + 이동 ======
+  const handleTogetherReadClick = async (groupId: number) => {
+    const target = readingGroups.find((g) => g.reading_group_id === groupId);
+    if (!target) return;
 
-    const alreadyJoined = !!readingGroup.my_progress;
+    const alreadyJoined = !!target.my_progress;
 
-    // 아직 참여 안 했으면 join 호출
     if (!alreadyJoined) {
       try {
-        await joinReadingGroup(readingGroup.reading_group_id);
+        await joinReadingGroup(groupId);
 
-        // 낙관적 업데이트 (멤버 수 +1, my_progress 생성)
-        setReadingGroup((prev) =>
-          prev
-            ? {
-                ...prev,
-                member_count: prev.member_count + 1,
-                my_progress:
-                  prev.my_progress ??
-                  {
-                    current_page: 0,
-                    memo: null,
-                  },
-              }
-            : prev,
+        // 낙관적 업데이트
+        setReadingGroups((prev) =>
+          prev.map((g) =>
+            g.reading_group_id === groupId
+              ? {
+                  ...g,
+                  member_count: g.member_count + 1,
+                  my_progress:
+                    g.my_progress ?? {
+                      current_page: 0,
+                      memo: null,
+                    },
+                }
+              : g,
+          ),
         );
       } catch (e) {
         console.error('함께 읽기 참여 실패:', e);
@@ -106,8 +113,9 @@ const MainPage: React.FC = () => {
       }
     }
 
-    // 참여 여부와 관계 없이 방 페이지로 이동
-    navigate('/togetherRead');
+    // 방으로 이동 (라우팅에 맞게 수정 가능)
+    navigate(`/togetherRead/${groupId}`);
+    // 만약 라우트가 /togetherRead/:groupId 라면
   };
 
   return (
@@ -151,7 +159,7 @@ const MainPage: React.FC = () => {
           />
         ) : (
           <DefaultMainSections
-            readingGroup={readingGroup}
+            readingGroups={readingGroups}
             readingGroupLoading={rgLoading}
             readingGroupError={rgError}
             onClickBook={(id) => navigate(`/book/${id}`)}
@@ -222,7 +230,7 @@ const SearchResultSection: React.FC<SearchResultSectionProps> = ({
             key={book.itemId}
             title={book.title}
             subtitle={`${book.author} · ${book.publisher}`}
-            thumbnailUrl={book.cover}
+            //thumbnailUrl={book.cover}
             tags={book.categoryNames}
             onClickCard={() => onClickBook(book.itemId)}
           />
@@ -252,33 +260,34 @@ const SearchResultSection: React.FC<SearchResultSectionProps> = ({
  * 기본 메인 섹션
  * =========================== */
 type DefaultMainSectionsProps = {
-  readingGroup: ReadingGroupOverview | null;
+  readingGroups: ReadingGroupOverview[];
   readingGroupLoading: boolean;
   readingGroupError: string | null;
   onClickBook: (id: number) => void;
-  onClickTogetherRead: () => void;
+  onClickTogetherRead: (groupId: number) => void;
   onClickDebate: (id: number) => void;
 };
 
 const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
-  readingGroup,
+  readingGroups,
   readingGroupLoading,
   readingGroupError,
   onClickBook,
   onClickTogetherRead,
   onClickDebate,
 }) => {
+  /*
   // progress 계산
-  //const isJoined = !!readingGroup?.my_progress;
-  /*const progressPercent =
+  const isJoined = !!readingGroup?.my_progress;
+  const progressPercent =
     readingGroup && readingGroup.my_progress && readingGroup.total_pages > 0
       ? Math.round(
           (readingGroup.my_progress.current_page /
             readingGroup.total_pages) *
             100,
         )
-      : 0;*/
-
+      : 0;
+  */
   return (
     <>
       {/* 배너 */}
@@ -286,44 +295,18 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
         <Image className="h-41 w-full" />
       </div>
 
-{/* 함께 읽기 */}
-{!readingGroupLoading && readingGroup && !readingGroupError && (
-  <section className="mt-6 px-5">
-    <h2 className="mb-4 text-title5 text-black">
-      현재 진행되고 있는 함께 읽기
-    </h2>
+      {/* 함께 읽기 (5개 캐러셀) */}
+      {!readingGroupLoading && !readingGroupError && readingGroups.length > 0 && (
+        <section className="mt-6">
+          <h2 className="mb-4 px-5 text-title5 text-black">현재 진행되고 있는 함께 읽기</h2>
 
-    <CardCarousel className="mt-1">
-      {Array.from({ length: 5 }).map((_, index) => {
-        const isJoined = !!readingGroup.my_progress;
-        const progressPercent =
-          readingGroup &&
-          readingGroup.my_progress &&
-          readingGroup.total_pages > 0
-            ? Math.round(
-                (readingGroup.my_progress.current_page /
-                  readingGroup.total_pages) *
-                  100,
-              )
-            : 0;
-
-        return (
-          <TogetherReadCard
-            key={index}
-            title={readingGroup.title}
-            participants={readingGroup.member_count}
-            remainDays={readingGroup.days_left}
-            isJoined={isJoined}
-            progress={progressPercent}
-            rank={undefined}
-            periodWeeks={3}
-            onClick={onClickTogetherRead}
+          {/* ✅ 여기서 “5장 캐러셀” 구현 (CardCarousel 안 써도 됨) */}
+          <TogetherReadCarousel
+            items={readingGroups}
+            onClickTogetherRead={onClickTogetherRead}
           />
-        );
-      })}
-    </CardCarousel>
-  </section>
-)}
+        </section>
+      )}
 
 
 
@@ -413,3 +396,103 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
     </>
   );
 };
+
+/* ===========================
+ * 함께 읽기 캐러셀 (5장)
+ * - “토론 카드”처럼 꽉 차게 보이도록 px-5 안쪽 폭에 맞춤
+ * - 스와이프/가로스크롤 + dots 포함
+ * =========================== */
+function TogetherReadCarousel({
+  items,
+  onClickTogetherRead,
+}: {
+  items: ReadingGroupOverview[];
+  onClickTogetherRead: (groupId: number) => void;
+}) {
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const [active, setActive] = useState(0);
+
+  const slideCount = items.length;
+
+  // 스크롤 위치 기반 active index 계산
+  const onScroll = () => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    const { scrollLeft, clientWidth } = el;
+    const idx = Math.round(scrollLeft / clientWidth);
+    setActive(Math.max(0, Math.min(slideCount - 1, idx)));
+  };
+
+  const goTo = (idx: number) => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    const x = idx * el.clientWidth;
+    el.scrollTo({ left: x, behavior: 'smooth' });
+  };
+
+  return (
+    <div className="mt-1">
+      {/* ✅ 스크롤 영역 */}
+      <div
+        ref={scrollerRef}
+        onScroll={onScroll}
+        className={cn(
+          'flex w-full snap-x snap-mandatory overflow-x-auto',
+          'scrollbar-hide',
+        )}
+        style={{
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          msOverflowStyle: 'none',  /* IE and Edge */
+          scrollbarWidth: 'none',  /* Firefox */
+        }}
+      >
+        {items.map((g) => {
+          const isJoined = !!g.my_progress;
+          const progressPercent =
+            g.my_progress && g.total_pages > 0
+              ? Math.floor((g.my_progress.current_page / g.total_pages) * 100)
+              : 0;
+
+          return (
+            <div
+              key={g.reading_group_id}
+              className={cn(
+                'w-full flex-shrink-0 snap-center',
+                'px-5', // ✅ 토론 카드랑 동일하게 좌우 여백 5
+              )}
+            >
+              <TogetherReadCard
+                title={g.title}
+                participants={g.member_count}
+                remainDays={g.days_left}
+                isJoined={isJoined}
+                progress={progressPercent}
+                rank={undefined}
+                //thumbnailUrl={undefined}
+                onClick={() => onClickTogetherRead(g.reading_group_id)}
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ✅ dots */}
+      <div className="mt-3 flex justify-center gap-1">
+        {Array.from({ length: slideCount }).map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            className={cn(
+              'h-[7px] w-[7px] rounded-full',
+              i === active ? 'bg-gray3' : 'bg-gray2',
+            )}
+            aria-label={`slide-${i}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
