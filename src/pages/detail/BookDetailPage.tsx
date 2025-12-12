@@ -11,9 +11,9 @@ import {
 } from '@/components';
 import { useNavigate, useParams } from 'react-router-dom';
 import { fetchBookDetail } from '@/api/detail/detail.api';
+import { fetchBookDiscussion, type BookDiscussionSummary } from '@/api/detail/discussion.api';
 import type { BookDetail } from '@/types/book';
-import { fetchQuotes } from '@/api/detail/quote.api';
-import { createQuote } from '@/api/detail/quote.api';
+import { fetchQuotes, createQuote } from '@/api/detail/quote.api';
 import { formatKoreanDate } from '@/utils/date';
 import {
   createBookBookmark,
@@ -34,8 +34,7 @@ const BookDetailPage: React.FC = () => {
   const [book, setBook] = useState<BookDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // 토론 API 추후 연결
-  const discussions: any[] = [];
+  const [discussions, setDiscussions]=useState<BookDiscussionSummary[]>([]);
   const [quotes, setQuotes] = useState<any[]>([]);
   const navigate = useNavigate();
 
@@ -53,6 +52,21 @@ const BookDetailPage: React.FC = () => {
   const handleCreateDiscussion = () => {
     setOpenCreateModal(true);
   };
+
+  // ==== 토론 조회 API ===
+  useEffect(()=>{
+    if(!book?.bookId) return;
+
+    (async()=>{
+      try{
+        const list=await fetchBookDiscussion(book.bookId);
+        console.log(list)
+        setDiscussions(list);
+      }catch(err){
+        console.error('토론 목록을 불러오지 못했습니다:', err);
+      }
+    })();
+  }, [book?.bookId])
 
   // ==== 인용구 조회 API ====
   useEffect(() => {
@@ -78,14 +92,13 @@ const BookDetailPage: React.FC = () => {
     (async () => {
       try {
         setLoading(true);
-        const data = await fetchBookDetail(bookId);
-        setBook(data);
+        const [detail, status] = await Promise.all([
+          fetchBookDetail(bookId),
+          fetchBookBookmarkStatus(bookId),
+        ]);
 
-        //북마크 여부 내려주는 API 필요
-        if (typeof (data as any).bookmarked === 'boolean') {
-          setIsBookmarked(Boolean((data as any).bookmarked));
-        }
-
+        setBook(detail);
+        setIsBookmarked(!!status);
         setError(null);
       } catch (err: any) {
         console.error(err);
@@ -95,31 +108,6 @@ const BookDetailPage: React.FC = () => {
       }
     })();
   }, [bookId]);
-
-  // 북마크 여부 조회
-  useEffect(() => {
-  if (!bookId) return;
-
-  (async () => {
-    try {
-      setLoading(true);
-
-      const data = await fetchBookDetail(bookId);
-      setBook(data);
-
-      try {
-        const status = await fetchBookBookmarkStatus(bookId);
-        setIsBookmarked(status);
-      } catch (err) {
-        console.error("북마크 여부 조회 실패:", err);
-      }
-    } catch (err: any) {
-      setError(err.message ?? "도서 정보를 불러오지 못했습니다.");
-    } finally {
-      setLoading(false);
-    }
-  })();
-}, [bookId]);
 
   const handleToggleBookmark = async () => {
     if (!bookId) return;
@@ -256,25 +244,25 @@ const BookDetailPage: React.FC = () => {
         {/* ===== 토론 리스트 ===== */}
         {activeTab === '토론' && (
           <div className="mt-4 px-5">
-            {discussions.length === 0 ? (
+            {(discussions?.length ?? 0) === 0 ? (
               <p className="text-body3 text-gray5 mt-6 text-center">
                 아직 등록된 토론이 없어요.
               </p>
             ) : (
               <div className="space-y-3">
-                {discussions.map((d) => (
+                {(discussions ?? []).map((d) => (
                   <DiscussionCard
-                    key={d.id}
+                    key={d.discussion_id}
                     type="discussion"
-                    bookTitle={d.bookTitle}
+                    bookTitle={title}
                     title={d.title}
                     content={d.content}
                     nickname={d.nickname}
-                    dateLabel={d.dateLabel}
-                    likeCount={d.likeCount}
-                    commentCount={d.commentCount}
+                    dateLabel={formatKoreanDate(d.created_at)}
+                    likeCount={d.like_count}
+                    commentCount={d.comment_count}
                     onClickCard={() => {
-                      // TODO: 토론 상세
+                      navigate(`/debate/${d.discussion_id}`);
                     }}
                   />
                 ))}

@@ -1,4 +1,4 @@
-import api from '../api';
+import api from "../api";
 
 export type DiscussionType = 'FREE' | 'VS';
 
@@ -58,6 +58,20 @@ export interface DiscussionCreateRequest {
   option2?: string;
 }
 
+
+export type BookDiscussionSummary = {
+  discussion_id: number;
+  title: string;
+  content: string;
+  discussion_type: "FREE" | "VS";
+  option1: string | null;
+  option2: string | null;
+  created_at: string;
+  nickname: string;
+  like_count: number;
+  comment_count: number;
+};
+
 export interface DiscussionCreateResponse {
   discussion_id: number;
 }
@@ -97,6 +111,16 @@ export const createDiscussionMessage = async (
   const res = await api.post(`/discussions/${discussionId}/messages`, payload);
   return res as unknown as DiscussionMessageCreateResponse;
 };
+
+//토론 목록
+export const fetchBookDiscussion = async (
+  bookId: number | string
+): Promise<BookDiscussionSummary[]> => {
+  const res = await api.get(`/books/${bookId}/discussions`);
+  const data = res as unknown as { discussions: BookDiscussionSummary[] };
+  return data?.discussions ?? [];
+};
+
 
 //좋아요
 export const fetchDiscussionLikeStatus = async (discussionId: number): Promise<boolean> => {
