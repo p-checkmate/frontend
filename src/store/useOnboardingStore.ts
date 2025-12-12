@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import type { TopGenre } from '@/constants/genre';
 
 interface OnboardingState {
   email: string;
@@ -15,8 +16,8 @@ interface OnboardingState {
   toggleBookSelect: (id: number) => void;
 
   // 상위 장르 선택
-  selectedTopGenre: string | null;
-  setTopGenre: (genre: string | null) => void;
+  selectedTopGenre: TopGenre | null;
+  setTopGenre: (genre: TopGenre | null) => void;
 
   // 하위 장르 선택
   selectedSubGenres: string[];
@@ -24,13 +25,13 @@ interface OnboardingState {
 }
 
 export const useOnboardingStore = create<OnboardingState>((set) => ({
-  email: "",
-  password: "",
+  email: '',
+  password: '',
   setEmail: (email) => set({ email }),
   setPassword: (password) => set({ password }),
 
   // 닉네임
-  nickname: "",
+  nickname: '',
   setNickname: (name) => set({ nickname: name }),
 
   // 책 선택
@@ -60,7 +61,8 @@ export const useOnboardingStore = create<OnboardingState>((set) => ({
   setTopGenre: (genre) =>
     set({
       selectedTopGenre: genre,
-      selectedSubGenres: [], // 상위 장르 바꾸면 하위는 초기화
+      // 상위 장르 바꾸면 하위 선택 초기화
+      selectedSubGenres: [],
     }),
 
   // 하위 장르
