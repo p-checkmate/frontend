@@ -30,7 +30,7 @@ import QuoteIcon from '@/assets/icons/quote.svg?react';
 import ShareIcon from '@/assets/icons/share.svg?react';
 import AIIcon from '@/assets/icons/ai_icon.svg?react';
 import Banner from '@/assets/icons/banner.png';
-
+import LinkIcon from '@/assets/icons/link_icon.svg?react';
 export {
   SendIcon,
   CommentIcon,
@@ -64,4 +64,5 @@ export {
   ShareIcon,
   AIIcon,
   Banner,
+  LinkIcon,
 };
