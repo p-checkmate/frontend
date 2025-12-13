@@ -175,6 +175,14 @@ const BookDetailPage: React.FC = () => {
   const aladinUrl = `https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=${book.itemId}`;
   const coverImageUrl = thumbnailUrl;
   const tags = genres?.map((g) => g.genreName) ?? [];
+  const decodeHtml = (str: string) =>
+    str
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
+  const decodedDescription = decodeHtml(description ?? '');
 
   return (
     <div className="bg-beige1 min-h-screen">
@@ -213,7 +221,7 @@ const BookDetailPage: React.FC = () => {
               </div>
 
               {/* 도서 요약 */}
-              <div className="text-body2">{description}</div>
+              <div className="text-body2">{decodedDescription}</div>
               <a
                 href={aladinUrl}
                 target="_blank"
