@@ -15,7 +15,6 @@ import useScrollHide from '@/hooks/useScrollDirection';
 
 import BookCard from '@/components/common/cards/BookSelectCard';
 import {
-  //MOCK_MAIN_BOOKS,
   MOCK_HOT_DISCUSSIONS,
   MOCK_RECOMMENDED_QUOTES,
 } from '@/_mocks/mainPageMock';
@@ -545,6 +544,7 @@ function TogetherReadCarousel({
                 progress={progressPercent}
                 rank={g.my_rank}
                 totalDays={totalDays}
+                thumbnailUrl={g.thumbnail_url ?? undefined}
                 onClick={() => onClickTogetherRead(g.reading_group_id)}
               />
             </div>
