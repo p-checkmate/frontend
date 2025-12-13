@@ -27,6 +27,7 @@ import {
   joinReadingGroup,
   type ReadingGroupOverview,
 } from '@/api/main/readingGroup.api';
+import { Banner } from '@/assets';
 
 // 운영에서 “메인에 노출할 그룹 5개”를 room_id로 고정
 const READING_GROUP_IDS = [1, 3, 5, 7, 9];
@@ -334,7 +335,7 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
     <>
       {/* 배너 */}
       <div className="mt-3.5">
-        <Image className="h-41 w-full" />
+        <Image src={Banner} className="w-full" />
       </div>
 
       {/* 함께 읽기 (5개 캐러셀) */}
