@@ -24,7 +24,7 @@ import {
 import { useInfiniteBookSearch } from '@/hooks/useInfiniteBookSearch';
 import {
   fetchReadingGroupsOverviews,
-  fetchReadingGroupMembers, // ✅ 추가
+  fetchReadingGroupMembers,
   joinReadingGroup,
   type ReadingGroupOverview,
 } from '@/api/main/readingGroup.api';
@@ -32,7 +32,7 @@ import {
 // 운영에서 “메인에 노출할 그룹 5개”를 room_id로 고정
 const READING_GROUP_IDS = [1, 3, 5, 7, 9];
 
-// ✅ rank 포함 타입(Homepage에서만 사용)
+// rank 포함 타입(Homepage에서만 사용)
 type ReadingGroupWithRank = ReadingGroupOverview & {
   my_rank?: number;
 };
@@ -51,7 +51,7 @@ function calcMyRankFromMembers(
 
   const myPercent = toPercent(me.current_page);
 
-  // ✅ 공동등수: 내 퍼센트보다 "엄격히 큰" 사람 수 + 1
+  // 공동등수: 내 퍼센트보다 "엄격히 큰" 사람 수 + 1
   const higherCount = members.filter((m) => toPercent(m.current_page) > myPercent)
     .length;
 
@@ -92,7 +92,7 @@ const MainPage: React.FC = () => {
         // overview map
         const overviewMap = new Map(list.map((g) => [g.reading_group_id, g]));
 
-        // ✅ members도 병렬로 불러와 rank 계산 (실패해도 카드 뜨게)
+        // members도 병렬로 불러와 rank 계산 (실패해도 카드 뜨게)
         const membersResults = await Promise.all(
           READING_GROUP_IDS.map(async (groupId) => {
             try {
@@ -159,7 +159,6 @@ const MainPage: React.FC = () => {
                       current_page: 0,
                       memo: null,
                     },
-                  // ✅ join 직후에는 rank 정확하지 않을 수 있음 → 일단 undefined 유지 or 기존 값 유지
                 }
               : g,
           ),
@@ -478,8 +477,8 @@ function TogetherReadCarousel({
                 remainDays={g.days_left}
                 isJoined={isJoined}
                 progress={progressPercent}
-                rank={g.my_rank} // ✅ rank 주입
-                totalDays={totalDays} // 💡 수정: totalDays 전달
+                rank={g.my_rank} 
+                totalDays={totalDays}
                 onClick={() => onClickTogetherRead(g.reading_group_id)}
               />
             </div>

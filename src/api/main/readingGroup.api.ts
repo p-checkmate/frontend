@@ -22,7 +22,7 @@ export type ReadingGroupMembersResponse = {
   total_count: number;
   total_pages: number;
   has_next: boolean;
-  total_page_count: number; // ✅ 이게 책 총 페이지
+  total_page_count: number;
   members: Array<{
     member_id: number;
     user_id: number;
@@ -34,14 +34,14 @@ export type ReadingGroupMembersResponse = {
   }>;
 };
 
-// ✅ 단일 overview
+// overview
 export async function fetchReadingGroupOverview(
   groupId: number,
 ): Promise<ReadingGroupOverview> {
   return api.get(`/reading-groups/${groupId}/overview`);
 }
 
-// ✅ 여러 개 overview 병렬 조회 (실패한 것만 제외하고 반환)
+// overview 병렬 조회 (실패한 것만 제외하고 반환)
 export async function fetchReadingGroupsOverviews(
   groupIds: number[],
 ): Promise<ReadingGroupOverview[]> {
@@ -57,7 +57,7 @@ export async function fetchReadingGroupsOverviews(
     .map((r) => r.value);
 }
 
-// ✅ join
+// join
 export async function joinReadingGroup(
   groupId: number,
 ): Promise<{ reading_group_id: number }> {

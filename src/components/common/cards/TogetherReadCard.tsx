@@ -10,9 +10,7 @@ type TogetherReadCardProps = {
   rank?: number;
   thumbnailUrl?: string;
   onClick?: () => void;
-  totalDays?: number; // 이거 추후 수정
-
-  // 외부에서 가로폭/스타일 더 줄 수 있게
+  totalDays?: number;
   className?: string;
 };
 
@@ -51,7 +49,7 @@ const TogetherReadCard: React.FC<TogetherReadCardProps> = ({
         {/* 텍스트 영역 */}
         <div className="flex flex-1 flex-col gap-[5px]">
           <p className="text-caption4 text-gray3">
-            {totalDays}일 동안 함께 읽는 책 {/*여기 추후 수정*/}
+            {totalDays}일 동안 함께 읽는 책
           </p>
           <h3 className="text-title6">{title}</h3>
 
