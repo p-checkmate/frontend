@@ -24,6 +24,7 @@ import {
 import { useInfiniteBookSearch } from '@/hooks/useInfiniteBookSearch';
 import {
   fetchReadingGroupsOverviews,
+  fetchReadingGroupMembers, // ✅ 추가
   joinReadingGroup,
   type ReadingGroupOverview,
 } from '@/api/main/readingGroup.api';
@@ -31,12 +32,38 @@ import {
 // 운영에서 “메인에 노출할 그룹 5개”를 room_id로 고정
 const READING_GROUP_IDS = [1, 3, 5, 7, 9];
 
+// ✅ rank 포함 타입(Homepage에서만 사용)
+type ReadingGroupWithRank = ReadingGroupOverview & {
+  my_rank?: number;
+};
+
+function calcMyRankFromMembers(
+  members: Array<{ current_page: number; is_current_user: boolean }>,
+  totalPageCount: number,
+) {
+  if (!totalPageCount || totalPageCount <= 0) return undefined;
+
+  const toPercent = (p: number) =>
+    Math.min(100, Math.floor((p / totalPageCount) * 100));
+
+  const me = members.find((m) => m.is_current_user);
+  if (!me) return undefined;
+
+  const myPercent = toPercent(me.current_page);
+
+  // ✅ 공동등수: 내 퍼센트보다 "엄격히 큰" 사람 수 + 1
+  const higherCount = members.filter((m) => toPercent(m.current_page) > myPercent)
+    .length;
+
+  return higherCount + 1;
+}
+
 const MainPage: React.FC = () => {
   const navigate = useNavigate();
   const isHidden = useScrollHide(40);
 
   // ====== 함께 읽기 상태 (5개) ======
-  const [readingGroups, setReadingGroups] = useState<ReadingGroupOverview[]>([]);
+  const [readingGroups, setReadingGroups] = useState<ReadingGroupWithRank[]>([]);
   const [rgLoading, setRgLoading] = useState(true);
   const [rgError, setRgError] = useState<string | null>(null);
 
@@ -53,7 +80,7 @@ const MainPage: React.FC = () => {
     loadMoreRef,
   } = useInfiniteBookSearch();
 
-  // ====== 함께 읽기 5개 overview 호출 ======
+  // ====== 함께 읽기 5개 overview + rank 계산 ======
   useEffect(() => {
     const load = async () => {
       try {
@@ -62,11 +89,41 @@ const MainPage: React.FC = () => {
 
         const list = await fetchReadingGroupsOverviews(READING_GROUP_IDS);
 
-        // READING_GROUP_IDS 순서대로 정렬
-        const map = new Map(list.map((g) => [g.reading_group_id, g]));
-        const ordered = READING_GROUP_IDS.map((id) => map.get(id)).filter(
-          Boolean,
-        ) as ReadingGroupOverview[];
+        // overview map
+        const overviewMap = new Map(list.map((g) => [g.reading_group_id, g]));
+
+        // ✅ members도 병렬로 불러와 rank 계산 (실패해도 카드 뜨게)
+        const membersResults = await Promise.all(
+          READING_GROUP_IDS.map(async (groupId) => {
+            try {
+              const data = await fetchReadingGroupMembers(groupId);
+              return { groupId, data };
+            } catch (e) {
+              console.warn('members 로딩 실패:', groupId, e);
+              return { groupId, data: null as any };
+            }
+          }),
+        );
+
+        const membersMap = new Map(membersResults.map((x) => [x.groupId, x.data]));
+
+        // READING_GROUP_IDS 순서대로 정렬 + rank 합치기
+        const ordered = READING_GROUP_IDS.map((id) => {
+          const ov = overviewMap.get(id);
+          if (!ov) return null;
+
+          const m = membersMap.get(id);
+
+          const my_rank =
+            m?.members && m?.total_page_count
+              ? calcMyRankFromMembers(m.members, m.total_page_count)
+              : undefined;
+
+          return {
+            ...ov,
+            my_rank,
+          } as ReadingGroupWithRank;
+        }).filter(Boolean) as ReadingGroupWithRank[];
 
         setReadingGroups(ordered);
       } catch (e) {
@@ -102,6 +159,7 @@ const MainPage: React.FC = () => {
                       current_page: 0,
                       memo: null,
                     },
+                  // ✅ join 직후에는 rank 정확하지 않을 수 있음 → 일단 undefined 유지 or 기존 값 유지
                 }
               : g,
           ),
@@ -113,31 +171,25 @@ const MainPage: React.FC = () => {
       }
     }
 
-    // 방으로 이동 (라우팅에 맞게 수정 가능)
     navigate(`/togetherRead/${groupId}`);
   };
 
   // === AI 챗 핸들러 ===
-  const handleChatClick=()=>{
-    navigate(`/ai`)
-  }
+  const handleChatClick = () => {
+    navigate(`/ai`);
+  };
 
   return (
     <div className="min-h-screen bg-beige1">
       {/* 상단 헤더 + 검색 */}
       <div className="fixed left-0 right-0 top-0 z-50">
-        <Header
-          variant="logoMy"
-          onMyPageClick={() => navigate('/mypage')}
-        />
+        <Header variant="logoMy" onMyPageClick={() => navigate('/mypage')} />
 
         <div
           className={cn(
             'flex justify-center pt-1 pb-3 transition-all duration-300',
             'origin-top',
-            isHidden
-              ? '-translate-y-full opacity-0'
-              : 'translate-y-0 opacity-100',
+            isHidden ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100',
           )}
         >
           <Search
@@ -172,7 +224,7 @@ const MainPage: React.FC = () => {
           />
         )}
       </div>
-      <ChatFloater onClick={handleChatClick}/>
+      <ChatFloater onClick={handleChatClick} />
     </div>
   );
 };
@@ -218,15 +270,11 @@ const SearchResultSection: React.FC<SearchResultSectionProps> = ({
       </p>
 
       {loading && !hasResults && (
-        <p className="py-8 text-center text-caption3 text-gray3">
-          검색 중입니다...
-        </p>
+        <p className="py-8 text-center text-caption3 text-gray3">검색 중입니다...</p>
       )}
 
       {!loading && !hasResults && (
-        <p className="py-10 text-center text-caption3 text-gray3">
-          검색 결과가 없습니다.
-        </p>
+        <p className="py-10 text-center text-caption3 text-gray3">검색 결과가 없습니다.</p>
       )}
 
       <div className="space-y-3">
@@ -235,7 +283,6 @@ const SearchResultSection: React.FC<SearchResultSectionProps> = ({
             key={book.itemId}
             title={book.title}
             subtitle={`${book.author} · ${book.publisher}`}
-            //thumbnailUrl={book.cover}
             tags={book.categoryNames}
             onClickCard={() => onClickBook(book.itemId)}
           />
@@ -265,7 +312,7 @@ const SearchResultSection: React.FC<SearchResultSectionProps> = ({
  * 기본 메인 섹션
  * =========================== */
 type DefaultMainSectionsProps = {
-  readingGroups: ReadingGroupOverview[];
+  readingGroups: ReadingGroupWithRank[];
   readingGroupLoading: boolean;
   readingGroupError: string | null;
   onClickBook: (id: number) => void;
@@ -281,7 +328,6 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
   onClickTogetherRead,
   onClickDebate,
 }) => {
-
   return (
     <>
       {/* 배너 */}
@@ -292,27 +338,18 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
       {/* 함께 읽기 (5개 캐러셀) */}
       {!readingGroupLoading && !readingGroupError && readingGroups.length > 0 && (
         <section className="mt-6">
-          <h2 className="mb-4 px-5 text-title5 text-black">현재 진행되고 있는 함께 읽기</h2>
+          <h2 className="mb-4 px-5 text-title5 text-black">
+            현재 진행되고 있는 함께 읽기
+          </h2>
 
-          <TogetherReadCarousel
-            items={readingGroups}
-            onClickTogetherRead={onClickTogetherRead}
-          />
+          <TogetherReadCarousel items={readingGroups} onClickTogetherRead={onClickTogetherRead} />
         </section>
       )}
 
-
-
       {/* AI 추천 도서 */}
-      <HorizontalBookScrollSection
-        title="님을 위한 AI 추천 도서"
-        className="pt-8"
-      >
+      <HorizontalBookScrollSection title="님을 위한 AI 추천 도서" className="pt-8">
         {MOCK_MAIN_BOOKS.map((b) => (
-          <div
-            key={b.id}
-            className="h-23 w-17 flex-shrink-0"
-          >
+          <div key={b.id} className="h-23 w-17 flex-shrink-0">
             <Image
               src={b.coverUrl}
               alt={b.title}
@@ -324,15 +361,9 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
       </HorizontalBookScrollSection>
 
       {/* 인기 도서 */}
-      <HorizontalBookScrollSection
-        title="체크메이트의 인기 도서"
-        className="pt-5"
-      >
+      <HorizontalBookScrollSection title="체크메이트의 인기 도서" className="pt-5">
         {MOCK_MAIN_BOOKS.map((b) => (
-          <div
-            key={b.id}
-            className="h-23 w-17 flex-shrink-0"
-          >
+          <div key={b.id} className="h-23 w-17 flex-shrink-0">
             <Image
               src={b.coverUrl}
               alt={b.title}
@@ -345,9 +376,7 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
 
       {/* 뜨거운 토론 */}
       <section className="mt-10">
-        <h2 className="px-5 text-title5">
-          지금 뜨거운 토론장
-        </h2>
+        <h2 className="px-5 text-title5">지금 뜨거운 토론장</h2>
         <CardCarousel className="mt-3">
           {MOCK_HOT_DISCUSSIONS.map((d) => (
             <DiscussionCard
@@ -368,9 +397,7 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
 
       {/* 인용구 */}
       <section className="mt-10">
-        <h2 className="px-5 text-title5">
-          나를 위한 인용구
-        </h2>
+        <h2 className="px-5 text-title5">나를 위한 인용구</h2>
         <CardCarousel className="mt-3">
           {MOCK_RECOMMENDED_QUOTES.map((q) => (
             <DiscussionCard
@@ -397,7 +424,7 @@ function TogetherReadCarousel({
   items,
   onClickTogetherRead,
 }: {
-  items: ReadingGroupOverview[];
+  items: ReadingGroupWithRank[];
   onClickTogetherRead: (groupId: number) => void;
 }) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
@@ -424,19 +451,15 @@ function TogetherReadCarousel({
 
   return (
     <div className="mt-1">
-      {/* ✅ 스크롤 영역 */}
       <div
         ref={scrollerRef}
         onScroll={onScroll}
-        className={cn(
-          'flex w-full snap-x snap-mandatory overflow-x-auto',
-          'scrollbar-hide',
-        )}
+        className={cn('flex w-full snap-x snap-mandatory overflow-x-auto', 'scrollbar-hide')}
         style={{
           scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch',
           msOverflowStyle: 'none',
-          scrollbarWidth: 'none',  
+          scrollbarWidth: 'none',
         }}
       >
         {items.map((g) => {
@@ -447,20 +470,14 @@ function TogetherReadCarousel({
               : 0;
 
           return (
-            <div
-              key={g.reading_group_id}
-              className={cn(
-                'w-full flex-shrink-0 snap-center',
-                'px-5', 
-              )}
-            >
+            <div key={g.reading_group_id} className={cn('w-full flex-shrink-0 snap-center', 'px-5')}>
               <TogetherReadCard
                 title={g.title}
                 participants={g.member_count}
                 remainDays={g.days_left}
                 isJoined={isJoined}
                 progress={progressPercent}
-                rank={undefined}
+                rank={g.my_rank} // ✅ rank 주입
                 onClick={() => onClickTogetherRead(g.reading_group_id)}
               />
             </div>
@@ -468,16 +485,12 @@ function TogetherReadCarousel({
         })}
       </div>
 
-      {/* dots */}
       <div className="mt-3 flex justify-center gap-1">
         {Array.from({ length: slideCount }).map((_, i) => (
           <button
             key={i}
             onClick={() => goTo(i)}
-            className={cn(
-              'h-[7px] w-[7px] rounded-full',
-              i === active ? 'bg-gray3' : 'bg-gray2',
-            )}
+            className={cn('h-[7px] w-[7px] rounded-full', i === active ? 'bg-gray3' : 'bg-gray2')}
             aria-label={`slide-${i}`}
           />
         ))}
