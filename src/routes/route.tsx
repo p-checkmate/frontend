@@ -89,7 +89,7 @@ export const router = createBrowserRouter([
     element:<QuoteDetailPage/>
   },
   {
-    path:'/togetherRead',
+    path:'/togetherRead/:groupId',
     element:<TogetherRead/>
   },
   {
