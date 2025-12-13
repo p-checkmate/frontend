@@ -138,10 +138,8 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({ discussion }) =
   const side2Count =
     summary?.opinion_ratio?.option2_count ?? messages.filter((m) => m.side === 2).length;
 
-  const side1Ratio =
-    summary?.opinion_ratio?.option1_percentage ??
-    (total ? Math.round((side1Count / total) * 100) : 0);
-  const side2Ratio = summary?.opinion_ratio?.option2_percentage ?? (total ? 100 - side1Ratio : 0);
+  const side1Ratio = summary?.opinion_ratio?.option1_percentage;
+  const side2Ratio = summary?.opinion_ratio?.option2_percentage;
 
   const option1 = summary?.option1 ?? discussion.option1 ?? '1번 의견';
   const option2 = summary?.option2 ?? discussion.option2 ?? '2번 의견';
@@ -249,7 +247,7 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({ discussion }) =
 
             <div className="text-caption3 text-gray3 mb-2 flex items-center justify-between">
               <span>1번 의견</span>
-              <span>{side1Ratio}%</span>
+              <span> {summaryLoading ? '불러오는 중...' : side1Ratio}%</span>
             </div>
             <div className="bg-beige2 mb-3 h-2 w-full overflow-hidden rounded-full">
               <div
@@ -260,7 +258,7 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({ discussion }) =
 
             <div className="text-caption3 text-gray3 mb-2 flex items-center justify-between">
               <span>2번 의견</span>
-              <span>{side2Ratio}%</span>
+              <span>{summaryLoading ? '불러오는 중...' : side2Ratio}%</span>
             </div>
             <div className="bg-beige2 h-2 w-full overflow-hidden rounded-full">
               <div
