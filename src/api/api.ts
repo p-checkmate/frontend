@@ -52,16 +52,10 @@ function shouldSkipAuthHeader(url?: string) {
     const u = url.startsWith('http') ? new URL(url) : new URL(url, API_BASE);
     const p = u.pathname;
 
-    return (
-      p.includes('/auth/login') ||
-      p.includes('/auth/register') ||
-      p.includes('/auth/refresh')
-    );
+    return p.includes('/auth/login') || p.includes('/auth/register') || p.includes('/auth/refresh');
   } catch {
     return (
-      url.includes('/auth/login') ||
-      url.includes('/auth/register') ||
-      url.includes('/auth/refresh')
+      url.includes('/auth/login') || url.includes('/auth/register') || url.includes('/auth/refresh')
     );
   }
 }
@@ -128,7 +122,7 @@ api.interceptors.response.use(
       if (originalRequest && originalRequest._retry) {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
+        window.location.href = '/onboardingLandingPage';
         return Promise.reject(error);
       }
 
@@ -136,7 +130,7 @@ api.interceptors.response.use(
       if (isAuthRequest(originalRequest?.url)) {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
+        window.location.href = '/onboardingLandingPage';
         return Promise.reject(error);
       }
 
@@ -145,7 +139,7 @@ api.interceptors.response.use(
       if (!refreshToken) {
         // 리프레시 토큰도 없으면 그냥 로그인 필요
         localStorage.removeItem('accessToken');
-        window.location.href = '/login';
+        window.location.href = '/onboardingLandingPage';
         return Promise.reject(error);
       }
 
@@ -158,10 +152,8 @@ api.interceptors.response.use(
 
         const refreshBody = refreshResponse.data;
 
-        const newAccessToken =
-          refreshBody?.data?.accessToken ?? refreshBody?.accessToken;
-        const newRefreshToken =
-          refreshBody?.data?.refreshToken ?? refreshBody?.refreshToken;
+        const newAccessToken = refreshBody?.data?.accessToken ?? refreshBody?.accessToken;
+        const newRefreshToken = refreshBody?.data?.refreshToken ?? refreshBody?.refreshToken;
 
         if (!newAccessToken) {
           throw new Error('토큰 재발급에 실패했습니다.');
@@ -175,8 +167,7 @@ api.interceptors.response.use(
 
         // 원래 요청 헤더에 새 accessToken 적용
         if (originalRequest.headers) {
-          (originalRequest.headers as any).Authorization =
-            `Bearer ${newAccessToken}`;
+          (originalRequest.headers as any).Authorization = `Bearer ${newAccessToken}`;
         } else {
           originalRequest.headers = {
             Authorization: `Bearer ${newAccessToken}`,
@@ -188,7 +179,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
+        window.location.href = '/onboardingLandingPage';
         return Promise.reject(refreshError);
       }
     }
@@ -196,9 +187,7 @@ api.interceptors.response.use(
     // 그 외 공통 에러 포맷
     return Promise.reject({
       message:
-        body?.error?.message ||
-        body?.message ||
-        '네트워크 오류 또는 서버 에러가 발생했습니다.',
+        body?.error?.message || body?.message || '네트워크 오류 또는 서버 에러가 발생했습니다.',
       code: status ?? 'UNKNOWN',
       error: body?.error ?? null,
     });

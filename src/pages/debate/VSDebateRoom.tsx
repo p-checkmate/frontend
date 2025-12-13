@@ -132,9 +132,9 @@ const VSDebateRoomPage: React.FC<VSDebateRoomPageProps> = ({ discussion }) => {
             variant="backTitleDropdown"
             onBackClick={() => navigate(-1)}
             title={discussion.title}
-            isLiked={liked}                 // ✅ 하트 상태
-            likeCount={likeCount}           // ✅ 좋아요 수
-            onToggleLike={handleToggleLike} // ✅ 토글 핸들러
+            isLiked={liked}
+            likeCount={likeCount}
+            onToggleLike={handleToggleLike}
             dropdownContent={
               <div className="bg-beige2 pt-1">
                 <div className="flex flex-col gap-2">

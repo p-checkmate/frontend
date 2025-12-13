@@ -1,4 +1,4 @@
-import api from "../api";
+import api from '../api';
 
 export type DiscussionType = 'FREE' | 'VS';
 
@@ -58,12 +58,11 @@ export interface DiscussionCreateRequest {
   option2?: string;
 }
 
-
 export type BookDiscussionSummary = {
   discussion_id: number;
   title: string;
   content: string;
-  discussion_type: "FREE" | "VS";
+  discussion_type: 'FREE' | 'VS';
   option1: string | null;
   option2: string | null;
   created_at: string;
@@ -84,9 +83,7 @@ export const createDiscussion = async (
   return api.post(`/books/${bookId}/discussions`, payload);
 };
 
-export const fetchDiscussionDetail = async (
-  discussionId: number | string,
-): Promise<Discussion> => {
+export const fetchDiscussionDetail = async (discussionId: number | string): Promise<Discussion> => {
   const res = await api.get(`/discussions/${discussionId}`);
 
   const data = res as unknown as { discussion: Discussion };
@@ -114,13 +111,12 @@ export const createDiscussionMessage = async (
 
 //토론 목록
 export const fetchBookDiscussion = async (
-  bookId: number | string
+  bookId: number | string,
 ): Promise<BookDiscussionSummary[]> => {
   const res = await api.get(`/books/${bookId}/discussions`);
   const data = res as unknown as { discussions: BookDiscussionSummary[] };
   return data?.discussions ?? [];
 };
-
 
 //좋아요
 export const fetchDiscussionLikeStatus = async (discussionId: number): Promise<boolean> => {
@@ -135,4 +131,49 @@ export const likeDiscussion = async (discussionId: number) => {
 
 export const unlikeDiscussion = async (discussionId: number) => {
   return api.delete(`/discussions/${discussionId}/like`);
+};
+
+//토론 결과 투표
+export const voteDiscussion = async (
+  discussionId: number,
+  choice: 1 | 2,
+): Promise<{ message: string }> => {
+  const res = await api.post(`/discussions/${discussionId}/vote`, { choice });
+
+  return res as unknown as { message: string };
+};
+
+export type VoteStatusResponse = {
+  is_voted: boolean;
+  choice: 1 | 2 | null;
+};
+
+export const fetchDiscussionVoteStatus = async (
+  discussionId: number,
+): Promise<VoteStatusResponse> => {
+  const res = await api.get(`/discussions/${discussionId}/vote-status`);
+
+  return res as unknown as VoteStatusResponse;
+};
+
+export type DiscussionSummary = {
+  discussion_id: number;
+  title: string;
+  discussion_type: 'VS' | 'FREE';
+  option1: string | null;
+  option2: string | null;
+  ended_at: string;
+  total_comments: number;
+  summary: string;
+  opinion_ratio: {
+    option1_count: number;
+    option2_count: number;
+    option1_percentage: number;
+    option2_percentage: number;
+  };
+};
+
+export const fetchDiscussionSummary = async (discussionId: number): Promise<DiscussionSummary> => {
+  const res = await api.get(`/discussions/${discussionId}/summary`, { timeout: 30000 });
+  return res as unknown as DiscussionSummary;
 };
