@@ -286,6 +286,7 @@ const SearchResultSection: React.FC<SearchResultSectionProps> = ({
             key={book.itemId}
             title={book.title}
             subtitle={`${book.author} · ${book.publisher}`}
+            thumbnailUrl={book.cover}
             tags={book.categoryNames}
             onClickCard={() => onClickBook(book.itemId)}
           />
