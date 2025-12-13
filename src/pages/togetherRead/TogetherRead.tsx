@@ -9,6 +9,7 @@ import {
   type ReadingGroupOverview,
   type ReadingGroupMember,
 } from '@/api/togetherRead/togetherRead.api';
+import { getCurrentUser } from '@/utils/auth';
 
 const TogetherRead = () => {
   const navigate = useNavigate();
@@ -19,6 +20,8 @@ const TogetherRead = () => {
   const [members, setMembers] = useState<ReadingGroupMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const user = getCurrentUser();
+  const nickname = user?.nickname ?? '';
 
   // ===== load =====
   useEffect(() => {
@@ -88,7 +91,7 @@ const TogetherRead = () => {
         objectType: 'feed',
         content: {
           title: `함께 읽기: ${overview.title}`,
-          description: `참여자 ${overview.member_count}명 · D-${overview.days_left} · 총 ${overview.total_pages}p`,
+          description: `참여자 ${overview.member_count}명 · D-${overview.days_left} · 총 ${overview.total_pages}p \n${nickname}님이 같이 읽기에 초대했어요! 함께 책 읽고 감상 나눠요!`,
           imageUrl,
           link: {
             mobileWebUrl: shareUrl,
