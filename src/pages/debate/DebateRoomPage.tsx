@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
-import FreeDebateRoomPage from "./FreeDebateRoom";
-import VSDebateRoomPage from "./VSDebateRoom";
+import FreeDebateRoomPage from './FreeDebateRoom';
+import VSDebateRoomPage from './VSDebateRoom';
 
-import { fetchDiscussionDetail } from "@/api/detail/discussion.api";
-import type { Discussion } from "@/api/detail/discussion.api";
-import VSDebateResultPage from "@/components/debate/ResultPage";
+import { fetchDiscussionDetail } from '@/api/detail/discussion.api';
+import type { Discussion } from '@/api/detail/discussion.api';
+import VSDebateResultPage from '@/components/debate/ResultPage';
 
-const DAY_MS=24*60*60*1000;
-const DEBATE_DURATION_DAYS=7;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const DEBATE_DURATION_DAYS = 7;
 
 const DebateRoomPage: React.FC = () => {
   const { debateRoomId } = useParams();
@@ -21,7 +21,7 @@ const DebateRoomPage: React.FC = () => {
 
   useEffect(() => {
     if (!discussionId) {
-      setError("잘못된 토론방 ID입니다.");
+      setError('잘못된 토론방 ID입니다.');
       setLoading(false);
       return;
     }
@@ -35,8 +35,8 @@ const DebateRoomPage: React.FC = () => {
         setDiscussion(data);
         setError(null);
       } catch (e: any) {
-        console.error("토론 상세 불러오기 실패:", e);
-        setError(e?.message ?? "토론방 정보를 불러올 수 없습니다.");
+        console.error('토론 상세 불러오기 실패:', e);
+        setError(e?.message ?? '토론방 정보를 불러올 수 없습니다.');
       } finally {
         setLoading(false);
       }
@@ -46,26 +46,24 @@ const DebateRoomPage: React.FC = () => {
   if (loading) return <div>토론 정보를 불러오는 중입니다…</div>;
 
   if (error || !discussion) {
-    return <div>{error ?? "토론방을 찾을 수 없습니다."}</div>;
+    return <div>{error ?? '토론방을 찾을 수 없습니다.'}</div>;
   }
 
   //테스트용
   //discussion.created_at=new Date(Date.now() -10*DAY_MS).toISOString();
 
-  const isVSClosed=
-    discussion.discussion_type==='VS'&&discussion.created_at
-    ? new Date(discussion.created_at).getTime()+
-      DEBATE_DURATION_DAYS*DAY_MS<=
-    Date.now()
-    :false;
+  const isVSClosed =
+    discussion.discussion_type === 'VS' && discussion.created_at
+      ? new Date(discussion.created_at).getTime() + DEBATE_DURATION_DAYS * DAY_MS <= Date.now()
+      : false;
 
-  if (discussion.discussion_type === "FREE") {
+  if (discussion.discussion_type === 'FREE') {
     return <FreeDebateRoomPage discussion={discussion} />;
   }
 
-  if (discussion.discussion_type === "VS") {
-    if(isVSClosed){
-      return <VSDebateResultPage discussion={discussion}/>;
+  if (discussion.discussion_type === 'VS') {
+    if (isVSClosed) {
+      return <VSDebateResultPage discussion={discussion} />;
     }
     return <VSDebateRoomPage discussion={discussion} />;
   }
