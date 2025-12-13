@@ -200,6 +200,7 @@ const TogetherRead = () => {
           title="함께 읽기"
           onBackClick={handleBack}
           onShareClick={handleShare}
+          className="sticky top-0 z-50 bg-beige1"
         />
 
         <main className="flex-1 px-4 pt-4 pb-8">

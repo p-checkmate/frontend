@@ -14,11 +14,6 @@ import { cn } from '@/utils/cn';
 import useScrollHide from '@/hooks/useScrollDirection';
 
 import BookCard from '@/components/common/cards/BookSelectCard';
-import {
-  MOCK_MAIN_BOOKS,
-  MOCK_HOT_DISCUSSIONS,
-  MOCK_RECOMMENDED_QUOTES,
-} from '@/_mocks/mainPageMock';
 
 import { useInfiniteBookSearch } from '@/hooks/useInfiniteBookSearch';
 import {
@@ -28,6 +23,19 @@ import {
   type ReadingGroupOverview,
 } from '@/api/main/readingGroup.api';
 import { Banner } from '@/assets';
+
+import {
+  fetchPopularBooks,
+  fetchRecommendedBooks,
+  type MainBookThumb,
+} from '@/api/main/book.api';
+
+import {
+  fetchDiscussions,
+  fetchQuotes,
+  type DiscussionItem,
+  type QuoteItem,
+} from '@/api/main/community.api';
 
 // 운영에서 “메인에 노출할 그룹 5개”를 room_id로 고정
 const READING_GROUP_IDS = [1, 3, 5, 7, 9];
@@ -64,6 +72,19 @@ const MainPage: React.FC = () => {
   const [readingGroups, setReadingGroups] = useState<ReadingGroupWithRank[]>([]);
   const [rgLoading, setRgLoading] = useState(true);
   const [rgError, setRgError] = useState<string | null>(null);
+
+  // ====== AI 추천 / 인기 도서 상태 ======
+  const [recommendedBooks, setRecommendedBooks] = useState<MainBookThumb[]>([]);
+  const [popularBooks, setPopularBooks] = useState<MainBookThumb[]>([]);
+  const [bookLoading, setBookLoading] = useState(true);
+  const [bookError, setBookError] = useState<string | null>(null);
+
+    // ====== 토론/인용구 상태 ======
+  const [hotDiscussions, setHotDiscussions] = useState<DiscussionItem[]>([]);
+  const [quotes, setQuotes] = useState<QuoteItem[]>([]);
+  const [communityLoading, setCommunityLoading] = useState(true);
+  const [communityError, setCommunityError] = useState<string | null>(null);
+
 
   // ====== 검색 훅 ======
   const {
@@ -135,6 +156,53 @@ const MainPage: React.FC = () => {
 
     load();
   }, []);
+
+  // ====== AI 추천 / 인기 도서 API 연결 ======
+  useEffect(() => {
+    const loadBooks = async () => {
+      try {
+        setBookLoading(true);
+        setBookError(null);
+
+        const [rec, pop] = await Promise.all([
+          fetchRecommendedBooks(),
+          fetchPopularBooks(),
+        ]);
+
+        setRecommendedBooks(rec ?? []);
+        setPopularBooks(pop ?? []);
+      } catch (e) {
+        console.error('도서 섹션 로딩 실패:', e);
+        setBookError('도서 정보를 불러올 수 없습니다.');
+      } finally {
+        setBookLoading(false);
+      }
+    };
+
+    loadBooks();
+  }, []);
+
+    // ====== 토론 / 인용구 API 연결 ======
+  useEffect(() => {
+    const loadCommunity = async () => {
+      try {
+        setCommunityLoading(true);
+        setCommunityError(null);
+
+        const [d, q] = await Promise.all([fetchDiscussions(), fetchQuotes()]);
+        setHotDiscussions(d ?? []);
+        setQuotes(q ?? []);
+      } catch (e) {
+        console.error('토론/인용구 섹션 로딩 실패:', e);
+        setCommunityError('토론/인용구 정보를 불러올 수 없습니다.');
+      } finally {
+        setCommunityLoading(false);
+      }
+    };
+
+    loadCommunity();
+  }, []);
+
 
   // ====== join + 이동 ======
   const handleTogetherReadClick = async (groupId: number) => {
@@ -222,9 +290,18 @@ const MainPage: React.FC = () => {
             readingGroups={readingGroups}
             readingGroupLoading={rgLoading}
             readingGroupError={rgError}
+            recommendedBooks={recommendedBooks}
+            popularBooks={popularBooks}
+            bookLoading={bookLoading}
+            bookError={bookError}
             onClickBook={(id) => navigate(`/book/${id}`)}
             onClickTogetherRead={handleTogetherReadClick}
             onClickDebate={(id) => navigate(`/debate/${id}`)}
+            hotDiscussions={hotDiscussions}
+            quotes={quotes}
+            communityLoading={communityLoading}
+            communityError={communityError}
+            onClickQuote={(quoteId) => navigate(`/quote/${quoteId}`)}
           />
         )}
       </div>
@@ -318,18 +395,39 @@ type DefaultMainSectionsProps = {
   readingGroups: ReadingGroupWithRank[];
   readingGroupLoading: boolean;
   readingGroupError: string | null;
+
+  recommendedBooks: MainBookThumb[];
+  popularBooks: MainBookThumb[];
+  bookLoading: boolean;
+  bookError: string | null;
+
   onClickBook: (id: number) => void;
   onClickTogetherRead: (groupId: number) => void;
   onClickDebate: (id: number) => void;
+
+  hotDiscussions: DiscussionItem[];
+  quotes: QuoteItem[];
+  communityLoading: boolean;
+  communityError: string | null;
+  onClickQuote: (quoteId: number) => void;
 };
 
 const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
   readingGroups,
   readingGroupLoading,
   readingGroupError,
+  recommendedBooks,
+  popularBooks,
+  bookLoading,
+  bookError,
   onClickBook,
   onClickTogetherRead,
   onClickDebate,
+  hotDiscussions,
+  quotes,
+  communityLoading,
+  communityError,
+  onClickQuote,
 }) => {
   return (
     <>
@@ -348,72 +446,101 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
       )}
 
       {/* AI 추천 도서 */}
-      <HorizontalBookScrollSection title="당신을 위한 AI 추천 도서" className="pt-8">
-        {MOCK_MAIN_BOOKS.map((b) => (
-          <div key={b.id} className="h-23 w-17 flex-shrink-0">
-            <Image
-              src={b.coverUrl}
-              alt={b.title}
-              className="h-full w-full cursor-pointer"
-              onClick={() => onClickBook(b.id)}
-            />
-          </div>
-        ))}
+      <HorizontalBookScrollSection title="님을 위한 AI 추천 도서" className="pt-8">
+        {bookLoading ? (
+          <div className="px-5 py-2 text-caption4 text-gray3">불러오는 중...</div>
+        ) : bookError ? (
+          <div className="px-5 py-2 text-caption4 text-gray3">{bookError}</div>
+        ) : (
+          recommendedBooks.map((b) => (
+            <div key={b.itemId} className="h-23 w-17 flex-shrink-0">
+              <Image
+                src={b.thumbnailUrl}
+                alt=""
+                className="h-full w-full cursor-pointer"
+                onClick={() => onClickBook(b.itemId)}
+              />
+            </div>
+          ))
+        )}
       </HorizontalBookScrollSection>
 
       {/* 인기 도서 */}
       <HorizontalBookScrollSection title="체크메이트의 인기 도서" className="pt-5">
-        {MOCK_MAIN_BOOKS.map((b) => (
-          <div key={b.id} className="h-23 w-17 flex-shrink-0">
-            <Image
-              src={b.coverUrl}
-              alt={b.title}
-              className="h-full w-full"
-              onClick={() => onClickBook(b.id)}
-            />
-          </div>
-        ))}
+        {bookLoading ? (
+          <div className="px-5 py-2 text-caption4 text-gray3">불러오는 중...</div>
+        ) : bookError ? (
+          <div className="px-5 py-2 text-caption4 text-gray3">{bookError}</div>
+        ) : (
+          popularBooks.map((b) => (
+            <div key={b.itemId} className="h-23 w-17 flex-shrink-0">
+              <Image
+                src={b.thumbnailUrl}
+                alt=""
+                className="h-full w-full cursor-pointer"
+                onClick={() => onClickBook(b.itemId)}
+              />
+            </div>
+          ))
+        )}
       </HorizontalBookScrollSection>
 
-      {/* 뜨거운 토론 */}
+            {/* 뜨거운 토론 */}
       <section className="mt-10">
         <h2 className="text-title5 px-5">지금 뜨거운 토론장</h2>
-        <CardCarousel className="mt-3">
-          {MOCK_HOT_DISCUSSIONS.map((d) => (
-            <DiscussionCard
-              key={d.id}
-              type="discussion"
-              bookTitle={d.bookTitle}
-              title={d.title}
-              content={d.content}
-              nickname={d.nickname}
-              dateLabel={d.dateLabel}
-              likeCount={d.likeCount}
-              commentCount={d.commentCount}
-              onClickCard={() => onClickDebate(d.id)}
-            />
-          ))}
-        </CardCarousel>
+
+        {communityLoading ? (
+          <div className="px-5 py-4 text-caption4 text-gray3">불러오는 중...</div>
+        ) : communityError ? (
+          <div className="px-5 py-4 text-caption4 text-gray3">{communityError}</div>
+        ) : (
+          <CardCarousel className="mt-3">
+            {hotDiscussions.map((d) => (
+              <DiscussionCard
+                key={d.discussion_id}
+                type="discussion"
+                bookTitle={d.book.title}
+                title={d.title}
+                content={d.content}
+                nickname={d.user.nickname}
+                dateLabel={formatDateLabel(d.created_at)}
+                likeCount={d.like_count}
+                commentCount={d.comment_count}
+                onClickCard={() => onClickDebate(d.discussion_id)}
+              />
+            ))}
+          </CardCarousel>
+        )}
       </section>
 
-      {/* 인용구 */}
+
+            {/* 인용구 */}
       <section className="mt-10">
-        <h2 className="text-title5 px-5">나를 위한 인용구</h2>
-        <CardCarousel className="mt-3">
-          {MOCK_RECOMMENDED_QUOTES.map((q) => (
-            <DiscussionCard
-              key={q.id}
-              type="quote"
-              bookTitle={q.bookTitle}
-              content={q.content}
-              tags={q.tags}
-              nickname={q.nickname}
-              dateLabel={q.dateLabel}
-              likeCount={q.likeCount}
-            />
-          ))}
-        </CardCarousel>
+        <h2 className="text-title5 px-5">인기 있는 인용구</h2>
+
+        {communityLoading ? (
+          <div className="px-5 py-4 text-caption4 text-gray3">불러오는 중...</div>
+        ) : communityError ? (
+          <div className="px-5 py-4 text-caption4 text-gray3">{communityError}</div>
+        ) : (
+          <CardCarousel className="mt-3">
+            {quotes.map((q) => (
+              <DiscussionCard
+                key={q.quote_id}
+                type="quote"
+                bookTitle={q.book.title}
+                content={q.content}
+                tags={(q.book.genres ?? []).slice(0, 2)}
+                nickname={q.user.nickname}
+                dateLabel={formatDateLabel(q.created_at)}
+                likeCount={q.like_count}
+                onClickCard={() => onClickQuote(q.quote_id)}
+              />
+            ))}
+          </CardCarousel>
+        )}
       </section>
+
     </>
   );
 };
@@ -484,6 +611,7 @@ function TogetherReadCarousel({
                 progress={progressPercent}
                 rank={g.my_rank}
                 totalDays={totalDays}
+                thumbnailUrl={g.thumbnail_url ?? undefined}
                 onClick={() => onClickTogetherRead(g.reading_group_id)}
               />
             </div>
@@ -503,4 +631,14 @@ function TogetherReadCarousel({
       </div>
     </div>
   );
+}
+
+function formatDateLabel(isoString: string) {
+  const d = new Date(isoString);
+  if (Number.isNaN(d.getTime())) return isoString;
+
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${yyyy}.${mm}.${dd}`;
 }

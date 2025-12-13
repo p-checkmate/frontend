@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { cn } from "@/utils/cn";
+import { Image } from '@/components';
 
 type TogetherReadCardProps = {
   title: string;
@@ -21,6 +22,7 @@ const TogetherReadCard: React.FC<TogetherReadCardProps> = ({
   isJoined,
   progress = 0,
   rank,
+  thumbnailUrl,
   onClick,
   totalDays,
   className,
@@ -46,6 +48,19 @@ const TogetherReadCard: React.FC<TogetherReadCardProps> = ({
       )}
     >
       <div className="flex items-center justify-between gap-4">
+
+        {/* 썸네일 로직 - 미참여(isJoined=false) + thumbnailUrl 있을 때만 표시 */}
+        {!isJoined && !!thumbnailUrl && (
+          <div className="h-22 w-16 flex-shrink-0">
+            <Image
+              src={thumbnailUrl}
+              alt="책 표지"
+              aspectRatio="aspect-square"
+              className="h-full w-full"
+            />
+          </div>
+        )}
+        
         {/* 텍스트 영역 */}
         <div className="flex flex-1 flex-col gap-[5px]">
           <p className="text-caption4 text-gray3">

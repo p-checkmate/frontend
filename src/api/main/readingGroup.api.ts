@@ -9,6 +9,7 @@ export type ReadingGroupProgress = {
 export type ReadingGroupOverview = {
   reading_group_id: number;
   title: string;
+  thumbnail_url: string | null;
   member_count: number;
   days_left: number;
   total_days: number;
