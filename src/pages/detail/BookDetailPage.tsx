@@ -34,7 +34,7 @@ const BookDetailPage: React.FC = () => {
   const [book, setBook] = useState<BookDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [discussions, setDiscussions]=useState<BookDiscussionSummary[]>([]);
+  const [discussions, setDiscussions] = useState<BookDiscussionSummary[]>([]);
   const [quotes, setQuotes] = useState<any[]>([]);
   const navigate = useNavigate();
 
@@ -54,19 +54,19 @@ const BookDetailPage: React.FC = () => {
   };
 
   // ==== 토론 조회 API ===
-  useEffect(()=>{
-    if(!book?.bookId) return;
+  useEffect(() => {
+    if (!book?.bookId) return;
 
-    (async()=>{
-      try{
-        const list=await fetchBookDiscussion(book.bookId);
-        console.log(list)
+    (async () => {
+      try {
+        const list = await fetchBookDiscussion(book.bookId);
+        console.log(list);
         setDiscussions(list);
-      }catch(err){
+      } catch (err) {
         console.error('토론 목록을 불러오지 못했습니다:', err);
       }
     })();
-  }, [book?.bookId])
+  }, [book?.bookId]);
 
   // ==== 인용구 조회 API ====
   useEffect(() => {
@@ -81,8 +81,6 @@ const BookDetailPage: React.FC = () => {
     })();
   }, [book?.bookId]);
 
-  // ===== 도서 상세 API 호출 =====
-  // ===== 도서 상세 + 북마크 상태 =====
   useEffect(() => {
     if (!bookId) {
       setError('잘못된 접근입니다.');
@@ -94,7 +92,6 @@ const BookDetailPage: React.FC = () => {
       try {
         setLoading(true);
 
-        // 1) URL 파라미터(bookId)는 상세 조회용 (ex. itemId)
         const detail = await fetchBookDetail(bookId);
 
         setBook(detail);
@@ -108,7 +105,7 @@ const BookDetailPage: React.FC = () => {
     })();
   }, [bookId]);
 
-    // ===== 북마크 상태 조회  =====
+  // ===== 북마크 상태 조회  =====
   useEffect(() => {
     if (!bookId) return;
 
@@ -123,8 +120,6 @@ const BookDetailPage: React.FC = () => {
     })();
   }, [bookId]);
 
-
-
   const handleToggleBookmark = async () => {
     if (!bookId) return;
 
@@ -132,15 +127,15 @@ const BookDetailPage: React.FC = () => {
       if (isBookmarked) {
         await deleteBookBookmark(bookId);
         setIsBookmarked(false);
-        showToast("북마크에서 제거했어요.");
+        showToast('북마크에서 제거했어요.');
       } else {
         await createBookBookmark(bookId);
         setIsBookmarked(true);
-        showToast("북마크에 추가했어요!");
+        showToast('북마크에 추가했어요!');
       }
     } catch (err: any) {
       console.error('북마크 토글 실패:', err);
-      showToast("북마크 변경에 실패했습니다.");
+      showToast('북마크 변경에 실패했습니다.');
     }
   };
 
@@ -148,14 +143,14 @@ const BookDetailPage: React.FC = () => {
   if (loading) {
     return (
       <div className="bg-beige1 min-h-screen">
-        <div className="fixed left-0 right-0 top-0 z-50">
+        <div className="fixed top-0 right-0 left-0 z-50">
           <Header
             variant="logoBookmark"
             isBookmarked={isBookmarked}
             onToggleBookmark={handleToggleBookmark}
           />
         </div>
-        <p className="mt-20 text-center text-gray6">책 정보를 불러오는 중입니다…</p>
+        <p className="text-gray6 mt-20 text-center">책 정보를 불러오는 중입니다…</p>
       </div>
     );
   }
@@ -163,16 +158,14 @@ const BookDetailPage: React.FC = () => {
   if (error || !book) {
     return (
       <div className="bg-beige1 min-h-screen">
-        <div className="fixed left-0 right-0 top-0 z-50">
+        <div className="fixed top-0 right-0 left-0 z-50">
           <Header
             variant="logoBookmark"
             isBookmarked={isBookmarked}
             onToggleBookmark={handleToggleBookmark}
           />
         </div>
-        <p className="mt-20 text-center text-gray6">
-          {error ?? '책 정보를 찾을 수 없습니다.'}
-        </p>
+        <p className="text-gray6 mt-20 text-center">{error ?? '책 정보를 찾을 수 없습니다.'}</p>
       </div>
     );
   }
@@ -185,7 +178,7 @@ const BookDetailPage: React.FC = () => {
   return (
     <div className="bg-beige1 min-h-screen">
       <Toast visible={toastVisible} message={toastMessage} variant="alert" />
-      <div className="fixed left-0 right-0 top-0 z-40">
+      <div className="fixed top-0 right-0 left-0 z-40">
         <Header
           variant="logoBookmark"
           isBookmarked={isBookmarked}
@@ -232,7 +225,7 @@ const BookDetailPage: React.FC = () => {
         </div>
 
         {activeTab === '토론' && (
-          <div className="mt-4 pr-2 flex items-center justify-between">
+          <div className="mt-4 flex items-center justify-between pr-2">
             <span className="text-body3" />
             <button
               type="button"
@@ -245,7 +238,7 @@ const BookDetailPage: React.FC = () => {
         )}
 
         {activeTab === '인용구' && (
-          <div className="mt-4 pr-2 flex items-center justify-between">
+          <div className="mt-4 flex items-center justify-between pr-2">
             <span className="text-body3" />
             <button
               type="button"
@@ -261,9 +254,7 @@ const BookDetailPage: React.FC = () => {
         {activeTab === '토론' && (
           <div className="mt-4 px-5">
             {(discussions?.length ?? 0) === 0 ? (
-              <p className="text-body3 text-gray5 mt-6 text-center">
-                아직 등록된 토론이 없어요.
-              </p>
+              <p className="text-body3 text-gray5 mt-6 text-center">아직 등록된 토론이 없어요.</p>
             ) : (
               <div className="space-y-3">
                 {(discussions ?? []).map((d) => (
@@ -299,7 +290,7 @@ const BookDetailPage: React.FC = () => {
                 <DiscussionCard
                   key={q.quote_id}
                   type="quote"
-                  bookTitle={title} // 책 제목도 안 내려와서 우선 상세 조회 API에서 받아오기
+                  bookTitle={title}
                   content={q.content}
                   tags={tags}
                   nickname={q.nickname}
@@ -321,7 +312,7 @@ const BookDetailPage: React.FC = () => {
         bookId={book.bookId}
         onCreated={(id) => {
           console.log('새 토론 생성됨:', id);
-          navigate(`/debate/${id}`)
+          navigate(`/debate/${id}`);
         }}
       />
       <QuoteCreateModal
