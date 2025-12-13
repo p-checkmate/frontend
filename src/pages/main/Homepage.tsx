@@ -429,7 +429,7 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
 
       {/* 함께 읽기 (5개 캐러셀) */}
       {!readingGroupLoading && !readingGroupError && readingGroups.length > 0 && (
-        <section className="mt-6">
+        <section className="mt-8">
           <h2 className="text-title5 mb-4 px-5 text-black">현재 진행되고 있는 함께 읽기</h2>
 
           <TogetherReadCarousel items={readingGroups} onClickTogetherRead={onClickTogetherRead} />
@@ -437,14 +437,14 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
       )}
 
       {/* AI 추천 도서 */}
-      <HorizontalBookScrollSection title="님을 위한 AI 추천 도서" className="pt-8">
+      <HorizontalBookScrollSection title="님을 위한 AI 추천 도서" className="pt-10">
         {bookLoading ? (
           <div className="text-caption4 text-gray3 px-5 py-2">불러오는 중...</div>
         ) : bookError ? (
           <div className="text-caption4 text-gray3 px-5 py-2">{bookError}</div>
         ) : (
           recommendedBooks.map((b) => (
-            <div key={b.itemId} className="h-23 w-17 flex-shrink-0">
+            <div key={b.itemId} className="h-26 w-18 flex-shrink-0">
               <Image
                 src={b.thumbnailUrl}
                 alt=""
@@ -457,14 +457,14 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
       </HorizontalBookScrollSection>
 
       {/* 인기 도서 */}
-      <HorizontalBookScrollSection title="체크메이트의 인기 도서" className="pt-5">
+      <HorizontalBookScrollSection title="체크메이트의 인기 도서" className="pt-6">
         {bookLoading ? (
           <div className="text-caption4 text-gray3 px-5 py-2">불러오는 중...</div>
         ) : bookError ? (
           <div className="text-caption4 text-gray3 px-5 py-2">{bookError}</div>
         ) : (
           popularBooks.map((b) => (
-            <div key={b.itemId} className="h-23 w-17 flex-shrink-0">
+            <div key={b.itemId} className="h-26 w-18 flex-shrink-0">
               <Image
                 src={b.thumbnailUrl}
                 alt=""
