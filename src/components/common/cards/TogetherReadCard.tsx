@@ -10,9 +10,7 @@ type TogetherReadCardProps = {
   rank?: number;
   thumbnailUrl?: string;
   onClick?: () => void;
-  periodWeeks?: number;
-
-  // 외부에서 가로폭/스타일 더 줄 수 있게
+  totalDays?: number;
   className?: string;
 };
 
@@ -24,7 +22,7 @@ const TogetherReadCard: React.FC<TogetherReadCardProps> = ({
   progress = 0,
   rank,
   onClick,
-  periodWeeks = 3,
+  totalDays,
   className,
 }) => {
   const [animatedProgress, setAnimatedProgress] = useState(0);
@@ -51,7 +49,7 @@ const TogetherReadCard: React.FC<TogetherReadCardProps> = ({
         {/* 텍스트 영역 */}
         <div className="flex flex-1 flex-col gap-[5px]">
           <p className="text-caption4 text-gray3">
-            {periodWeeks}주 동안 함께 읽는 책
+            {totalDays}일 동안 함께 읽는 책
           </p>
           <h3 className="text-title6">{title}</h3>
 
