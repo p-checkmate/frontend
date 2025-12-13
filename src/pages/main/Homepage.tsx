@@ -43,8 +43,7 @@ function calcMyRankFromMembers(
 ) {
   if (!totalPageCount || totalPageCount <= 0) return undefined;
 
-  const toPercent = (p: number) =>
-    Math.min(100, Math.floor((p / totalPageCount) * 100));
+  const toPercent = (p: number) => Math.min(100, Math.floor((p / totalPageCount) * 100));
 
   const me = members.find((m) => m.is_current_user);
   if (!me) return undefined;
@@ -52,8 +51,7 @@ function calcMyRankFromMembers(
   const myPercent = toPercent(me.current_page);
 
   // 공동등수: 내 퍼센트보다 "엄격히 큰" 사람 수 + 1
-  const higherCount = members.filter((m) => toPercent(m.current_page) > myPercent)
-    .length;
+  const higherCount = members.filter((m) => toPercent(m.current_page) > myPercent).length;
 
   return higherCount + 1;
 }
@@ -154,11 +152,10 @@ const MainPage: React.FC = () => {
               ? {
                   ...g,
                   member_count: g.member_count + 1,
-                  my_progress:
-                    g.my_progress ?? {
-                      current_page: 0,
-                      memo: null,
-                    },
+                  my_progress: g.my_progress ?? {
+                    current_page: 0,
+                    memo: null,
+                  },
                 }
               : g,
           ),
@@ -179,9 +176,9 @@ const MainPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-beige1">
+    <div className="bg-beige1 min-h-screen">
       {/* 상단 헤더 + 검색 */}
-      <div className="fixed left-0 right-0 top-0 z-50">
+      <div className="fixed top-0 right-0 left-0 z-50">
         <Header variant="logoMy" onMyPageClick={() => navigate('/mypage')} />
 
         <div
@@ -201,7 +198,7 @@ const MainPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="mx-auto pb-20 pt-27">
+      <div className="mx-auto pt-27 pb-20">
         {isSearching ? (
           <SearchResultSection
             keyword={keyword}
@@ -223,7 +220,7 @@ const MainPage: React.FC = () => {
           />
         )}
       </div>
-      <ChatFloater onClick={handleChatClick} />
+      {!isSearching && <ChatFloater onClick={handleChatClick} />}
     </div>
   );
 };
@@ -263,17 +260,17 @@ const SearchResultSection: React.FC<SearchResultSectionProps> = ({
 
   return (
     <section className="px-5">
-      <p className="mb-3 text-caption4 text-gray3">
+      <p className="text-caption4 text-gray3 mb-3">
         검색 결과
         {keyword.trim() && `: "${keyword.trim()}"`}
       </p>
 
       {loading && !hasResults && (
-        <p className="py-8 text-center text-caption3 text-gray3">검색 중입니다...</p>
+        <p className="text-caption3 text-gray3 py-8 text-center">검색 중입니다...</p>
       )}
 
       {!loading && !hasResults && (
-        <p className="py-10 text-center text-caption3 text-gray3">검색 결과가 없습니다.</p>
+        <p className="text-caption3 text-gray3 py-10 text-center">검색 결과가 없습니다.</p>
       )}
 
       <div className="space-y-3">
@@ -292,12 +289,10 @@ const SearchResultSection: React.FC<SearchResultSectionProps> = ({
         <>
           <div ref={loadMoreRef} className="h-10 w-full" />
           {isLoadingMore && (
-            <p className="py-4 text-center text-caption3 text-gray3">
-              더 불러오는 중이에요...
-            </p>
+            <p className="text-caption3 text-gray3 py-4 text-center">더 불러오는 중이에요...</p>
           )}
           {!hasMore && (
-            <p className="py-4 text-center text-caption3 text-gray3">
+            <p className="text-caption3 text-gray3 py-4 text-center">
               검색 결과를 모두 불러왔어요.
             </p>
           )}
@@ -337,9 +332,7 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
       {/* 함께 읽기 (5개 캐러셀) */}
       {!readingGroupLoading && !readingGroupError && readingGroups.length > 0 && (
         <section className="mt-6">
-          <h2 className="mb-4 px-5 text-title5 text-black">
-            현재 진행되고 있는 함께 읽기
-          </h2>
+          <h2 className="text-title5 mb-4 px-5 text-black">현재 진행되고 있는 함께 읽기</h2>
 
           <TogetherReadCarousel items={readingGroups} onClickTogetherRead={onClickTogetherRead} />
         </section>
@@ -375,7 +368,7 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
 
       {/* 뜨거운 토론 */}
       <section className="mt-10">
-        <h2 className="px-5 text-title5">지금 뜨거운 토론장</h2>
+        <h2 className="text-title5 px-5">지금 뜨거운 토론장</h2>
         <CardCarousel className="mt-3">
           {MOCK_HOT_DISCUSSIONS.map((d) => (
             <DiscussionCard
@@ -396,7 +389,7 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
 
       {/* 인용구 */}
       <section className="mt-10">
-        <h2 className="px-5 text-title5">나를 위한 인용구</h2>
+        <h2 className="text-title5 px-5">나를 위한 인용구</h2>
         <CardCarousel className="mt-3">
           {MOCK_RECOMMENDED_QUOTES.map((q) => (
             <DiscussionCard
@@ -467,17 +460,20 @@ function TogetherReadCarousel({
             g.my_progress && g.total_pages > 0
               ? Math.floor((g.my_progress.current_page / g.total_pages) * 100)
               : 0;
-              const totalDays = g.total_days;
+          const totalDays = g.total_days;
 
           return (
-            <div key={g.reading_group_id} className={cn('w-full flex-shrink-0 snap-center', 'px-5')}>
+            <div
+              key={g.reading_group_id}
+              className={cn('w-full flex-shrink-0 snap-center', 'px-5')}
+            >
               <TogetherReadCard
                 title={g.title}
                 participants={g.member_count}
                 remainDays={g.days_left}
                 isJoined={isJoined}
                 progress={progressPercent}
-                rank={g.my_rank} 
+                rank={g.my_rank}
                 totalDays={totalDays}
                 onClick={() => onClickTogetherRead(g.reading_group_id)}
               />
