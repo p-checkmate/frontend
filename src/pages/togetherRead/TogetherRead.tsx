@@ -76,10 +76,7 @@ const TogetherRead = () => {
     const shareUrl = `${window.location.origin}/togetherRead/${overview.reading_group_id}`;
 
     const imageUrl =
-      (overview as any).thumbnail_url ??
-      (overview as any).thumbnailUrl ??
-      (overview as any).cover_url ??
-      '';
+      'https://github.com/p-checkmate/frontend/blob/develop/src/assets/together.png?raw=true';
 
     if (!imageUrl) {
       alert('thumbnail_url이 없어서 공유 이미지를 넣을 수 없어요.');
