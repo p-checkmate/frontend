@@ -1,4 +1,3 @@
-// src/pages/Homepage.tsx
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Header,
@@ -76,6 +75,7 @@ const MainPage: React.FC = () => {
     handleKeywordChange,
     handleSubmit,
     loadMoreRef,
+    resetSearch,
   } = useInfiniteBookSearch();
 
   // ====== 함께 읽기 5개 overview + rank 계산 ======
@@ -179,13 +179,20 @@ const MainPage: React.FC = () => {
     <div className="bg-beige1 min-h-screen">
       {/* 상단 헤더 + 검색 */}
       <div className="fixed top-0 right-0 left-0 z-50">
-        <Header variant="logoMy" onMyPageClick={() => navigate('/mypage')} />
+        <Header
+          variant="logoMy"
+          onLogoClick={() => {
+            if (isSearching) resetSearch();
+          }}
+          onMyPageClick={() => navigate('/mypage')}
+        />
 
         <div
           className={cn(
             'flex justify-center pt-1 pb-3 transition-all duration-300',
-            'origin-top',
-            isHidden ? '-translate-y-full opacity-0' : 'translate-y-0 opacity-100',
+            isHidden
+              ? 'pointer-events-none -translate-y-full opacity-0'
+              : 'pointer-events-auto translate-y-0 opacity-100',
           )}
         >
           <Search
