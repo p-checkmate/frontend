@@ -514,7 +514,7 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
 
             {/* 인용구 */}
       <section className="mt-10">
-        <h2 className="text-title5 px-5">나를 위한 인용구</h2>
+        <h2 className="text-title5 px-5">인기 있는 인용구</h2>
 
         {communityLoading ? (
           <div className="px-5 py-4 text-caption4 text-gray3">불러오는 중...</div>
