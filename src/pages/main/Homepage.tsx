@@ -16,7 +16,7 @@ import useScrollHide from '@/hooks/useScrollDirection';
 
 import BookCard from '@/components/common/cards/BookSelectCard';
 import {
-  MOCK_MAIN_BOOKS,
+  //MOCK_MAIN_BOOKS,
   MOCK_HOT_DISCUSSIONS,
   MOCK_RECOMMENDED_QUOTES,
 } from '@/_mocks/mainPageMock';
@@ -28,6 +28,12 @@ import {
   joinReadingGroup,
   type ReadingGroupOverview,
 } from '@/api/main/readingGroup.api';
+
+import {
+  fetchPopularBooks,
+  fetchRecommendedBooks,
+  type MainBookThumb,
+} from '@/api/main/book.api';
 
 // 운영에서 “메인에 노출할 그룹 5개”를 room_id로 고정
 const READING_GROUP_IDS = [1, 3, 5, 7, 9];
@@ -66,6 +72,12 @@ const MainPage: React.FC = () => {
   const [readingGroups, setReadingGroups] = useState<ReadingGroupWithRank[]>([]);
   const [rgLoading, setRgLoading] = useState(true);
   const [rgError, setRgError] = useState<string | null>(null);
+
+  // ====== AI 추천 / 인기 도서 상태 ======
+  const [recommendedBooks, setRecommendedBooks] = useState<MainBookThumb[]>([]);
+  const [popularBooks, setPopularBooks] = useState<MainBookThumb[]>([]);
+  const [bookLoading, setBookLoading] = useState(true);
+  const [bookError, setBookError] = useState<string | null>(null);
 
   // ====== 검색 훅 ======
   const {
@@ -135,6 +147,31 @@ const MainPage: React.FC = () => {
     };
 
     load();
+  }, []);
+
+  // ====== AI 추천 / 인기 도서 API 연결 ======
+  useEffect(() => {
+    const loadBooks = async () => {
+      try {
+        setBookLoading(true);
+        setBookError(null);
+
+        const [rec, pop] = await Promise.all([
+          fetchRecommendedBooks(),
+          fetchPopularBooks(),
+        ]);
+
+        setRecommendedBooks(rec ?? []);
+        setPopularBooks(pop ?? []);
+      } catch (e) {
+        console.error('도서 섹션 로딩 실패:', e);
+        setBookError('도서 정보를 불러올 수 없습니다.');
+      } finally {
+        setBookLoading(false);
+      }
+    };
+
+    loadBooks();
   }, []);
 
   // ====== join + 이동 ======
@@ -217,6 +254,10 @@ const MainPage: React.FC = () => {
             readingGroups={readingGroups}
             readingGroupLoading={rgLoading}
             readingGroupError={rgError}
+            recommendedBooks={recommendedBooks}
+            popularBooks={popularBooks}
+            bookLoading={bookLoading}
+            bookError={bookError}
             onClickBook={(id) => navigate(`/book/${id}`)}
             onClickTogetherRead={handleTogetherReadClick}
             onClickDebate={(id) => navigate(`/debate/${id}`)}
@@ -314,6 +355,12 @@ type DefaultMainSectionsProps = {
   readingGroups: ReadingGroupWithRank[];
   readingGroupLoading: boolean;
   readingGroupError: string | null;
+
+  recommendedBooks: MainBookThumb[];
+  popularBooks: MainBookThumb[];
+  bookLoading: boolean;
+  bookError: string | null;
+
   onClickBook: (id: number) => void;
   onClickTogetherRead: (groupId: number) => void;
   onClickDebate: (id: number) => void;
@@ -323,6 +370,10 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
   readingGroups,
   readingGroupLoading,
   readingGroupError,
+  recommendedBooks,
+  popularBooks,
+  bookLoading,
+  bookError,
   onClickBook,
   onClickTogetherRead,
   onClickDebate,
@@ -346,31 +397,43 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
       )}
 
       {/* AI 추천 도서 */}
-      <HorizontalBookScrollSection title="당신을 위한 AI 추천 도서" className="pt-8">
-        {MOCK_MAIN_BOOKS.map((b) => (
-          <div key={b.id} className="h-23 w-17 flex-shrink-0">
-            <Image
-              src={b.coverUrl}
-              alt={b.title}
-              className="h-full w-full cursor-pointer"
-              onClick={() => onClickBook(b.id)}
-            />
-          </div>
-        ))}
+      <HorizontalBookScrollSection title="님을 위한 AI 추천 도서" className="pt-8">
+        {bookLoading ? (
+          <div className="px-5 py-2 text-caption4 text-gray3">불러오는 중...</div>
+        ) : bookError ? (
+          <div className="px-5 py-2 text-caption4 text-gray3">{bookError}</div>
+        ) : (
+          recommendedBooks.map((b) => (
+            <div key={b.itemId} className="h-23 w-17 flex-shrink-0">
+              <Image
+                src={b.thumbnailUrl}
+                alt=""
+                className="h-full w-full cursor-pointer"
+                onClick={() => onClickBook(b.itemId)}
+              />
+            </div>
+          ))
+        )}
       </HorizontalBookScrollSection>
 
       {/* 인기 도서 */}
       <HorizontalBookScrollSection title="체크메이트의 인기 도서" className="pt-5">
-        {MOCK_MAIN_BOOKS.map((b) => (
-          <div key={b.id} className="h-23 w-17 flex-shrink-0">
-            <Image
-              src={b.coverUrl}
-              alt={b.title}
-              className="h-full w-full"
-              onClick={() => onClickBook(b.id)}
-            />
-          </div>
-        ))}
+        {bookLoading ? (
+          <div className="px-5 py-2 text-caption4 text-gray3">불러오는 중...</div>
+        ) : bookError ? (
+          <div className="px-5 py-2 text-caption4 text-gray3">{bookError}</div>
+        ) : (
+          popularBooks.map((b) => (
+            <div key={b.itemId} className="h-23 w-17 flex-shrink-0">
+              <Image
+                src={b.thumbnailUrl}
+                alt=""
+                className="h-full w-full cursor-pointer"
+                onClick={() => onClickBook(b.itemId)}
+              />
+            </div>
+          ))
+        )}
       </HorizontalBookScrollSection>
 
       {/* 뜨거운 토론 */}
