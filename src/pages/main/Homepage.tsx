@@ -347,7 +347,7 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
       )}
 
       {/* AI 추천 도서 */}
-      <HorizontalBookScrollSection title="님을 위한 AI 추천 도서" className="pt-8">
+      <HorizontalBookScrollSection title="당신을 위한 AI 추천 도서" className="pt-8">
         {MOCK_MAIN_BOOKS.map((b) => (
           <div key={b.id} className="h-23 w-17 flex-shrink-0">
             <Image
@@ -468,6 +468,7 @@ function TogetherReadCarousel({
             g.my_progress && g.total_pages > 0
               ? Math.floor((g.my_progress.current_page / g.total_pages) * 100)
               : 0;
+              const totalDays = g.total_days;
 
           return (
             <div key={g.reading_group_id} className={cn('w-full flex-shrink-0 snap-center', 'px-5')}>
@@ -478,6 +479,7 @@ function TogetherReadCarousel({
                 isJoined={isJoined}
                 progress={progressPercent}
                 rank={g.my_rank} // ✅ rank 주입
+                totalDays={totalDays} // 💡 수정: totalDays 전달
                 onClick={() => onClickTogetherRead(g.reading_group_id)}
               />
             </div>

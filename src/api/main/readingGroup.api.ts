@@ -11,6 +11,7 @@ export type ReadingGroupOverview = {
   title: string;
   member_count: number;
   days_left: number;
+  total_days: number;
   total_pages: number;
   my_progress: ReadingGroupProgress | null; // 참여 안 했으면 null
 };
