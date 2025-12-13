@@ -51,7 +51,9 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
       {/* 제목 영역 */}
       <div className="flex justify-between">
         <div className="space-y-1">
-          <p className="text-title5 pt-1 text-black">{bookTitle}</p>
+          <p className="text-title5 pt-1 text-black line-clamp-1 break-words">
+            {bookTitle}
+          </p>
         </div>
 
         <button className="cursor-pointer">
@@ -59,7 +61,8 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
         </button>
       </div>
 
-      {!isQuote && <p className="text-title6 pt-1 text-black">{title}</p>}
+      {!isQuote && <p className="text-title6 pt-1 text-black line-clamp-1 break-words">
+        {title}</p>}
 
       {/* 내용 */}
       <p className="text-body5 text-gray3 mt-2 line-clamp-2 pr-7">{content}</p>
