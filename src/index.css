@@ -1,9 +1,9 @@
-@import "../public/fonts/fonts.css";
-@import "tailwindcss";
+@import '../public/fonts/fonts.css';
+@import 'tailwindcss';
 
 /*필요에 따라 추가해서 쓰시면 됩니다!*/
 :root {
-  --font-default: "Pretendard", sans-serif;
+  --font-default: 'Pretendard', sans-serif;
   /* === 색깔 === */
   --color-beige1: #f9f5e8;
   --color-beige2: #fffdf6; /*조금 더 연한 색*/
@@ -15,7 +15,7 @@
   --color-gray1: #ebebeb;
   --color-gray2: #b4b4b4;
   --color-gray3: #747474;
-  --color-gray4: #ECECEC;
+  --color-gray4: #ececec;
   --color-pink: #ff9173;
 
   --radius-s: 2px;
@@ -215,8 +215,8 @@
   }
 
   .bg-gray4 {
-  background-color: var(--color-gray4);
-}
+    background-color: var(--color-gray4);
+  }
 
   .bg-green1 {
     background-color: var(--color-green1);
@@ -261,8 +261,8 @@
   }
 
   .text-gray4 {
-  color: var(--color-gray4);
-}
+    color: var(--color-gray4);
+  }
 
   .text-yellow {
     color: var(--color-yellow);
@@ -314,8 +314,8 @@
   }
 
   .border-gray4 {
-  border-color: var(--color-gray4);
-}
+    border-color: var(--color-gray4);
+  }
 
   /* radius */
   .rounded-s {
