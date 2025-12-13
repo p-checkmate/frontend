@@ -22,12 +22,9 @@ import {
   joinReadingGroup,
   type ReadingGroupOverview,
 } from '@/api/main/readingGroup.api';
+import { Banner } from '@/assets';
 
-import {
-  fetchPopularBooks,
-  fetchRecommendedBooks,
-  type MainBookThumb,
-} from '@/api/main/book.api';
+import { fetchPopularBooks, fetchRecommendedBooks, type MainBookThumb } from '@/api/main/book.api';
 
 import {
   fetchDiscussions,
@@ -78,12 +75,11 @@ const MainPage: React.FC = () => {
   const [bookLoading, setBookLoading] = useState(true);
   const [bookError, setBookError] = useState<string | null>(null);
 
-    // ====== 토론/인용구 상태 ======
+  // ====== 토론/인용구 상태 ======
   const [hotDiscussions, setHotDiscussions] = useState<DiscussionItem[]>([]);
   const [quotes, setQuotes] = useState<QuoteItem[]>([]);
   const [communityLoading, setCommunityLoading] = useState(true);
   const [communityError, setCommunityError] = useState<string | null>(null);
-
 
   // ====== 검색 훅 ======
   const {
@@ -163,10 +159,7 @@ const MainPage: React.FC = () => {
         setBookLoading(true);
         setBookError(null);
 
-        const [rec, pop] = await Promise.all([
-          fetchRecommendedBooks(),
-          fetchPopularBooks(),
-        ]);
+        const [rec, pop] = await Promise.all([fetchRecommendedBooks(), fetchPopularBooks()]);
 
         setRecommendedBooks(rec ?? []);
         setPopularBooks(pop ?? []);
@@ -181,7 +174,7 @@ const MainPage: React.FC = () => {
     loadBooks();
   }, []);
 
-    // ====== 토론 / 인용구 API 연결 ======
+  // ====== 토론 / 인용구 API 연결 ======
   useEffect(() => {
     const loadCommunity = async () => {
       try {
@@ -201,7 +194,6 @@ const MainPage: React.FC = () => {
 
     loadCommunity();
   }, []);
-
 
   // ====== join + 이동 ======
   const handleTogetherReadClick = async (groupId: number) => {
@@ -363,6 +355,7 @@ const SearchResultSection: React.FC<SearchResultSectionProps> = ({
             key={book.itemId}
             title={book.title}
             subtitle={`${book.author} · ${book.publisher}`}
+            thumbnailUrl={book.cover}
             tags={book.categoryNames}
             onClickCard={() => onClickBook(book.itemId)}
           />
@@ -431,7 +424,7 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
     <>
       {/* 배너 */}
       <div className="mt-3.5">
-        <Image className="h-41 w-full" />
+        <Image src={Banner} className="w-full" />
       </div>
 
       {/* 함께 읽기 (5개 캐러셀) */}
@@ -446,9 +439,9 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
       {/* AI 추천 도서 */}
       <HorizontalBookScrollSection title="님을 위한 AI 추천 도서" className="pt-8">
         {bookLoading ? (
-          <div className="px-5 py-2 text-caption4 text-gray3">불러오는 중...</div>
+          <div className="text-caption4 text-gray3 px-5 py-2">불러오는 중...</div>
         ) : bookError ? (
-          <div className="px-5 py-2 text-caption4 text-gray3">{bookError}</div>
+          <div className="text-caption4 text-gray3 px-5 py-2">{bookError}</div>
         ) : (
           recommendedBooks.map((b) => (
             <div key={b.itemId} className="h-23 w-17 flex-shrink-0">
@@ -466,9 +459,9 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
       {/* 인기 도서 */}
       <HorizontalBookScrollSection title="체크메이트의 인기 도서" className="pt-5">
         {bookLoading ? (
-          <div className="px-5 py-2 text-caption4 text-gray3">불러오는 중...</div>
+          <div className="text-caption4 text-gray3 px-5 py-2">불러오는 중...</div>
         ) : bookError ? (
-          <div className="px-5 py-2 text-caption4 text-gray3">{bookError}</div>
+          <div className="text-caption4 text-gray3 px-5 py-2">{bookError}</div>
         ) : (
           popularBooks.map((b) => (
             <div key={b.itemId} className="h-23 w-17 flex-shrink-0">
@@ -483,14 +476,14 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
         )}
       </HorizontalBookScrollSection>
 
-            {/* 뜨거운 토론 */}
+      {/* 뜨거운 토론 */}
       <section className="mt-10">
         <h2 className="text-title5 px-5">지금 뜨거운 토론장</h2>
 
         {communityLoading ? (
-          <div className="px-5 py-4 text-caption4 text-gray3">불러오는 중...</div>
+          <div className="text-caption4 text-gray3 px-5 py-4">불러오는 중...</div>
         ) : communityError ? (
-          <div className="px-5 py-4 text-caption4 text-gray3">{communityError}</div>
+          <div className="text-caption4 text-gray3 px-5 py-4">{communityError}</div>
         ) : (
           <CardCarousel className="mt-3">
             {hotDiscussions.map((d) => (
@@ -511,15 +504,14 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
         )}
       </section>
 
-
-            {/* 인용구 */}
+      {/* 인용구 */}
       <section className="mt-10">
         <h2 className="text-title5 px-5">인기 있는 인용구</h2>
 
         {communityLoading ? (
-          <div className="px-5 py-4 text-caption4 text-gray3">불러오는 중...</div>
+          <div className="text-caption4 text-gray3 px-5 py-4">불러오는 중...</div>
         ) : communityError ? (
-          <div className="px-5 py-4 text-caption4 text-gray3">{communityError}</div>
+          <div className="text-caption4 text-gray3 px-5 py-4">{communityError}</div>
         ) : (
           <CardCarousel className="mt-3">
             {quotes.map((q) => (
@@ -538,7 +530,6 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
           </CardCarousel>
         )}
       </section>
-
     </>
   );
 };
@@ -599,7 +590,7 @@ function TogetherReadCarousel({
           return (
             <div
               key={g.reading_group_id}
-              className={cn('w-full flex-shrink-0 snap-center', 'px-5')}
+              className={cn('w-full flex-shrink-0 snap-center', 'px-5 py-[2px]')}
             >
               <TogetherReadCard
                 title={g.title}

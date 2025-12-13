@@ -1,5 +1,5 @@
-import React from "react";
-import { cn } from "@/utils/cn";
+import React from 'react';
+import { cn } from '@/utils/cn';
 
 interface HorizontalBookScrollSectionProps {
   title: string;
@@ -13,7 +13,7 @@ const HorizontalBookScrollSection: React.FC<HorizontalBookScrollSectionProps> = 
   children,
 }) => {
   return (
-    <section className={cn("w-full px-1 bg-beige1", className)}>
+    <section className={cn('bg-beige1 w-full px-1', className)}>
       <div className="flex items-center px-5 pt-4">
         <h2 className="text-title5">{title}</h2>
       </div>
@@ -23,16 +23,7 @@ const HorizontalBookScrollSection: React.FC<HorizontalBookScrollSectionProps> = 
           <div className="flex gap-5 pr-10">{children}</div>
         </div>
 
-        <div
-          className="
-            pointer-events-none
-            absolute right-5 top-0
-            h-full w-12
-            bg-gradient-to-l
-            from-[var(--color-beige1)]
-            to-transparent
-          "
-        />
+        <div className="pointer-events-none absolute top-0 right-5 h-full w-12 bg-gradient-to-l from-[var(--color-beige1)] to-transparent" />
       </div>
     </section>
   );

@@ -20,6 +20,7 @@ import {
   deleteBookBookmark,
   fetchBookBookmarkStatus,
 } from '@/api/detail/bookmark.api';
+import { LinkIcon } from '@/assets';
 
 const TAB_OPTIONS = ['토론', '인용구'] as const;
 type Tab = (typeof TAB_OPTIONS)[number];
@@ -171,9 +172,17 @@ const BookDetailPage: React.FC = () => {
   }
 
   const { title, author, publisher, description, thumbnailUrl, genres } = book;
-
+  const aladinUrl = `https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=${book.itemId}`;
   const coverImageUrl = thumbnailUrl;
   const tags = genres?.map((g) => g.genreName) ?? [];
+  const decodeHtml = (str: string) =>
+    str
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
+  const decodedDescription = decodeHtml(description ?? '');
 
   return (
     <div className="bg-beige1 min-h-screen">
@@ -212,7 +221,16 @@ const BookDetailPage: React.FC = () => {
               </div>
 
               {/* 도서 요약 */}
-              <div className="text-body2">{description}</div>
+              <div className="text-body2">{decodedDescription}</div>
+              <a
+                href={aladinUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-caption3 bg-green1 mt-2 inline-flex h-9 items-center justify-center rounded-md px-3 text-white"
+              >
+                <LinkIcon />
+                알라딘에서 구매하기
+              </a>
             </div>
           </div>
 

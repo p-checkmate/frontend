@@ -1,4 +1,3 @@
-// src/pages/togetherRead/TogetherRead.tsx
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Header, MyReadCard, BookMarathonCard } from '@/components';
@@ -10,6 +9,7 @@ import {
   type ReadingGroupOverview,
   type ReadingGroupMember,
 } from '@/api/togetherRead/togetherRead.api';
+import { getCurrentUser } from '@/utils/auth';
 
 const TogetherRead = () => {
   const navigate = useNavigate();
@@ -20,6 +20,8 @@ const TogetherRead = () => {
   const [members, setMembers] = useState<ReadingGroupMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const user = getCurrentUser();
+  const nickname = user?.nickname ?? '';
 
   // ===== load =====
   useEffect(() => {
@@ -52,7 +54,6 @@ const TogetherRead = () => {
     load();
   }, [gid]);
 
-  // 참여자 리스트: 내 카드가 항상 맨 위 + 그 다음 많이 읽은 순
   const sortedUsers = useMemo(() => {
     const copy = [...members];
     copy.sort((a, b) => {
@@ -67,21 +68,61 @@ const TogetherRead = () => {
   const handleBack = () => navigate(-1);
 
   const handleShare = () => {
-    alert('도서 함께 읽기 링크 공유 기능은\n추후에 추가될 예정입니다 :)');
+    if (!overview) return;
+
+    const kakao = window.Kakao;
+    if (!kakao) {
+      alert('Kakao SDK가 로드되지 않았어요.');
+      return;
+    }
+
+    const shareUrl = `${window.location.origin}/togetherRead/${overview.reading_group_id}`;
+
+    const imageUrl =
+      'https://github.com/p-checkmate/frontend/blob/develop/src/assets/together.png?raw=true';
+
+    if (!imageUrl) {
+      alert('thumbnail_url이 없어서 공유 이미지를 넣을 수 없어요.');
+      return;
+    }
+
+    try {
+      kakao.Share.sendDefault({
+        objectType: 'feed',
+        content: {
+          title: `함께 읽기: ${overview.title}`,
+          description: `참여자 ${overview.member_count}명 · D-${overview.days_left} · 총 ${overview.total_pages}p \n${nickname}님이 같이 읽기에 초대했어요! 함께 책 읽고 감상 나눠요!`,
+          imageUrl,
+          link: {
+            mobileWebUrl: shareUrl,
+            webUrl: shareUrl,
+          },
+        },
+        buttons: [
+          {
+            title: '함께 읽기 보러가기',
+            link: {
+              mobileWebUrl: shareUrl,
+              webUrl: shareUrl,
+            },
+          },
+        ],
+      });
+    } catch (e) {
+      console.error('Kakao share failed:', e);
+      alert('카카오 공유에 실패했어요. 콘솔 로그를 확인해주세요.');
+    }
   };
 
-  // 내 진행 업데이트 (PATCH)
   const handleUpdateMyReading = async (newReadPage: number, newMemo: string) => {
     if (!overview) return;
 
     try {
-      // 1) 서버 업데이트
       await patchMyProgress(overview.reading_group_id, {
         current_page: newReadPage,
         memo: newMemo,
       });
 
-      // 2) overview
       setOverview((prev) =>
         prev
           ? {
@@ -94,15 +135,11 @@ const TogetherRead = () => {
           : prev,
       );
 
-      // 3) members 리스트에서 내 항목 갱신
       setMembers((prev) =>
         prev.map((m) =>
-          m.is_current_user
-            ? { ...m, current_page: newReadPage, memo: newMemo }
-            : m,
+          m.is_current_user ? { ...m, current_page: newReadPage, memo: newMemo } : m,
         ),
       );
-
     } catch (e: any) {
       console.error(e);
       alert(e?.message ?? '업데이트에 실패했어요. 잠시 후 다시 시도해주세요.');
@@ -111,11 +148,16 @@ const TogetherRead = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen justify-center bg-beige1">
+      <div className="bg-beige1 flex min-h-screen justify-center">
         <div className="flex w-full max-w-[430px] flex-col">
-          <Header variant="backTitleIcon" title="함께 읽기" onBackClick={handleBack} onShareClick={handleShare} />
-          <main className="flex-1 px-4 pb-8 pt-6">
-            <p className="text-center text-caption3 text-gray3">불러오는 중...</p>
+          <Header
+            variant="backTitleIcon"
+            title="함께 읽기"
+            onBackClick={handleBack}
+            onShareClick={handleShare}
+          />
+          <main className="flex-1 px-4 pt-6 pb-8">
+            <p className="text-caption3 text-gray3 text-center">불러오는 중...</p>
           </main>
         </div>
       </div>
@@ -124,11 +166,16 @@ const TogetherRead = () => {
 
   if (error || !overview) {
     return (
-      <div className="flex min-h-screen justify-center bg-beige1">
+      <div className="bg-beige1 flex min-h-screen justify-center">
         <div className="flex w-full max-w-[430px] flex-col">
-          <Header variant="backTitleIcon" title="함께 읽기" onBackClick={handleBack} onShareClick={handleShare} />
-          <main className="flex-1 px-4 pb-8 pt-6">
-            <p className="text-center text-caption3 text-gray3">{error ?? '데이터가 없어요.'}</p>
+          <Header
+            variant="backTitleIcon"
+            title="함께 읽기"
+            onBackClick={handleBack}
+            onShareClick={handleShare}
+          />
+          <main className="flex-1 px-4 pt-6 pb-8">
+            <p className="text-caption3 text-gray3 text-center">{error ?? '데이터가 없어요.'}</p>
           </main>
         </div>
       </div>
@@ -146,7 +193,7 @@ const TogetherRead = () => {
   };
 
   return (
-    <div className="flex min-h-screen justify-center bg-beige1">
+    <div className="bg-beige1 flex min-h-screen justify-center">
       <div className="flex w-full max-w-[430px] flex-col">
         <Header
           variant="backTitleIcon"
@@ -156,16 +203,15 @@ const TogetherRead = () => {
           className="sticky top-0 z-50 bg-beige1"
         />
 
-        <main className="flex-1 px-4 pb-8 pt-4">
+        <main className="flex-1 px-4 pt-4 pb-8">
           {/* 책 정보 헤더 */}
           <section className="mb-4">
-            <h2 className="ml-4 text-caption1 font-semibold text-black">{title}</h2>
-            <p className="ml-3 mt-1 text-caption4 text-gray3">
+            <h2 className="text-caption1 ml-4 font-semibold text-black">{title}</h2>
+            <p className="text-caption4 text-gray3 mt-1 ml-3">
               참여자 <span className="text-green1">{participantsCount}명</span>
               {' · '}
               남은 기간 <span className="text-green1">D-{dday}</span>
-              {' · '}
-              총 <span className="text-green1">{totalPage}p</span>
+              {' · '}총 <span className="text-green1">{totalPage}p</span>
             </p>
           </section>
 
@@ -182,7 +228,7 @@ const TogetherRead = () => {
           {/* 함께 달리는 독서 마라톤 */}
           <section className="mt-6">
             <div className="rounded-m bg-beige2 px-4 py-4 shadow-sm">
-              <h3 className="mb-3 text-title6 text-black">함께 달리는 독서 마라톤</h3>
+              <h3 className="text-title6 mb-3 text-black">함께 달리는 독서 마라톤</h3>
 
               <div className="flex flex-col items-center gap-4">
                 {sortedUsers.map((user) => (

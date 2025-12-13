@@ -1,4 +1,15 @@
-import api from "../api";
+import api from '../api';
+
+export type QuoteBookInfo = {
+  title: string;
+  author: string;
+  publisher: string;
+  published_date: string;
+  description: string;
+  thumbnail_url: string;
+  page_count: number;
+  genres: string[];
+};
 
 export type QuoteDetail = {
   quote_id: number;
@@ -9,6 +20,7 @@ export type QuoteDetail = {
   like_count: number;
   created_at: string;
   updated_at: string | null;
+  book: QuoteBookInfo;
 };
 
 // 인용구 목록 조회
