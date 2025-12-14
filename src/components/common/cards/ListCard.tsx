@@ -1,7 +1,7 @@
 import React from 'react';
 import { cn } from '@/utils/cn';
 import Badge from '@/components/common/badge/Badge';
-import { HeartIcon, HeartFilled, MoreIcon } from '@/assets';
+import { HeartIcon, HeartFilled } from '@/assets';
 
 type CardType = 'discussion' | 'quote';
 
@@ -51,18 +51,13 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
       {/* 제목 영역 */}
       <div className="flex justify-between">
         <div className="space-y-1">
-          <p className="text-title5 pt-1 text-black line-clamp-1 break-words">
-            {bookTitle}
-          </p>
+          <p className="text-title5 line-clamp-1 pt-1 break-words text-black">{bookTitle}</p>
         </div>
 
-        <button className="cursor-pointer">
-          <MoreIcon className="w-5" />
-        </button>
+        <button className="cursor-pointer"></button>
       </div>
 
-      {!isQuote && <p className="text-title6 pt-1 text-black line-clamp-1 break-words">
-        {title}</p>}
+      {!isQuote && <p className="text-title6 line-clamp-1 pt-1 break-words text-black">{title}</p>}
 
       {/* 내용 */}
       <p className="text-body5 text-gray3 mt-2 line-clamp-2 pr-7">{content}</p>
@@ -89,11 +84,7 @@ const DiscussionCard: React.FC<DiscussionCardProps> = ({
         <div className="flex items-center gap-2">
           <div className="text-body4 rounded-m border-gray2 flex h-6 items-center gap-1 border px-3 select-none">
             <span className="flex h-4 w-4 items-center justify-center">
-              {isLiked ? (
-                <HeartFilled className="h-4 w-4" />
-              ) : (
-                <HeartIcon className="h-4 w-4" />
-              )}
+              {isLiked ? <HeartFilled className="h-4 w-4" /> : <HeartIcon className="h-4 w-4" />}
             </span>
             <span>{likeCount}</span>
           </div>
