@@ -186,10 +186,20 @@ const TogetherRead = () => {
   const totalPage = overview.total_pages;
   const participantsCount = overview.member_count;
   const dday = overview.days_left;
+  const itemId = overview.itemId;
 
   const myReading = {
     readPage: overview.my_progress?.current_page ?? 0,
     memo: overview.my_progress?.memo ?? '',
+  };
+
+  // 책 제목 클릭 핸들러
+  const handleTitleClick = () => {
+    if (itemId) {
+      navigate(`/book/${itemId}`);
+    } else {
+      console.warn('itemId가 없어 책 상세 페이지로 이동할 수 없습니다.');
+    }
   };
 
   return (
@@ -206,7 +216,12 @@ const TogetherRead = () => {
         <main className="flex-1 px-4 pt-4 pb-8">
           {/* 책 정보 헤더 */}
           <section className="mb-4">
-            <h2 className="text-caption1 ml-4 font-semibold text-black">{title}</h2>
+            <h2 
+              className="text-caption1 ml-4 font-semibold text-black cursor-pointer" 
+              onClick={handleTitleClick}
+            >
+              {title}
+            </h2>
             <p className="text-caption4 text-gray3 mt-1 ml-3">
               참여자 <span className="text-green1">{participantsCount}명</span>
               {' · '}

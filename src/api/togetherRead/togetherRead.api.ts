@@ -5,6 +5,7 @@ import api from '@/api/api';
 export type ReadingGroupOverview = {
   reading_group_id: number;
   title: string;
+  itemId: number;  // 추가함!
   member_count: number;
   days_left: number;
   total_pages: number;
