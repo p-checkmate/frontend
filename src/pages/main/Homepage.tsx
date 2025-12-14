@@ -32,6 +32,7 @@ import {
   type DiscussionItem,
   type QuoteItem,
 } from '@/api/main/community.api';
+import { getCurrentUser } from '@/utils/auth';
 
 // 운영에서 “메인에 노출할 그룹 5개”를 room_id로 고정
 const READING_GROUP_IDS = [1, 3, 5, 7, 9];
@@ -420,6 +421,8 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
   communityError,
   onClickQuote,
 }) => {
+  const user = getCurrentUser();
+  const nickname = user?.nickname ?? '';
   return (
     <>
       {/* 배너 */}
@@ -437,7 +440,7 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
       )}
 
       {/* AI 추천 도서 */}
-      <HorizontalBookScrollSection title="님을 위한 AI 추천 도서" className="pt-10">
+      <HorizontalBookScrollSection title={`${nickname}님을 위한 AI 추천 도서`} className="pt-10">
         {bookLoading ? (
           <div className="text-caption4 text-gray3 px-5 py-2">불러오는 중...</div>
         ) : bookError ? (

@@ -133,10 +133,8 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({ discussion }) =
   // ===== 통계 계산 =====
   const total = summary?.total_comments ?? messages.length;
 
-  const side1Count =
-    summary?.opinion_ratio?.option1_count ?? messages.filter((m) => m.side === 1).length;
-  const side2Count =
-    summary?.opinion_ratio?.option2_count ?? messages.filter((m) => m.side === 2).length;
+  const side1Count = messages.filter((m) => m.side === 1).length;
+  const side2Count = messages.filter((m) => m.side === 2).length;
 
   const side1Ratio = summary?.opinion_ratio?.option1_percentage;
   const side2Ratio = summary?.opinion_ratio?.option2_percentage;
@@ -160,10 +158,21 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({ discussion }) =
 
       setSelectedSide(side);
       setHasVoted(true);
+
+      setSummaryLoading(true);
+      const nextSummary = await fetchDiscussionSummary(roomId);
+      setSummary(nextSummary);
+
+      setVoteStatusLoading(true);
+      const status = await fetchDiscussionVoteStatus(roomId);
+      setHasVoted(status.is_voted);
+      setSelectedSide(status.choice === 1 || status.choice === 2 ? status.choice : null);
     } catch (e: any) {
       console.error('투표 API 호출 실패:', e?.message || e);
     } finally {
       setVoting(false);
+      setSummaryLoading(false);
+      setVoteStatusLoading(false);
     }
   };
 

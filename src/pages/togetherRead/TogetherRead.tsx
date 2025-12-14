@@ -153,7 +153,7 @@ const TogetherRead = () => {
           <Header
             variant="backTitleIcon"
             title="함께 읽기"
-            onBackClick={handleBack}
+            onBackClick={() => navigate(`/`)}
             onShareClick={handleShare}
           />
           <main className="flex-1 px-4 pt-6 pb-8">
@@ -198,9 +198,9 @@ const TogetherRead = () => {
         <Header
           variant="backTitleIcon"
           title="함께 읽기"
-          onBackClick={handleBack}
+          onBackClick={() => navigate('/')}
           onShareClick={handleShare}
-          className="sticky top-0 z-50 bg-beige1"
+          className="bg-beige1 sticky top-0 z-50"
         />
 
         <main className="flex-1 px-4 pt-4 pb-8">
