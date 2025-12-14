@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Header, BaseModal, Button } from '@/components';
-import { RightArrowIcon } from '@/assets';
 
 import {
   fetchSettingProfile,
@@ -45,11 +44,6 @@ const Setting: React.FC = () => {
 
     loadProfile();
   }, []);
-
-  // 1. 라이선스 페이지 이동
-  const handleLicenseClick = () => {
-    navigate('/mypage/setting/license'); // 추후 경로 수정
-  };
 
   // 2. 로그아웃 처리
   const handleLogoutConfirm = async () => {
@@ -118,15 +112,6 @@ const Setting: React.FC = () => {
 
         {/* 3. 앱 정보 영역 */}
         <section className="px-[37px] py-2">
-          {/* 라이선스 */}
-          <button
-            type="button"
-            onClick={handleLicenseClick}
-            className="flex w-full items-center justify-between py-4 cursor-pointer"
-          >
-            <span className="text-caption3 text-black">라이선스</span>
-            <RightArrowIcon className="w-[26px] h-[26px] text-black" />
-          </button>
 
           {/* 버전 정보 */}
           <div className="flex w-full items-center justify-between py-4">
