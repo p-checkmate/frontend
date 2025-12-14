@@ -460,7 +460,7 @@ const DefaultMainSections: React.FC<DefaultMainSectionsProps> = ({
       </HorizontalBookScrollSection>
 
       {/* 인기 도서 */}
-      <HorizontalBookScrollSection title="체크메이트의 인기 도서" className="pt-6">
+      <HorizontalBookScrollSection title="채크메이트의 인기 도서" className="pt-6">
         {bookLoading ? (
           <div className="text-caption4 text-gray3 px-5 py-2">불러오는 중...</div>
         ) : bookError ? (
