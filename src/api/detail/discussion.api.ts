@@ -22,7 +22,7 @@ export interface DiscussionMessage {
   discussion_id: number;
   user_id: number;
   nickname: string;
-  choice: number;
+  choice: number; // 1 | 2 | 0(자유토론) 등 백엔드에 따라
   content: string;
   created_at: string;
   updated_at: string;
@@ -50,14 +50,6 @@ export interface DiscussionCreateResponse {
   discussion_id: number;
 }
 
-export interface DiscussionCreateRequest {
-  title: string;
-  content: string;
-  discussion_type: DiscussionType;
-  option1?: string;
-  option2?: string;
-}
-
 export type BookDiscussionSummary = {
   discussion_id: number;
   title: string;
@@ -71,36 +63,34 @@ export type BookDiscussionSummary = {
   comment_count: number;
 };
 
-export interface DiscussionCreateResponse {
-  discussion_id: number;
-}
-
-//토론 생성 API
+// 토론 생성 API
 export const createDiscussion = async (
   bookId: number | string,
   payload: DiscussionCreateRequest,
 ): Promise<DiscussionCreateResponse> => {
-  return api.post(`/books/${bookId}/discussions`, payload);
+  return api.post(`/books/${bookId}/discussions`, payload) as unknown as DiscussionCreateResponse;
 };
 
-export const fetchDiscussionDetail = async (discussionId: number | string): Promise<Discussion> => {
+// 토론 상세
+export const fetchDiscussionDetail = async (
+  discussionId: number | string,
+): Promise<Discussion> => {
   const res = await api.get(`/discussions/${discussionId}`);
-
-  const data = res as unknown as { discussion: Discussion };
-
-  return data.discussion;
+  // api 인터셉터 형태/혹은 res 자체 형태 혼재 대응
+  const data = (res as any)?.discussion ?? (res as any)?.data?.discussion;
+  return data as Discussion;
 };
 
-//메시지 목록 조회
+// 메시지 목록 조회
 export const fetchDiscussionMessages = async (
   discussionId: number | string,
 ): Promise<DiscussionMessage[]> => {
   const res = await api.get(`/discussions/${discussionId}/messages`);
-  const data = res as unknown as { messages: DiscussionMessage[] };
-  return data.messages;
+  const messages = (res as any)?.messages ?? (res as any)?.data?.messages;
+  return (messages ?? []) as DiscussionMessage[];
 };
 
-//메시지 생성
+// 메시지 생성
 export const createDiscussionMessage = async (
   discussionId: number | string,
   payload: DiscussionMessageCreateRequest,
@@ -109,20 +99,20 @@ export const createDiscussionMessage = async (
   return res as unknown as DiscussionMessageCreateResponse;
 };
 
-//토론 목록
+// 토론 목록
 export const fetchBookDiscussion = async (
   bookId: number | string,
 ): Promise<BookDiscussionSummary[]> => {
   const res = await api.get(`/books/${bookId}/discussions`);
-  const data = res as unknown as { discussions: BookDiscussionSummary[] };
-  return data?.discussions ?? [];
+  const discussions = (res as any)?.discussions ?? (res as any)?.data?.discussions;
+  return (discussions ?? []) as BookDiscussionSummary[];
 };
 
-//좋아요
+// 좋아요
 export const fetchDiscussionLikeStatus = async (discussionId: number): Promise<boolean> => {
   const res = await api.get(`/discussions/${discussionId}/like-status`);
-  const data = (res as any).data ?? res;
-  return data.isLiked ?? false;
+  const body = (res as any)?.data ?? res;
+  return (body?.isLiked ?? false) as boolean;
 };
 
 export const likeDiscussion = async (discussionId: number) => {
@@ -133,13 +123,12 @@ export const unlikeDiscussion = async (discussionId: number) => {
   return api.delete(`/discussions/${discussionId}/like`);
 };
 
-//토론 결과 투표
+// 토론 결과 투표
 export const voteDiscussion = async (
   discussionId: number,
   choice: 1 | 2,
 ): Promise<{ message: string }> => {
   const res = await api.post(`/discussions/${discussionId}/vote`, { choice });
-
   return res as unknown as { message: string };
 };
 
@@ -152,10 +141,10 @@ export const fetchDiscussionVoteStatus = async (
   discussionId: number,
 ): Promise<VoteStatusResponse> => {
   const res = await api.get(`/discussions/${discussionId}/vote-status`);
-
   return res as unknown as VoteStatusResponse;
 };
 
+// AI 요약 + 기본 메타
 export type DiscussionSummary = {
   discussion_id: number;
   title: string;
@@ -165,15 +154,25 @@ export type DiscussionSummary = {
   ended_at: string;
   total_comments: number;
   summary: string;
-  opinion_ratio: {
-    option1_count: number;
-    option2_count: number;
-    option1_percentage: number;
-    option2_percentage: number;
-  };
 };
 
 export const fetchDiscussionSummary = async (discussionId: number): Promise<DiscussionSummary> => {
   const res = await api.get(`/discussions/${discussionId}/summary`, { timeout: 30000 });
   return res as unknown as DiscussionSummary;
+};
+
+// 투표 통계/종료일
+export type DiscussionVoteSummary = {
+  vote1_count: number;
+  vote2_count: number;
+  option1_percentage: number;
+  option2_percentage: number;
+  end_date: string;
+};
+
+export const fetchDiscussionVoteSummary = async (
+  discussionId: number,
+): Promise<DiscussionVoteSummary> => {
+  const res = await api.get(`/discussions/${discussionId}/vote`);
+  return res as unknown as DiscussionVoteSummary;
 };

@@ -10,7 +10,9 @@ import {
   voteDiscussion,
   fetchDiscussionVoteStatus,
   fetchDiscussionSummary,
+  fetchDiscussionVoteSummary,
   type DiscussionSummary,
+  type DiscussionVoteSummary,
   fetchDiscussionLikeStatus,
   likeDiscussion,
   unlikeDiscussion,
@@ -32,8 +34,13 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({ discussion }) =
 
   const [voteStatusLoading, setVoteStatusLoading] = useState(true);
 
+  // AI 요약
   const [summary, setSummary] = useState<DiscussionSummary | null>(null);
   const [summaryLoading, setSummaryLoading] = useState(true);
+
+  // 투표 통계
+  const [voteSummary, setVoteSummary] = useState<DiscussionVoteSummary | null>(null);
+  const [voteSummaryLoading, setVoteSummaryLoading] = useState(true);
 
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(
@@ -67,7 +74,7 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({ discussion }) =
     })();
   }, [roomId]);
 
-  // ===== summary 로드 =====
+  // ===== summary 로드 (페이지 진입 시 1회만, 투표 후 재호출 X) =====
   useEffect(() => {
     if (!roomId) return;
 
@@ -81,6 +88,24 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({ discussion }) =
         setSummary(null);
       } finally {
         setSummaryLoading(false);
+      }
+    })();
+  }, [roomId]);
+
+  // ===== vote-summary 로드 (페이지 진입 시 1회 + 투표 후 재호출) =====
+  useEffect(() => {
+    if (!roomId) return;
+
+    (async () => {
+      try {
+        setVoteSummaryLoading(true);
+        const data = await fetchDiscussionVoteSummary(roomId);
+        setVoteSummary(data);
+      } catch (e: any) {
+        console.error('vote-summary 불러오기 실패:', e?.message || e);
+        setVoteSummary(null);
+      } finally {
+        setVoteSummaryLoading(false);
       }
     })();
   }, [roomId]);
@@ -130,19 +155,21 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({ discussion }) =
     })();
   }, [roomId]);
 
-  // ===== 통계 계산 =====
+  // ===== 화면 계산값 =====
   const total = summary?.total_comments ?? messages.length;
 
   const side1Count = messages.filter((m) => m.side === 1).length;
   const side2Count = messages.filter((m) => m.side === 2).length;
 
-  const side1Ratio = summary?.opinion_ratio?.option1_percentage;
-  const side2Ratio = summary?.opinion_ratio?.option2_percentage;
+  const side1Ratio = voteSummary?.option1_percentage ?? 0;
+  const side2Ratio = voteSummary?.option2_percentage ?? 0;
 
   const option1 = summary?.option1 ?? discussion.option1 ?? '1번 의견';
   const option2 = summary?.option2 ?? discussion.option2 ?? '2번 의견';
 
   const summaryText = summary?.summary ?? 'AI토론 요약문';
+
+  const endedAt = voteSummary?.end_date ?? summary?.ended_at ?? '종료일 없음';
 
   // ===== 투표 =====
   const handleVote = async (side: 1 | 2) => {
@@ -153,16 +180,20 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({ discussion }) =
 
     try {
       setVoting(true);
+
       const res = await voteDiscussion(roomId, side);
       console.log('투표 API 호출 성공:', res.message);
 
       setSelectedSide(side);
       setHasVoted(true);
 
-      setSummaryLoading(true);
-      const nextSummary = await fetchDiscussionSummary(roomId);
-      setSummary(nextSummary);
+      // summary 재호출 X (AI요약 다시 생성 방지)
+      // vote 결과만 새로고침
+      setVoteSummaryLoading(true);
+      const nextVoteSummary = await fetchDiscussionVoteSummary(roomId);
+      setVoteSummary(nextVoteSummary);
 
+      // vote-status는 신뢰성 위해 재조회
       setVoteStatusLoading(true);
       const status = await fetchDiscussionVoteStatus(roomId);
       setHasVoted(status.is_voted);
@@ -171,7 +202,7 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({ discussion }) =
       console.error('투표 API 호출 실패:', e?.message || e);
     } finally {
       setVoting(false);
-      setSummaryLoading(false);
+      setVoteSummaryLoading(false);
       setVoteStatusLoading(false);
     }
   };
@@ -195,6 +226,8 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({ discussion }) =
       alert('좋아요 처리에 실패했습니다.');
     }
   };
+
+  const ratioLoading = voteSummaryLoading; // 화면에서 동일하게 쓰기
 
   return (
     <div className="bg-beige1 flex min-h-screen justify-center">
@@ -235,9 +268,8 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({ discussion }) =
             </div>
             <h2 className="text-title4 mb-1">{discussion.title}</h2>
             <p className="text-body2 text-gray3">
-              이 토론은 <span className="font-semibold">{summary?.ended_at ?? '종료일 없음'}</span>
-              에 종료되었어요. 총 <span className="font-semibold">{total}</span>개의 의견이
-              오갔어요.
+              이 토론은 <span className="font-semibold">{endedAt}</span>에 종료되었어요. 총{' '}
+              <span className="font-semibold">{total}</span>개의 의견이 오갔어요.
             </p>
           </div>
 
@@ -256,23 +288,23 @@ const VSDebateResultPage: React.FC<VSDebateResultPageProps> = ({ discussion }) =
 
             <div className="text-caption3 text-gray3 mb-2 flex items-center justify-between">
               <span>1번 의견</span>
-              <span> {summaryLoading ? '불러오는 중...' : side1Ratio}%</span>
+              <span>{ratioLoading ? '불러오는 중...' : `${side1Ratio}%`}</span>
             </div>
             <div className="bg-beige2 mb-3 h-2 w-full overflow-hidden rounded-full">
               <div
                 className="bg-yellow h-full rounded-full transition-all"
-                style={{ width: `${side1Ratio}%` }}
+                style={{ width: `${ratioLoading ? 0 : side1Ratio}%` }}
               />
             </div>
 
             <div className="text-caption3 text-gray3 mb-2 flex items-center justify-between">
               <span>2번 의견</span>
-              <span>{summaryLoading ? '불러오는 중...' : side2Ratio}%</span>
+              <span>{ratioLoading ? '불러오는 중...' : `${side2Ratio}%`}</span>
             </div>
             <div className="bg-beige2 h-2 w-full overflow-hidden rounded-full">
               <div
                 className="bg-green1 h-full rounded-full transition-all"
-                style={{ width: `${side2Ratio}%` }}
+                style={{ width: `${ratioLoading ? 0 : side2Ratio}%` }}
               />
             </div>
           </div>
