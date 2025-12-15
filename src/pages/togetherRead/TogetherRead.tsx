@@ -23,6 +23,8 @@ const TogetherRead = () => {
   const user = getCurrentUser();
   const nickname = user?.nickname ?? '';
 
+  const PUBLIC_ORIGIN = import.meta.env.VITE_SITE_URL ?? window.location.origin;
+
   // ===== load =====
   useEffect(() => {
     if (!Number.isFinite(gid)) {
@@ -76,7 +78,7 @@ const TogetherRead = () => {
       return;
     }
 
-    const shareUrl = `${window.location.origin}/togetherRead/${overview.reading_group_id}`;
+    const shareUrl = `${PUBLIC_ORIGIN}/togetherRead/${overview.reading_group_id}`;
 
     const imageUrl =
       'https://github.com/p-checkmate/frontend/blob/develop/src/assets/together.png?raw=true';
@@ -216,8 +218,8 @@ const TogetherRead = () => {
         <main className="flex-1 px-4 pt-4 pb-8">
           {/* 책 정보 헤더 */}
           <section className="mb-4">
-            <h2 
-              className="text-caption1 ml-4 font-semibold text-black cursor-pointer" 
+            <h2
+              className="text-caption1 ml-4 cursor-pointer font-semibold text-black"
               onClick={handleTitleClick}
             >
               {title}
